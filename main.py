@@ -1,7 +1,10 @@
-# This is a sample Python script.
+import pymongo
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+
+
+
+
+
 
 
 def print_hi(name):
@@ -11,9 +14,11 @@ def print_hi(name):
 
 # Press the green button in the gutter to run the script.
 from pyexamples import guessing_game
+from pyexamples import reply
 
 if __name__ == '__main__':
     print_hi('PyCharm')
-    guessing_game.runbot()
+    #guessing_game.runbot()
+    reply.runbot()
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+

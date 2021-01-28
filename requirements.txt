@@ -1,2 +1,4 @@
 aiohttp>=3.6.0,<3.8.0
 discord
+pymongo>=3.11.2
+dnspython
