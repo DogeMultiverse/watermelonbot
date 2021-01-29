@@ -11,9 +11,10 @@ class MyClient(discord.Client):
             js = json.load(f)
             mongo_key = js["mongo_key"]
             self.prefix = js["prefix"]
-        client = pymongo.MongoClient(mongo_key)
-        db = client.get_database("AlexMindustry")
-        self.expgains = db["expgains"]
+        if self.prefix in ["w!", "t!"]:  # only access mongodb for w! and t!
+            client = pymongo.MongoClient(mongo_key)
+            db = client.get_database("AlexMindustry")
+            self.expgains = db["expgains"]
         super().__init__(**options)
 
     async def on_ready(self):
