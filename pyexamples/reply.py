@@ -70,16 +70,20 @@ class MyClient(discord.Client):
                 # await message.channel.send('user found')
                 muuid = {}
                 muuid_name = {}
+                last_updated = {}
                 for doc in res:
                     if doc["muuid"] not in muuid:
                         muuid[doc["muuid"]] = {doc["servername"]: doc["EXP"]}
                         muuid_name[doc["muuid"]] = doc["musername"]
+                        last_updated[doc["muuid"]] = {doc["servername"]: doc["date"]}
                     elif (doc["servername"] in muuid[doc["muuid"]]) and (
                             muuid[doc["muuid"]][doc["servername"]] < doc["EXP"]):
                         muuid[doc["muuid"]][doc["servername"]] = doc["EXP"]
                         muuid_name[doc["muuid"]] = doc["musername"]
+                        last_updated[doc["muuid"]][doc["servername"]] = doc["date"]
                     else:
                         muuid[doc["muuid"]][doc["servername"]] = doc["EXP"]
+                        last_updated[doc["muuid"]][doc["servername"]] = doc["date"]
                 str_builder = ""
                 for muuid_i, exps in muuid.items():
                     str_builder += "In Game Name: `" + muuid_name[muuid_i] + "`\n"  # +str(exps) +"\n"
@@ -90,13 +94,15 @@ class MyClient(discord.Client):
                                       'ALEX | TURBO PVP SERVER', "ALEX | PVP SERVER (ASIA)"]:
                             try:
                                 exp = 0 if exp is None else exp
-                                exp_builder += f"{exp:>6}  " + server[7:].replace(" SERVER", "") + (
-                                    " [TOP 1%]" if exp > 40000 else (" [TOP 10%]" if exp > 15000 else "")) + "\n"
+                                serverstr = server[7:].replace(" SERVER", "") + (
+                                    " [TOP 1%]" if exp > 40000 else (" [TOP 10%]" if exp > 15000 else ""))
+                                exp_builder += f"{exp:>6}  " + f"{serverstr:<21}" + \
+                                               last_updated[muuid_i][server].strftime("%Y-%m-%d %H:%M:%S") + "\n"
                             except Exception as e:
                                 print(exp, server)
                                 print(str(e))
                     if len(exp_builder) > 0:
-                        exp_builder = "```\n <EXP>  <SERVER>\n" + exp_builder + "\n```"
+                        exp_builder = "```\n <EXP>  <SERVER>             <LAST UPDATED, UTC>\n" + exp_builder + "\n```"
                         str_builder += exp_builder
                 if len(str_builder) > 0:
                     await message.channel.send(str_builder)
