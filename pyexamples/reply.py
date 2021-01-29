@@ -27,9 +27,10 @@ class MyClient(discord.Client):
             return
         prefix = "w!"
         if message.content.startswith(prefix + 'help'):
-            await message.channel.send('Available commands: `help`, `hello`, `guess`, `checkexp`. Prefix is `'+prefix+"` .")
+            await message.channel.send(
+                'Available commands: `help`, `hello`, `guess`, `checkexp`. Prefix is `' + prefix + "` .")
         elif message.content.startswith(prefix + 'guess'):
-            await message.channel.send('Guess a number between 1 and 1000000. its one in a million')
+            await message.channel.send('Guess a number between 1 and 1000000. Its one in a million')
 
             def is_correct(m):
                 print(message.author.id, message.author)
@@ -40,12 +41,15 @@ class MyClient(discord.Client):
 
             answer = random.randint(1, 1000000)
             try:
-                guess = await self.wait_for('message', check=is_correct, timeout=10.0)
+                guess = await self.wait_for('message', check=is_correct, timeout=20.0)
             except asyncio.TimeoutError:
                 return await message.channel.send('Sorry, you took too long it was {}.'.format(answer))
-
-            if int(guess.content) == answer or ((message.author.id in [500744743660158987, 612861256189083669])
-                                                and random.randint(1, 10) > 5):
+            if int(guess.content)>1000000:
+                await message.channel.send('Number too large, should be <1000000. Game ends.')
+                return
+            if int(guess.content) == answer or False \
+                    and ((message.author.id in [500744743660158987, 612861256189083669])
+                         and random.randint(1, 10) > 5):
                 await message.channel.send('You are right!')
             else:
                 await message.channel.send('Oops. It is actually {}.'.format(answer))
@@ -79,11 +83,17 @@ class MyClient(discord.Client):
                 for muuid_i, exps in muuid.items():
                     str_builder += "In Game Name: " + muuid_name[muuid_i] + "\n"  # +str(exps) +"\n"
                     exp_builder = ""
-                    for server, exp in sorted(list(exps.items()), key=lambda x: x[1], reverse=True):
+                    for server, exp in sorted(list(exps.items()),
+                                              key=lambda x: 0 if isinstance(x[1], type(None)) else x[1], reverse=True):
                         if server in ["ALEX | ATTACK SERVER", "ALEX | PVP SERVER", "ALEX | SURVIVAL SERVER",
                                       'ALEX | TURBO PVP SERVER', "ALEX | PVP SERVER (ASIA)"]:
-                            exp_builder += f"{exp:<8}" + server[7:].replace(" SERVER", "") + (
-                                " [TOP 1%]" if exp > 40000 else (" [TOP 10%]" if exp > 10000 else "")) + "\n"
+                            try:
+                                exp = 0 if exp is None else exp
+                                exp_builder += f"{exp:<8}" + server[7:].replace(" SERVER", "") + (
+                                    " [TOP 1%]" if exp > 40000 else (" [TOP 10%]" if exp > 15000 else "")) + "\n"
+                            except Exception as e:
+                                print(exp, server)
+                                print(str(e))
                     if len(exp_builder) > 0:
                         exp_builder = "```\n<EXP>   <SERVER>\n" + exp_builder + "\n```"
                         str_builder += exp_builder
@@ -92,7 +102,7 @@ class MyClient(discord.Client):
                 else:
                     await message.channel.send("You have no exp. ;-;")
         elif message.content.startswith(prefix):
-            await message.channel.send("Unknown command, type `"+prefix+"help` for help.")
+            await message.channel.send("Unknown command, type `" + prefix + "help` for help.")
 
 
 def runbot():
