@@ -10,6 +10,7 @@ class MyClient(discord.Client):
         with open("watermelon.config", "rb") as f:
             js = json.load(f)
             mongo_key = js["mongo_key"]
+            self.prefix = js["prefix"]
         client = pymongo.MongoClient(mongo_key)
         db = client.get_database("AlexMindustry")
         self.expgains = db["expgains"]
@@ -25,7 +26,7 @@ class MyClient(discord.Client):
         # we do not want the bot to reply to itself
         if message.author.id == self.user.id:
             return
-        prefix = "w!"
+        prefix = self.prefix
         if message.content.startswith(prefix + 'help'):
             await message.channel.send(
                 'Available commands: `help`, `hello`, `guess`, `checkexp`. Prefix is `' + prefix + "` .")
@@ -44,7 +45,7 @@ class MyClient(discord.Client):
                 guess = await self.wait_for('message', check=is_correct, timeout=20.0)
             except asyncio.TimeoutError:
                 return await message.channel.send('Sorry, you took too long it was {}.'.format(answer))
-            if int(guess.content)>1000000:
+            if int(guess.content) > 1000000:
                 await message.channel.send('Number too large, should be <1000000. Game ends.')
                 return
             if int(guess.content) == answer or False \
@@ -81,7 +82,7 @@ class MyClient(discord.Client):
                         muuid[doc["muuid"]][doc["servername"]] = doc["EXP"]
                 str_builder = ""
                 for muuid_i, exps in muuid.items():
-                    str_builder += "In Game Name: " + muuid_name[muuid_i] + "\n"  # +str(exps) +"\n"
+                    str_builder += "In Game Name: `" + muuid_name[muuid_i] + "`\n"  # +str(exps) +"\n"
                     exp_builder = ""
                     for server, exp in sorted(list(exps.items()),
                                               key=lambda x: 0 if isinstance(x[1], type(None)) else x[1], reverse=True):
@@ -89,13 +90,13 @@ class MyClient(discord.Client):
                                       'ALEX | TURBO PVP SERVER', "ALEX | PVP SERVER (ASIA)"]:
                             try:
                                 exp = 0 if exp is None else exp
-                                exp_builder += f"{exp:<8}" + server[7:].replace(" SERVER", "") + (
+                                exp_builder += f"{exp:>6}  " + server[7:].replace(" SERVER", "") + (
                                     " [TOP 1%]" if exp > 40000 else (" [TOP 10%]" if exp > 15000 else "")) + "\n"
                             except Exception as e:
                                 print(exp, server)
                                 print(str(e))
                     if len(exp_builder) > 0:
-                        exp_builder = "```\n<EXP>   <SERVER>\n" + exp_builder + "\n```"
+                        exp_builder = "```\n <EXP>  <SERVER>\n" + exp_builder + "\n```"
                         str_builder += exp_builder
                 if len(str_builder) > 0:
                     await message.channel.send(str_builder)
