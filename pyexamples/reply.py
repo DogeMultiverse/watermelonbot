@@ -113,10 +113,12 @@ class MyClient(discord.Client):
         elif message.content.startswith(prefix+"convertexp"):
             # add a new collection to show how much was claimed
             await message.channel.send("coming soon")
+                elif message.content.startswith(prefix+"github"):
+            await message.channel.send("https://github.com/alexpvpmindustry/watermelonbot")      
+            
         elif message.content.startswith(prefix):
             await message.channel.send("Unknown command, type `" + prefix + "help` for help.")
-        elif message.content.startswith(prefix+"github"):
-            await message.channel.send("https://github.com/alexpvpmindustry/watermelonbot")    
+  
         
 
 def runbot():
