@@ -30,7 +30,7 @@ class MyClient(discord.Client):
         prefix = self.prefix
         if message.content.startswith(prefix + 'help'):
             await message.channel.send(
-                'Available commands: `help`, `hello`, `guess`, `checkexp`. Prefix is `' + prefix + "` .")
+                'Available commands: `help`, `hello`, `guess`, `checkexp` , `github`. Prefix is `' + prefix + "` .")
         elif message.content.startswith(prefix + 'guess'):
             await message.channel.send('Guess a number between 1 and 1000000. Its one in a million')
 
@@ -115,6 +115,8 @@ class MyClient(discord.Client):
             await message.channel.send("coming soon")
         elif message.content.startswith(prefix):
             await message.channel.send("Unknown command, type `" + prefix + "help` for help.")
+        elif message.content.startswith(prefix+"github"):
+            await message.channel.send("https://github.com/alexpvpmindustry/watermelonbot")    
         
 
 def runbot():
