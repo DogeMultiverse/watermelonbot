@@ -109,9 +109,13 @@ class MyClient(discord.Client):
                     await message.channel.send(str_builder)
                 else:
                     await message.channel.send("You have no exp. ;-;")
+
+        elif message.content.startswith(prefix+"convertexp"):
+            # add a new collection to show how much was claimed
+            await message.channel.send("coming soon")
         elif message.content.startswith(prefix):
             await message.channel.send("Unknown command, type `" + prefix + "help` for help.")
-
+        
 
 def runbot():
     with open("watermelon.config", "rb") as f:
