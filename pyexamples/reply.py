@@ -3,6 +3,7 @@ import json
 import pymongo
 import asyncio
 import random
+from pyexamples import counting_bot
 
 
 class MyClient(discord.Client):
@@ -119,6 +120,8 @@ class MyClient(discord.Client):
 
         elif message.content.startswith(prefix):
             await message.channel.send("Unknown command, type `" + prefix + "help` for help.")
+        elif message.channel.id == 805105861450137600:
+            counting_bot.run_counterbot(message)
 
 
 def runbot():
