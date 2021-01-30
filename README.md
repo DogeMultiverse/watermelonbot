@@ -3,13 +3,13 @@
 watermelon bot for managing discord and servers. written in python
 
 ### how to contribute:
-- fork this repo
-- make edits
-- make pull req
+- Fork this repo
+- Create a Commit
+- Make a pull request until a repo owner/contributors merge a pull request
 
 
 ### how to run the bot for your server (you must have admin rights):
-- go to discord bot dev and create an application, create a bot
+- go to [discord developer portal](https://discord.com/developers) and create an application, create a bot
 - invite bot to your server via url
 - clone this repo and
 - add the bot token to the "watermelon.config" file.
