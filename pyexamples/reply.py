@@ -8,6 +8,7 @@ from pyexamples import counting_bot
 
 class MyClient(discord.Client):
     def __init__(self, **options):
+
         with open("watermelon.config", "rb") as f:
             js = json.load(f)
             mongo_key = js["mongo_key"]
@@ -16,7 +17,10 @@ class MyClient(discord.Client):
             client = pymongo.MongoClient(mongo_key)
             db = client.get_database("AlexMindustry")
             self.expgains = db["expgains"]
+        #self.count_channel = self.get_channel(805105861450137600)
+        #counting_bot.start_counter_bot(self.count_channel)
         super().__init__(**options)
+
 
     async def on_ready(self):
         print('Logged in as')
@@ -121,7 +125,7 @@ class MyClient(discord.Client):
         elif message.content.startswith(prefix):
             await message.channel.send("Unknown command, type `" + prefix + "help` for help.")
         elif message.channel.id == 805105861450137600:
-            counting_bot.run_counterbot(message)
+            await counting_bot.run_counterbot(message)
 
 
 def runbot():
