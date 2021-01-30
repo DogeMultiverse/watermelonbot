@@ -30,7 +30,8 @@ class MyClient(discord.Client):
         prefix = self.prefix
         if message.content.startswith(prefix + 'help'):
             await message.channel.send(
-                'Available commands: `help`, `hello`, `guess`, `checkexp` , `github`. Prefix is `' + prefix + "` .")
+                'Available commands: `help`, `hello`, `guess`, `checkexp` , `github`. Prefix is `' + prefix + "` .\n" +
+                "Other bots commands: `a?help`, `lol help`, `,suggest help`")
         elif message.content.startswith(prefix + 'guess'):
             await message.channel.send('Guess a number between 1 and 1000000. Its one in a million')
 
@@ -110,16 +111,15 @@ class MyClient(discord.Client):
                 else:
                     await message.channel.send("You have no exp. ;-;")
 
-        elif message.content.startswith(prefix+"convertexp"):
+        elif message.content.startswith(prefix + "convertexp"):
             # add a new collection to show how much was claimed
             await message.channel.send("coming soon")
-        elif message.content.startswith(prefix+"github"):
-            await message.channel.send("https://github.com/alexpvpmindustry/watermelonbot")      
-            
+        elif message.content.startswith(prefix + "github"):
+            await message.channel.send("https://github.com/alexpvpmindustry/watermelonbot")
+
         elif message.content.startswith(prefix):
             await message.channel.send("Unknown command, type `" + prefix + "help` for help.")
-  
-        
+
 
 def runbot():
     with open("watermelon.config", "rb") as f:
