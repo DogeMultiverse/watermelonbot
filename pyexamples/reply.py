@@ -6,6 +6,53 @@ import random
 from pyexamples import counting_bot
 
 
+def get_latest_exp(res):
+    muuid = {}
+    muuid_name = {}
+    last_updated = {}
+    exp_list = []
+    for doc in res:
+        if doc["muuid"] not in muuid:
+            muuid[doc["muuid"]] = {doc["servername"]: doc["EXP"]}
+            muuid_name[doc["muuid"]] = doc["musername"]
+            last_updated[doc["muuid"]] = {doc["servername"]: doc["date"]}
+        elif (doc["servername"] in muuid[doc["muuid"]]) and (
+                muuid[doc["muuid"]][doc["servername"]] < doc["EXP"]):
+            muuid[doc["muuid"]][doc["servername"]] = doc["EXP"]
+            muuid_name[doc["muuid"]] = doc["musername"]
+            last_updated[doc["muuid"]][doc["servername"]] = doc["date"]
+        else:
+            muuid[doc["muuid"]][doc["servername"]] = doc["EXP"]
+            last_updated[doc["muuid"]][doc["servername"]] = doc["date"]
+    str_builder = ""
+    for muuid_i, exps in muuid.items():
+        str_builder += "In Game Name: `" + muuid_name[muuid_i] + "`\n"  # +str(exps) +"\n"
+        exp_builder = ""
+        muuid_exp_dict = {"In_Game_Name": muuid_name[muuid_i], "servers": []}
+        for server, exp in sorted(list(exps.items()),
+                                  key=lambda x: 0 if isinstance(x[1], type(None)) else x[1], reverse=True):
+            if server in ["ALEX | ATTACK SERVER", "ALEX | PVP SERVER", "ALEX | SURVIVAL SERVER",
+                          'ALEX | TURBO PVP SERVER', "ALEX | PVP SERVER (ASIA)"]:
+                try:
+                    exp = 0 if exp is None else exp
+                    serverstr = server[7:].replace(" SERVER", "") + (
+                        " [TOP 1%]" if exp > 40000 else (" [TOP 10%]" if exp > 15000 else ""))
+                    exp_builder += f"{exp:>6}  " + f"{serverstr:<21}" + \
+                                   last_updated[muuid_i][server].strftime("%Y-%m-%d %H:%M:%S") + "\n"
+                    muuid_exp_dict["servers"].append({"servername": server[7:].replace(" SERVER", ""),
+                                                      "exp": exp, "unclaimed": 0, "lcdate": None,
+                                                      "lupdated": last_updated[muuid_i][server]
+                                                      })
+                except Exception as e:
+                    print(exp, server)
+                    print(str(e))
+        if len(exp_builder) > 0:
+            exp_builder = "```\n <EXP>  <SERVER>             <LAST UPDATED, UTC>\n" + exp_builder + "\n```"
+            str_builder += exp_builder
+            exp_list.append(muuid_exp_dict)
+    return str_builder, exp_list
+
+
 class MyClient(discord.Client):
     def __init__(self, **options):
 
@@ -17,12 +64,9 @@ class MyClient(discord.Client):
             client = pymongo.MongoClient(mongo_key)
             db = client.get_database("AlexMindustry")
             self.expgains = db["expgains"]
-        # self.count_channel = self.get_channel(805105861450137600)
-        # counting_bot.start_counter_bot(self.count_channel)
-        # {"highscore": 248, "highscore_players": [380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 670196968663941121, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173, 380474969458737173], "highscore_griefer": 380474969458737173, "current_count": 20, "current_players": [735410445409845251, 675507024930537473, 675507024930537473, 675507024930537473, 675507024930537473, 675507024930537473, 675507024930537473, 675507024930537473, 675507024930537473, 675507024930537473, 675507024930537473, 675507024930537473, 675507024930537473, 675507024930537473, 675507024930537473, 675507024930537473, 675507024930537473, 675507024930537473, 675507024930537473, 675507024930537473]}
-
+            self.convertedexp = db["convertedexp"]
+            self.ax = db["ax"]
         super().__init__(**options)
-        self.usertry = self.get_user(735410445409845251)
 
     async def on_ready(self):
         print('Logged in as')
@@ -77,50 +121,23 @@ class MyClient(discord.Client):
                 await message.channel.send("User has no EXP or user not found.")
             else:
                 # await message.channel.send('user found')
-                muuid = {}
-                muuid_name = {}
-                last_updated = {}
-                for doc in res:
-                    if doc["muuid"] not in muuid:
-                        muuid[doc["muuid"]] = {doc["servername"]: doc["EXP"]}
-                        muuid_name[doc["muuid"]] = doc["musername"]
-                        last_updated[doc["muuid"]] = {doc["servername"]: doc["date"]}
-                    elif (doc["servername"] in muuid[doc["muuid"]]) and (
-                            muuid[doc["muuid"]][doc["servername"]] < doc["EXP"]):
-                        muuid[doc["muuid"]][doc["servername"]] = doc["EXP"]
-                        muuid_name[doc["muuid"]] = doc["musername"]
-                        last_updated[doc["muuid"]][doc["servername"]] = doc["date"]
-                    else:
-                        muuid[doc["muuid"]][doc["servername"]] = doc["EXP"]
-                        last_updated[doc["muuid"]][doc["servername"]] = doc["date"]
-                str_builder = ""
-                for muuid_i, exps in muuid.items():
-                    str_builder += "In Game Name: `" + muuid_name[muuid_i] + "`\n"  # +str(exps) +"\n"
-                    exp_builder = ""
-                    for server, exp in sorted(list(exps.items()),
-                                              key=lambda x: 0 if isinstance(x[1], type(None)) else x[1], reverse=True):
-                        if server in ["ALEX | ATTACK SERVER", "ALEX | PVP SERVER", "ALEX | SURVIVAL SERVER",
-                                      'ALEX | TURBO PVP SERVER', "ALEX | PVP SERVER (ASIA)"]:
-                            try:
-                                exp = 0 if exp is None else exp
-                                serverstr = server[7:].replace(" SERVER", "") + (
-                                    " [TOP 1%]" if exp > 40000 else (" [TOP 10%]" if exp > 15000 else ""))
-                                exp_builder += f"{exp:>6}  " + f"{serverstr:<21}" + \
-                                               last_updated[muuid_i][server].strftime("%Y-%m-%d %H:%M:%S") + "\n"
-                            except Exception as e:
-                                print(exp, server)
-                                print(str(e))
-                    if len(exp_builder) > 0:
-                        exp_builder = "```\n <EXP>  <SERVER>             <LAST UPDATED, UTC>\n" + exp_builder + "\n```"
-                        str_builder += exp_builder
+                str_builder, exp_dict = get_latest_exp(res)
                 if len(str_builder) > 0:
                     await message.channel.send(str_builder)
                 else:
                     await message.channel.send("You have no exp. ;-;")
 
-        elif message.content.startswith(prefix + "convertexp"):
+        elif message.content.startswith(prefix + "buyeffect"):
+            if message.author.id != 612861256189083669:
+                await message.channel.send("coming soon")
+                return
             # add a new collection to show how much was claimed
-            await message.channel.send("coming soon")
+
+        elif message.content.startswith(prefix + "convertexp"):
+            if message.author.id != 612861256189083669:
+                await message.channel.send("coming soon")
+                return
+            # add a new collection to show how much was claimed # add last claimed time.
         elif message.content.startswith(prefix + "github"):
             await message.channel.send("https://github.com/alexpvpmindustry/watermelonbot")
 
