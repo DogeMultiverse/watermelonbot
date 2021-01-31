@@ -127,15 +127,9 @@ class MyClient(discord.Client):
         elif message.content.startswith(prefix):
             await message.channel.send("Unknown command, type `" + prefix + "help` for help.")
         elif prefix == "w!" and message.channel.id == 805105861450137600:
-            await counting_bot.run_counterbot(message,self)
+            await counting_bot.run_counterbot(message, self)
         elif prefix == "t!" and message.channel.id == 805105861450137600:
-            try_get_user = self.get_user(message.author.id)
-            print(message.author.id)
-            if try_get_user is not None:
-                print(try_get_user.name)
-            players = "alex, unj, blah blah"
-            topic = "hardcore counting. if any subsequent count is wrong, "+  "the bot restarts the count. Lets see what is the highest score we can get."
-            await self.get_channel(805105861450137600).edit(topic=(topic+try_get_user.name))
+            pass
 
 
 def runbot():
