@@ -2,13 +2,20 @@
 
 watermelon bot for managing discord and servers. written in python
 
-### how to contribute:
+[🍉 WaterMelonBot 🍉](#-watermelonbot-)
+- [how to contribute](#how-to-contribute)
+- [how to run the bot for your server (you must have admin rights)](#how-to-run-the-bot-for-your-server-you-must-have-admin-rights)
+- [watermelon configuration file](#watermelon-configuration-file)
+  
+
+
+# how to contribute
 - Fork this repo
 - Create a Commit
 - Make a pull request until a repo owner/contributors merge a pull request
 
 
-### how to run the bot for your server (you must have admin rights):
+# how to run the bot for your server (you must have admin rights)
 - go to [discord developer portal](https://discord.com/developers) and create an application, create a bot
 - invite your bot to your server via Oauth bot url
 - clone this repo and
@@ -16,7 +23,7 @@ watermelon bot for managing discord and servers. written in python
 - in this directory, execute `pip3 install -r requirements.txt` on terminal
 - run `python3 main.py`
 
-### watermelon.config file
+# watermelon configuration file
 - create a txt file "watermelon.config"
 - populate it with this:
 ```json
