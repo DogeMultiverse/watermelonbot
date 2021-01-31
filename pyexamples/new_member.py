@@ -15,7 +15,6 @@ class MyClient(discord.Client):
             to_send = 'Welcome {0.mention} to {1.name}!'.format(member, guild)
             await guild.system_channel.send(to_send)
 
-
 intents = discord.Intents.default()
 intents.members = True
 
