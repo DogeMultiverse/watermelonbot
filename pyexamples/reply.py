@@ -71,8 +71,8 @@ class MyClient(discord.Client):
             for i, cur in enumerate(cursor):
                 res.append(cur)
             if len(res) == 0:
-                print("user not found")
-                await message.channel.send('User not found')
+                print("User has no EXP.")
+                await message.channel.send("User has no EXP or user not found.")
             else:
                 # await message.channel.send('user found')
                 muuid = {}
@@ -124,7 +124,7 @@ class MyClient(discord.Client):
 
         elif message.content.startswith(prefix):
             await message.channel.send("Unknown command, type `" + prefix + "help` for help.")
-        elif message.channel.id == 805105861450137600:
+        elif prefix == "w!" and message.channel.id == 805105861450137600:
             await counting_bot.run_counterbot(message)
 
 

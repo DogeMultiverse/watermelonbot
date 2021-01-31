@@ -45,7 +45,8 @@ async def run_counterbot(message):
         if int(message.content) == (current_count + 1):
             save_data_inc_count(int(message.content), message.author.id, data)
             return
-    except Exception:
+    except Exception as e:
+        print(str(e))
         pass
     await message.channel.send(f"FAILED! {message.author.mention} IS A GRIEFER!!")
     if current_count > data["highscore"]:
