@@ -38,7 +38,7 @@ def save_data_reset_count(data):
         json.dump(data, f)
 
 
-async def run_counterbot(message):
+async def run_counterbot(message, self):
     data = read_data()
     current_count = data["current_count"]
     try:
@@ -57,6 +57,16 @@ async def run_counterbot(message):
         data["current_players"] = []
         save_data_reset_count(data)
         await message.channel.send(f"New highscore!")
+        topic = "hardcore counting. if any subsequent count is wrong, the bot restarts the count. Lets see what " \
+                "is the highest score we can get. "
+        playersstr = ""
+        for playerid in set(data["highscore_players"]):
+            player = self.get_user(playerid)
+            if player is not None:
+                playersstr += player.name + "#" + player.discriminator + ", "
+        if len(playersstr) > 0:
+            playersstr = playersstr[:-2]
+            await message.channel.edit(topic=topic + f"Highscore: {current_count}. By " + playersstr)
     else:
         highscore = data["highscore"]
         contribution = len(set(data["highscore_players"]))
