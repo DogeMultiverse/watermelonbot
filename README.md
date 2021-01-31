@@ -34,5 +34,5 @@ watermelon bot for managing discord and servers. written in python
   "mongo_key": "mongodb+srv://<USER>:<PASS>@<CLUSTER_IP>/<DB_NAME>?retryWrites=true&w=majority&socketTimeoutMS=36000&connectTimeoutMS=36000"
 }
 ```
-# TO DO
-Comming soon
+# To Do
+Coming soon
