@@ -14,13 +14,6 @@ class MyClient(discord.Client):
         if guild.system_channel is not None:
             to_send = 'Welcome {0.mention} to {1.name}!'.format(member, guild)
             await guild.system_channel.send(to_send)
-            
-    async def on_member_remove(self, member):
-        guild = member.guild
-        if guild.system_channel is not None:
-            to_send = 'Goodbye {0.mention} from {1.name}!'.format(member, guild)
-            await guild.system_channel.send(to_send)
-
 
 intents = discord.Intents.default()
 intents.members = True
