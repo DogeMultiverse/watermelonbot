@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import discord
 import json
 import pymongo
@@ -10,7 +12,7 @@ def get_latest_exp(res, convertedexp_doc):
     muuid = {}
     muuid_name = {}
     last_updated = {}
-    exp_list = []
+    exp_dict = {}
     if convertedexp_doc is None:
         convertedexp_doc = {}
     for doc in res:
@@ -61,8 +63,8 @@ def get_latest_exp(res, convertedexp_doc):
         if len(exp_builder) > 0:
             exp_builder = "```\n <EXP>  <SERVER>             <LASTUPDATED,UTC>  <CLAIMED>\n" + exp_builder + "\n```"
             str_builder += exp_builder
-            exp_list.append(muuid_exp_dict)
-    return str_builder, exp_list, convertedexp_doc
+            exp_dict[muuid_i] = muuid_exp_dict
+    return str_builder, exp_dict, convertedexp_doc
 
 
 class MyClient(discord.Client):
@@ -159,7 +161,44 @@ class MyClient(discord.Client):
             if prefix == "t!" and message.author.id != 612861256189083669:
                 await message.channel.send("coming soon")
                 return
+            await message.channel.send('converting exp')
             # add a new collection to show how much was claimed # add last claimed time.
+            cursor = self.expgains.find({"duuid": message.author.id})
+            convertedexp_doc = self.convertedexp.find_one({"duuid": message.author.id})
+            if convertedexp_doc is None:
+                self.convertedexp.insert_one({"duuid": message.author.id, "converted": None})
+            else:
+                convertedexp_doc = convertedexp_doc["converted"]
+            res = []
+            for i, cur in enumerate(cursor):
+                res.append(cur)
+            if len(res) == 0:
+                await message.channel.send("User has no EXP or user not found. Can't convert emptiness.")
+                return
+            else:
+                str_builder, exp_dict, convertedexp_doc = get_latest_exp(res, convertedexp_doc)
+                if len(str_builder) > 0:
+                    # do the conversion routine here # 500 exp to 1 Ax
+                    new_Ax = 0
+                    for muuid, exps in exp_dict.items():
+                        for servdata in exps["servers"]:
+                            # {"servername": rservername, "exp": exp, "claimed": claimed, "lcdate": lcdate,
+                            # "lupdated": last_updated[muuid_i][server] }
+                            rservername = servdata["servername"]
+                            exp = servdata["exp"]
+                            claimed = servdata["claimed"]
+                            claims = (exp - claimed) // 1000
+                            new_Ax += claims
+                            servdata["claimed"] += claims * 1000
+                            # servdata["lcdate"] = datetime.utcnow()
+                            convertedexp_doc[muuid][rservername] = {"claimed": servdata["claimed"],
+                                                                    "lcdate": datetime.utcnow()}
+                    self.convertedexp.find_one_and_replace({"duuid": message.author.id},
+                                                           {"duuid": message.author.id, "converted": convertedexp_doc})
+                    # todo add the value to ax
+                    await message.channel.send(f"You have converted {new_Ax*1000} EXP into {new_Ax} <:Ax:> Congrats!.")
+                else:
+                    await message.channel.send("You have no exp. ;-; Can't convert emptiness.")
         elif message.content.startswith(prefix + "github"):
             await message.channel.send("watermelonbot: https://github.com/alexpvpmindustry/watermelonbot\n" +
                                        "lol bot: https://github.com/unjown/unjownbot")
