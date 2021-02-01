@@ -46,9 +46,9 @@ async def run_counterbot(message, self):
             save_data_inc_count(int(message.content), message.author.id, data)
             return
     except Exception as e:
-        print(str(e))
+        # print(str(e))
         pass
-    await message.channel.send(f"FAILED! {message.author.mention} IS A GRIEFER!!")
+    await message.channel.send(f"FAILED! {message.author.mention} CAN'T COUNT <:kekw:786876427311251466>!!")
     if current_count > data["highscore"]:
         data["highscore"] = current_count
         data["highscore_players"] = data["current_players"]
