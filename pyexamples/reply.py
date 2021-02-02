@@ -74,7 +74,7 @@ class MyClient(discord.Client):
             js = json.load(f)
             mongo_key = js["mongo_key"]
             self.prefix = js["prefix"]
-        if self.prefix in ["w!", "t?"]:  # only access mongodb for w! and t?
+        if self.prefix in ["w?", "t?"]:  # only access mongodb for w? and t?
             client = pymongo.MongoClient(mongo_key)
             db = client.get_database("AlexMindustry")
             self.expgains = db["expgains"]
@@ -290,7 +290,7 @@ class MyClient(discord.Client):
 
         elif message.content.startswith(prefix):
             await message.channel.send("Unknown command, type `" + prefix + "help` for help.")
-        elif prefix == "w!" and message.channel.id == 805105861450137600:
+        elif prefix == "w?" and message.channel.id == 805105861450137600:
             await counting_bot.run_counterbot(message, self)
         elif prefix == "t?" and message.channel.id == 805105861450137600:
             pass
