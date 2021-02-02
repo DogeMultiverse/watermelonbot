@@ -157,10 +157,10 @@ class MyClient(discord.Client):
                 else:
                     await message.channel.send("You have no exp. ;-;")
         elif message.content.startswith(prefix+"claimeffect"):
-            # todo
+            # todo # check for role precondition then give effect
             pass
         elif message.content.startswith(prefix+"restartservers"):
-            # todo soft restart and hard restart
+            # todo # check for role precondition then soft restart and hard restart
             pass
         elif message.content.startswith(prefix + "buyeffect"):
             if prefix == "t?" and message.author.id != 612861256189083669:
