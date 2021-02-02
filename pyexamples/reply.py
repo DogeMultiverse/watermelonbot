@@ -156,7 +156,12 @@ class MyClient(discord.Client):
                     await message.channel.send(str_builder)
                 else:
                     await message.channel.send("You have no exp. ;-;")
-
+        elif message.content.startswith(prefix+"claimeffect"):
+            # todo
+            pass
+        elif message.content.startswith(prefix+"restartservers"):
+            # todo soft restart and hard restart
+            pass
         elif message.content.startswith(prefix + "buyeffect"):
             if prefix == "t?" and message.author.id != 612861256189083669:
                 await message.channel.send("t? is only for alex to test")
@@ -235,9 +240,7 @@ class MyClient(discord.Client):
                     await message.channel.send("error, pls **PING** alex! error 189:" + str(e))
             else:
                 await message.channel.send("Wrong usage of command.")
-
             # await message.channel.send("coming soon")
-
             # checks for price n balance, if valid, make purchase, else error message
         elif message.content.startswith(prefix + "axleaderboard"):
             await message.channel.send("type `a?axleaderboard`")
