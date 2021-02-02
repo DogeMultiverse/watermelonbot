@@ -35,7 +35,7 @@ class MyClient(discord.Client):
 
             if int(guess.content) == answer or (message.author.id in [500744743660158987, 612861256189083669]
                                                 and random.randint(1, 10) > 5):
-                await message.channel.send('You are right!')
+                await message.channel.send('You are right?')
             else:
                 await message.channel.send('Oops. It is actually {}.'.format(answer))
 
