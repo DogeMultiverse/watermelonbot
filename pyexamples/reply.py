@@ -16,12 +16,13 @@ def get_latest_exp(res, convertedexp_doc):
     if convertedexp_doc is None:
         convertedexp_doc = {}
     for doc in res:
+        if doc["EXP"] is None:
+            doc["EXP"]=0
         if doc["muuid"] not in muuid:
             muuid[doc["muuid"]] = {doc["servername"]: doc["EXP"]}
             muuid_name[doc["muuid"]] = doc["musername"]
             last_updated[doc["muuid"]] = {doc["servername"]: doc["date"]}
-        elif (doc["servername"] in muuid[doc["muuid"]]) and (
-                muuid[doc["muuid"]][doc["servername"]] < doc["EXP"]):
+        elif (doc["servername"] in muuid[doc["muuid"]]) and (muuid[doc["muuid"]][doc["servername"]] < doc["EXP"]):
             muuid[doc["muuid"]][doc["servername"]] = doc["EXP"]
             muuid_name[doc["muuid"]] = doc["musername"]
             last_updated[doc["muuid"]][doc["servername"]] = doc["date"]
