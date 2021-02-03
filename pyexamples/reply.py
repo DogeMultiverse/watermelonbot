@@ -6,6 +6,7 @@ import pymongo
 import asyncio
 import random
 from pyexamples import counting_bot
+from pyexamples import highlow_game
 
 
 def get_latest_exp(res, convertedexp_doc):
@@ -17,7 +18,7 @@ def get_latest_exp(res, convertedexp_doc):
         convertedexp_doc = {}
     for doc in res:
         if doc["EXP"] is None:
-            doc["EXP"]=0
+            doc["EXP"] = 0
         if doc["muuid"] not in muuid:
             muuid[doc["muuid"]] = {doc["servername"]: doc["EXP"]}
             muuid_name[doc["muuid"]] = doc["musername"]
@@ -157,11 +158,11 @@ class MyClient(discord.Client):
                     await message.channel.send(str_builder)
                 else:
                     await message.channel.send("You have no exp. ;-;")
-        elif message.content.startswith(prefix+"claimeffect"):
+        elif message.content.startswith(prefix + "claimeffect"):
             # todo @BOUNTY # check for role precondition then give effect
             #  https://discordpy.readthedocs.io/en/latest/api.html#reaction
             pass
-        elif message.content.startswith(prefix+"restartservers"):
+        elif message.content.startswith(prefix + "restartservers"):
             # todo @BOUNTY # check for role precondition then soft restart and hard restart
             pass
         elif message.content.startswith(prefix + "buyeffect"):
@@ -246,6 +247,8 @@ class MyClient(discord.Client):
             # checks for price n balance, if valid, make purchase, else error message
         elif message.content.startswith(prefix + "axleaderboard"):
             await message.channel.send("type `a?axleaderboard`")
+        elif message.content == (prefix + "highlow"):
+            await highlow_game.run_highlowgame(message, self)
         elif message.content.startswith(prefix + "convertexp"):
             if prefix == "t?" and message.author.id != 612861256189083669:
                 await message.channel.send("t? is only for alex to test")
@@ -273,9 +276,9 @@ class MyClient(discord.Client):
                             rservername = servdata["servername"]
                             exp = servdata["exp"]
                             if exp is None:
-                                exp =0
+                                exp = 0
                             claimed = servdata["claimed"]
-                            claims = (exp - claimed) // 1000 # integer division
+                            claims = (exp - claimed) // 1000  # integer division
                             new_Ax += claims
                             servdata["claimed"] += claims * 1000
                             convertedexp_doc[muuid][rservername] = {"claimed": servdata["claimed"],
@@ -294,13 +297,17 @@ class MyClient(discord.Client):
         elif message.content.startswith(prefix + "github"):
             await message.channel.send("watermelonbot: https://github.com/alexpvpmindustry/watermelonbot\n" +
                                        "lol bot: https://github.com/unjown/unjownbot")
-
+        elif '<@!804013622963208213>' in message.content:
+            if prefix == "w?":
+                await message.channel.send(prefix + 'is my prefix')
         elif message.content.startswith(prefix):
             await message.channel.send("Unknown command, type `" + prefix + "help` for help.")
         elif prefix == "w?" and message.channel.id == 805105861450137600:
             await counting_bot.run_counterbot(message, self)
         elif prefix == "t?" and message.channel.id == 805105861450137600:
             pass
+
+
 
 
 def runbot():
