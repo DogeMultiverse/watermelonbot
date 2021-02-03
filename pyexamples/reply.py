@@ -271,6 +271,8 @@ class MyClient(discord.Client):
                         for servdata in exps["servers"]:
                             rservername = servdata["servername"]
                             exp = servdata["exp"]
+                            if exp is None:
+                                exp =0
                             claimed = servdata["claimed"]
                             claims = (exp - claimed) // 1000 # integer division
                             new_Ax += claims
