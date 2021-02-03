@@ -103,7 +103,7 @@ class MyClient(discord.Client):
                                 print(exp, server)
                                 print(str(e))
                     if len(exp_builder) > 0:
-                        exp_builder = "```\n <EXP>  <SERVER>             <LAST UPDATED, UTC>\n" + exp_builder + "\nTOTAL EXP =" + exp + "\n```"
+                        exp_builder = "```\n <EXP>  <SERVER>             <LAST UPDATED, UTC>\n" + exp_builder + "\n```"
                         str_builder += exp_builder
                 if len(str_builder) > 0:
                     await message.channel.send(str_builder)
