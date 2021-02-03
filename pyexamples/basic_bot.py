@@ -26,16 +26,18 @@ async def on_ready():
 @commands.is_owner()
 async def eval_(ctx, *, command):
     res = eval(command)
-    if inspect.isawaitable(res):
-        embed = discord.Embed(title="Developer Evaluation")
-        embed.add_field(field="Input", command)
-        embed.add_field("Output", await res)
-        await ctx.send(embed=embed)
-    else:
-        embed2 = discord.Embed(title="Developer Evaluation")
-        embed2.add_field(field="Input", command)
-        embed2.add_field("Output", res)
-        await ctx.send(embed=embed2)
+    if "TOKEN" in command:
+        return res = "oh no"
+        if inspect.isawaitable(res):
+            embed = discord.Embed(title="Developer Evaluation")
+            embed.add_field(field="Input", command)
+            embed.add_field("Output", await res)
+            await ctx.send(embed=embed)
+        else:
+            embed2 = discord.Embed(title="Developer Evaluation")
+            embed2.add_field(field="Input", command)
+            embed2.add_field("Output", res)
+            await ctx.send(embed=embed2)
     
 @bot.command()
 async def add(ctx, left: int, right: int):
