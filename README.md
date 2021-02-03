@@ -2,11 +2,11 @@
 
 watermelon bot for managing discord and servers. written in python
 
-[🍉 WaterMelonBot 🍉](#-watermelonbot-)
-- [how to contribute](#how-to-contribute)
-- [how to run the bot for your server (you must have admin rights)](#how-to-run-the-bot-for-your-server-you-must-have-admin-rights)
-- [watermelon configuration file](#watermelon-configuration-file)
-- [TO DO](#to-do)
+- [🍉 WaterMelonBot 🍉](#-watermelonbot-)
+  - [how to contribute](#how-to-contribute)
+  - [how to run the bot for your server (you must have admin rights)](#how-to-run-the-bot-for-your-server-you-must-have-admin-rights)
+  - [watermelon configuration file](#watermelon-configuration-file)
+  - [TO DO](#to-do)
   
 
 
@@ -34,5 +34,13 @@ watermelon bot for managing discord and servers. written in python
   "mongo_key": "mongodb+srv://<USER>:<PASS>@<CLUSTER_IP>/<DB_NAME>?retryWrites=true&w=majority&socketTimeoutMS=36000&connectTimeoutMS=36000"
 }
 ```
+or
+
+on .env
+```.env
+bot_token=BOT_TOKEN
+mongo_key=mongodb+srv://<USER>:<PASS>@<CLUSTER_IP>/<DB_NAME>?retryWrites=true&w=majority&socketTimeoutMS=36000&connectTimeoutMS=36000
+```
+
 # To Do
 Coming soon
