@@ -295,6 +295,9 @@ class MyClient(discord.Client):
             await message.channel.send("watermelonbot: https://github.com/alexpvpmindustry/watermelonbot\n" +
                                        "lol bot: https://github.com/unjown/unjownbot")
 
+        elif message.content.includes('<@804013622963208213>'):
+            await message.channel.send(prefix + "is my prefix")
+
         elif message.content.startswith(prefix):
             await message.channel.send("Unknown command, type `" + prefix + "help` for help.")
         elif prefix == "w?" and message.channel.id == 805105861450137600:
