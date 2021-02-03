@@ -342,7 +342,7 @@ async def sleep_add_reaction(msg, duration, emoji="<:pog:786886696552890380>"):
     await msg.add_reaction(emoji)
 
 
-bot = commands.Bot(command_prefix="t?", description=description, intents=intents)
+bot = commands.Bot(command_prefix=prefix, description=description, intents=intents)
 
 
 @bot.event
