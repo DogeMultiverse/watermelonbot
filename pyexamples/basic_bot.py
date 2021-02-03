@@ -26,7 +26,7 @@ async def on_ready():
 @commands.is_owner()
 async def eval_(ctx, *, command):
     res = eval(command)
-    if "TOKEN", "MONGODBLINK" in command:
+    if "bot_token", "mongo_key" in command:
         return res = "oh no"
         if inspect.isawaitable(res):
             embed = discord.Embed(title="Developer Evaluation")
