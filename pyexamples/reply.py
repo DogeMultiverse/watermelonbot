@@ -115,7 +115,9 @@ class MyClient(discord.Client):
             await message.channel.send("coming soon")
         elif message.content.startswith(prefix+"github"):
             await message.channel.send("https://github.com/alexpvpmindustry/watermelonbot")      
-            
+        elif message.content.includes('<@804013622963208213>'):
+            await message.channel.send(prefix +'is my prefix') 
+
         elif message.content.startswith(prefix):
             await message.channel.send("Unknown command, type `" + prefix + "help` for help.")
   
