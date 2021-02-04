@@ -352,21 +352,17 @@ async def on_ready():
     print('------')
 
 @bot.command()
-async def highlow(ctx, strrr: str):
-    print("364message gotten" + ctx.author.name)
-    # elif message.content == (prefix + "highlow"):
-    await ctx.send("hellloo i got your msg" + strrr)
-    print("test 1")
-    # await highlow_game.run_highlowgame(ctx)
+async def highlow(ctx):
+    await highlow_game.run_highlowgame(ctx,bot)
 
 @bot.event
 async def on_message(message):
     fig = "https://media.discordapp.net/attachments/785543837116399636/806563140116152380/reallyangrymelon.png"
     if "<@!500744743660158987>" in message.content:
         await message.reply(fig, mention_author=True)
-    if message.content == prefix + "highlow":
+    if message.content == prefix + "highlow2":
         print("test 2")
-        await message.channel.send("this is another message")
+        await message.channel.send("this is highlow2")
     else:
         await bot.process_commands(message)
 
