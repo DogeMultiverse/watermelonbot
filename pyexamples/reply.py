@@ -344,14 +344,12 @@ async def sleep_add_reaction(msg, duration, emoji="<:pog:786886696552890380>"):
 
 bot = commands.Bot(command_prefix=prefix, description=description, intents=intents)
 
-
 @bot.event
 async def on_ready():
     print('Logged in as22 ')
     print(bot.user.name)
     print(bot.user.id)
     print('------')
-
 
 @bot.command()
 async def highlow(ctx, strrr: str):
@@ -361,7 +359,6 @@ async def highlow(ctx, strrr: str):
     print("test 1")
     # await highlow_game.run_highlowgame(ctx)
 
-
 @bot.event
 async def on_message(message):
     fig = "https://media.discordapp.net/attachments/785543837116399636/806563140116152380/reallyangrymelon.png"
@@ -370,6 +367,8 @@ async def on_message(message):
     if message.content == prefix + "highlow":
         print("test 2")
         await message.channel.send("this is another message")
+    else:
+        await bot.process_commands(message)
 
 
 #
