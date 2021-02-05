@@ -470,20 +470,20 @@ async def checkexp(ctx: discord.ext.commands.Context):
         print("User has no EXP.")
         await ctx.channel.send("User has no EXP or user not found.")
     else:
-        # await message.channel.send('user found')
         str_builder, exp_dict, convertedexp_doc = get_latest_exp(res, convertedexp_doc)
         if len(str_builder) > 0:
             convertedexp.find_one_and_replace({"duuid": ctx.author.id},
                                               {"duuid": ctx.author.id, "converted": convertedexp_doc})
-            await ctx.channel.send(
-                str_builder + f"\n Type `{prefix}convertexp` to convert your EXP into {ax_emoji}."
-                              f"(You still can keep your EXP)")
+
+            # todo count the amount of unconverted exp and trigger the next line if there is
+            await ctx.channel.send(str_builder + f"\n Type `{prefix}convertexp` to convert your EXP into {ax_emoji}."
+                                                 f"(You still can keep your EXP)")
         else:
             await ctx.channel.send("You have no exp. ;-;")
 
 
 @bot.command()
-async def buyeffect(ctx: discord.ext.commands.Context, peffect: str= None ):
+async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
     if prefix == "t?" and ctx.author.id != 612861256189083669:
         await ctx.channel.send("t? is only for alex to test")
         return
@@ -556,11 +556,64 @@ async def buyeffect(ctx: discord.ext.commands.Context, peffect: str= None ):
                 await ctx.channel.send("Effect not known. Spell properly and effects *are* cAsE sEnSiTiVe.")
         except Exception as e:
             print(str(e))
-            await ctx.channel.send("error, pls **PING** alex! error 189:" + str(e))
-    #else:
-    #    await ctx.channel.send("Wrong usage of command.")
-    # await message.channel.send("coming soon")
-    # checks for price n balance, if valid, make purchase, else error message
+            await ctx.channel.send("Please re-join Alex mindustry."
+                                   "\nIf you get this error again, pls **PING** alex! error 189:" + str(e))
+
+
+@bot.command()
+async def axleaderboard(ctx: discord.ext.commands.Context):
+    if prefix == "t?":
+        return
+    else:
+        await ctx.channel.send(f'for axleaderboard, type `a?axleaderboard`')
+
+
+@bot.command()
+async def convertexp(ctx: discord.ext.commands.Context):
+    if prefix == "t?" and ctx.author.id != 612861256189083669:
+        await ctx.channel.send("t? is only for alex to test")
+        return
+    await ctx.channel.send(f'Conversion rate: 1000 EXP -> 1 {ax_emoji}. Minimum conversion = 1000 EXP.', delete_after=9)
+    # add a new collection to show how much was claimed # add last claimed time.
+    cursor = expgains.find({"duuid": ctx.author.id})
+    convertedexp_doc = convertedexp.find_one({"duuid": ctx.author.id})
+    if convertedexp_doc is None:
+        convertedexp.insert_one({"duuid": ctx.author.id, "converted": None})
+    else:
+        convertedexp_doc = convertedexp_doc["converted"]
+    res = []
+    for i, cur in enumerate(cursor):
+        res.append(cur)
+    if len(res) == 0:
+        await ctx.channel.send("User has no EXP or user not found. Can't convert emptiness.")
+        return
+    else:
+        str_builder, exp_dict, convertedexp_doc = get_latest_exp(res, convertedexp_doc)
+        if len(str_builder) > 0:
+            new_Ax = 0
+            for muuid, exps in exp_dict.items():
+                for servdata in exps["servers"]:
+                    rservername = servdata["servername"]
+                    exp = servdata["exp"]
+                    if exp is None:
+                        exp = 0
+                    claimed = servdata["claimed"]
+                    claims = (exp - claimed) // 1000  # integer division
+                    new_Ax += claims
+                    servdata["claimed"] += claims * 1000
+                    convertedexp_doc[muuid][rservername] = {"claimed": servdata["claimed"],
+                                                            "lcdate": datetime.utcnow()}
+            convertedexp.find_one_and_replace({"duuid": ctx.author.id},
+                                              {"duuid": ctx.author.id, "converted": convertedexp_doc})
+            if ax.find_one({"duuid": ctx.author.id}) is None:
+                ax.insert_one({"duuid": ctx.author.id, "ax": new_Ax})
+            else:
+                ax.find_one_and_update({"duuid": ctx.author.id}, {"$inc": {"ax": new_Ax}})
+            await ctx.channel.send(
+                f"You have converted {new_Ax * 1000} EXP into {new_Ax} {ax_emoji}. Congrats!. Type "
+                f"`a?checkax @user` to check your current {ax_emoji}.")
+        else:
+            await ctx.channel.send("You have no exp. ;-; Can't convert emptiness.")
 
 
 @bot.event
@@ -605,50 +658,7 @@ async def on_message(message):
 #     elif message.content.startswith(prefix + "axleaderboard"):
 #         await message.channel.send("type `a?axleaderboard`")
 #     elif message.content.startswith(prefix + "convertexp"):
-#         if prefix == "t?" and message.author.id != 612861256189083669:
-#             await message.channel.send("t? is only for alex to test")
-#             return
-#         await message.channel.send(f'Conversion rate: 1000 EXP -> 1 {ax_emoji}. Minimum conversion = 1000 EXP.')
-#         # add a new collection to show how much was claimed # add last claimed time.
-#         cursor = expgains.find({"duuid": message.author.id})
-#         convertedexp_doc = convertedexp.find_one({"duuid": message.author.id})
-#         if convertedexp_doc is None:
-#             convertedexp.insert_one({"duuid": message.author.id, "converted": None})
-#         else:
-#             convertedexp_doc = convertedexp_doc["converted"]
-#         res = []
-#         for i, cur in enumerate(cursor):
-#             res.append(cur)
-#         if len(res) == 0:
-#             await message.channel.send("User has no EXP or user not found. Can't convert emptiness.")
-#             return
-#         else:
-#             str_builder, exp_dict, convertedexp_doc = get_latest_exp(res, convertedexp_doc)
-#             if len(str_builder) > 0:
-#                 new_Ax = 0
-#                 for muuid, exps in exp_dict.items():
-#                     for servdata in exps["servers"]:
-#                         rservername = servdata["servername"]
-#                         exp = servdata["exp"]
-#                         if exp is None:
-#                             exp = 0
-#                         claimed = servdata["claimed"]
-#                         claims = (exp - claimed) // 1000  # integer division
-#                         new_Ax += claims
-#                         servdata["claimed"] += claims * 1000
-#                         convertedexp_doc[muuid][rservername] = {"claimed": servdata["claimed"],
-#                                                                 "lcdate": datetime.utcnow()}
-#                 convertedexp.find_one_and_replace({"duuid": message.author.id},
-#                                                   {"duuid": message.author.id, "converted": convertedexp_doc})
-#                 if ax.find_one({"duuid": message.author.id}) is None:
-#                     ax.insert_one({"duuid": message.author.id, "ax": new_Ax})
-#                 else:
-#                     ax.find_one_and_update({"duuid": message.author.id}, {"$inc": {"ax": new_Ax}})
-#                 await message.channel.send(
-#                     f"You have converted {new_Ax * 1000} EXP into {new_Ax} {ax_emoji}. Congrats!. Type "
-#                     f"`a?checkax @user` to check your current {ax_emoji}.")
-#             else:
-#                 await message.channel.send("You have no exp. ;-; Can't convert emptiness.")
+#
 #     elif message.content.startswith(prefix + "github"):
 #         await message.channel.send("watermelonbot: https://github.com/alexpvpmindustry/watermelonbot\n" +
 #                                    "lol bot: https://github.com/unjown/unjownbot")
