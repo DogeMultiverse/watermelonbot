@@ -371,6 +371,7 @@ async def getemojis(ctx):
 
 @bot.command(description="adds <:EMOJI:> to the desired <message_id>. max 20 emojis per message")
 async def addemoji(ctx, emoji: str, messageid: int,channel: discord.TextChannel = None):
+    # todo fix error message when command invalid
     emojis = await ctx.guild.fetch_emojis()
     try:
         await ctx.message.delete(delay=3)
@@ -392,6 +393,7 @@ async def addemoji(ctx, emoji: str, messageid: int,channel: discord.TextChannel 
 
 @bot.command(description="adds hype emojis")
 async def addhype(ctx, messageid: int, channel: discord.TextChannel = None, counts: int = 5):
+    # todo fix error message when command invalid
     emojis = await ctx.guild.fetch_emojis()
     try:
         if channel is None:
