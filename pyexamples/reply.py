@@ -8,6 +8,7 @@ import random
 from discord.ext import commands
 from pyexamples import counting_bot
 from pyexamples import highlow_game
+import time
 
 
 def get_latest_exp(res, convertedexp_doc):
@@ -344,6 +345,7 @@ async def sleep_add_reaction(msg, duration, emoji="<:pog:786886696552890380>"):
 
 bot = commands.Bot(command_prefix=prefix, description=description, intents=intents)
 
+
 @bot.event
 async def on_ready():
     print('Logged in as22 ')
@@ -351,16 +353,76 @@ async def on_ready():
     print(bot.user.id)
     print('------')
 
+
 @bot.command()
 async def highlow(ctx):
-    await highlow_game.run_highlowgame(ctx,bot)
+    await highlow_game.run_highlowgame(ctx, bot)
+
+
+@bot.command()
+async def getemojis(ctx):
+    emojis = await ctx.guild.fetch_emojis()
+    for emoji in emojis:
+        if emoji.animated:
+            print(emoji.name)
+            await ctx.message.add_reaction(emoji)
+    await ctx.channel.send("added animated all emojis")
+
+
+@bot.command(description="adds <:EMOJI:> to the desired <message_id>. max 20 emojis per message")
+async def addemoji(ctx, emoji: str, messageid: int,channel: discord.TextChannel = None):
+    emojis = await ctx.guild.fetch_emojis()
+    try:
+        await ctx.message.delete(delay=3)
+        if channel is None:
+            msg = await ctx.fetch_message(messageid)
+        else:
+            msg = await channel.fetch_message(messageid)
+        found = False
+        for emoji_custom in emojis:
+            if emoji[1:-1].lower() == emoji_custom.name.lower():
+                await msg.add_reaction(emoji_custom)
+                found = True
+                await ctx.send(f"{emoji_custom} sent! Self destructing...", delete_after=3)
+        if not found:
+            await ctx.send("Emoji not found. Make sure to add the colons `:   :`", delete_after=3)
+    except discord.NotFound:
+        await ctx.send("Message id not found. Maybe message was deleted?", delete_after=3)
+
+
+@bot.command(description="adds hype emojis")
+async def addhype(ctx, messageid: int, channel: discord.TextChannel = None, counts: int = 5):
+    emojis = await ctx.guild.fetch_emojis()
+    try:
+        if channel is None:
+            msg = await ctx.fetch_message(messageid)
+        else:
+            msg = await channel.fetch_message(messageid)
+        total_emojis = 0
+        await ctx.send(f"Hype sending! Self destructing...", delete_after=3)
+        for emoji_custom in random.sample(emojis, k=len(emojis)):
+            if emoji_custom.name.lower() in ["partyglasses", "pepoclap", "roll", "blob", "auke",
+                                             "catdance", "pog", "hypertada", "cata", "petangry", "typing",
+                                             "petmelon", "petalex"]:
+                total_emojis += 1
+                time.sleep(random.randint(3, 3 + min(counts, 15)))
+                await msg.add_reaction(emoji_custom)
+            if total_emojis > counts:
+                break
+    except discord.NotFound:
+        await ctx.send("Message id not found. Maybe message was deleted?", delete_after=3)
+    await ctx.message.delete(delay=3)
+
 
 @bot.event
 async def on_message(message):
     fig = "https://media.discordapp.net/attachments/785543837116399636/806563140116152380/reallyangrymelon.png"
-    if "<@!500744743660158987>" in message.content:
+    pepo_clap = "https://media.discordapp.net/attachments/799855760011427880/806869234122358794/792177151448973322.gif"
+    if "<@!500744743660158987>" in message.content and prefix == "t?":
         await message.reply(fig, mention_author=True)
-    if message.content == prefix + "highlow2":
+    elif message.content == ':pepoclap:' and prefix == "t?":
+        await message.reply(pepo_clap)
+    elif message.content == prefix + "highlow2":
         print("test 2")
         await message.channel.send("this is highlow2")
     else:
