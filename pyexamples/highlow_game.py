@@ -1,6 +1,7 @@
 import asyncio
 import random
 
+
 async def run_highlowgame(ctx, bot):
     base_msg = await ctx.channel.send(f"Highlow guess number game for {ctx.author.display_name}."
                                       f"\nGuess the correct number between 1-100 inclusive."
@@ -20,21 +21,21 @@ async def run_highlowgame(ctx, bot):
         upperbound = 100
         lowerbound = 1
         currentguess = 50
-        ans = random.randint(1,100)
+        ans = random.randint(1, 100)
         print(ans)
         presses = 0
-        withinlimits=True
-        while (currentguess != ans) or withinlimits or presses<10:
+        withinlimits = True
+        while (currentguess != ans) or withinlimits or presses < 10:
             reaction, user = await bot.wait_for('reaction_add', timeout=30, check=check)
             presses += 1
             if reaction.emoji == up_emoji:
-                lowerbound = currentguess+1
-                withinlimits = ans>=lowerbound
+                lowerbound = currentguess + 1
+                withinlimits = ans >= lowerbound
             elif reaction.emoji == down_emoji:
-                upperbound = currentguess-1
-                withinlimits = ans<=upperbound
-            currentguess = (lowerbound+upperbound)//2
-            if (not withinlimits) or (currentguess==ans) or (presses>10):
+                upperbound = currentguess - 1
+                withinlimits = ans <= upperbound
+            currentguess = (lowerbound + upperbound) // 2
+            if (not withinlimits) or (currentguess == ans) or (presses > 10):
                 break
             await base_msg.edit(content=f"Highlow guess number game for {ctx.author.display_name}.\n"
                                         f"Guess the correct number between {lowerbound}-{upperbound} inclusive.\n"
@@ -42,7 +43,7 @@ async def run_highlowgame(ctx, bot):
             await base_msg.clear_reactions()
             await base_msg.add_reaction(up_emoji)
             await base_msg.add_reaction(down_emoji)
-        if ans ==currentguess:
+        if ans == currentguess:
             await base_msg.edit(content=f"Highlow guess number game for {ctx.author.display_name}.\n"
                                         f"You got it, answer was {ans} and you took {presses} guesses.")
             await base_msg.clear_reactions()

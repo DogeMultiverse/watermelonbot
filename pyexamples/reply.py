@@ -1,5 +1,4 @@
 from datetime import datetime
-
 import discord
 import json
 import pymongo
@@ -8,6 +7,7 @@ import random
 from discord.ext import commands
 from pyexamples import counting_bot
 from pyexamples import highlow_game
+from pyexamples import giveaway_bot2
 import time
 
 
@@ -384,6 +384,9 @@ async def github(ctx: discord.ext.commands.Context):
     await ctx.channel.send("watermelonbot: https://github.com/alexpvpmindustry/watermelonbot\n" +
                            "lol bot: https://github.com/unjown/unjownbot")
 
+@bot.command()
+async def addgiveaway(ctx:discord.ext.commands.Context,name :str):
+    bot.add_cog(giveaway_bot2.Giveaway)
 
 @bot.command()
 async def convertexp(ctx: discord.ext.commands.Context):
@@ -453,6 +456,7 @@ def runbot():
         js = json.load(f)
         bot_token = js["bot_token"]
     # clientdisc = MyClient(intents=discord.Intents().all())
+    # bot.load_extension("pyexamples.giveaway_bot2")
     bot.run(bot_token)
 
 #
