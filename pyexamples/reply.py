@@ -562,10 +562,13 @@ async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
 
 @bot.command()
 async def axleaderboard(ctx: discord.ext.commands.Context):
-    if prefix == "t?":
-        return
-    else:
-        await ctx.channel.send(f'for axleaderboard, type `a?axleaderboard`')
+    await ctx.channel.send(f'for axleaderboard, type `a?axleaderboard`')
+
+
+@bot.command()
+async def github(ctx: discord.ext.commands.Context):
+    await ctx.channel.send("watermelonbot: https://github.com/alexpvpmindustry/watermelonbot\n" +
+                           "lol bot: https://github.com/unjown/unjownbot")
 
 
 @bot.command()
@@ -610,7 +613,7 @@ async def convertexp(ctx: discord.ext.commands.Context):
             else:
                 ax.find_one_and_update({"duuid": ctx.author.id}, {"$inc": {"ax": new_Ax}})
             await ctx.channel.send(
-                f"You have converted {new_Ax * 1000} EXP into {new_Ax} {ax_emoji}. Congrats!. Type "
+                f"You have converted {new_Ax * 1000} EXP into {new_Ax} {ax_emoji}.\nCongrats!. Type "
                 f"`a?checkax @user` to check your current {ax_emoji}.")
         else:
             await ctx.channel.send("You have no exp. ;-; Can't convert emptiness.")
