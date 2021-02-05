@@ -91,7 +91,6 @@ if prefix in ["w?", "t?"]:  # only access mongodb for w? and t?
     convertedexp = db["convertedexp"]
     ax = db["ax"]
     ingamecosmetics = db["ingamecosmetics"]
-    print("mongodb key loaded")
 
 banner_gif = "https://tenor.com/view/rainbow-bar-rainbow-bar-colorful-line-gif-17716887"
 ax_emoji = "<:Ax:789661633214676992>"
@@ -105,19 +104,58 @@ async def sleep_add_reaction(msg, duration, emoji="<:pog:786886696552890380>"):
 
 
 bot = commands.Bot(command_prefix=prefix, description=description, intents=intents)
+
+
+# todo , make a nicer help command
+# todo command "help"
 bot.remove_command("help")
+# @bot.group(invoke_without_command=True)
+# async def help(ctx: discord.ext.commands.Context):
+#     em = discord.Embed(title=f"All commands from `[{prefix}] {bot.user.display_name}`",
+#                        description=f"Type {prefix}<command> to use them.")
+#     em.add_field(name="Games", value="`guess`, `highlow`")
+#     em.add_field(name="Utilities", value="`addemoji`, `addhype`, `help`, `github`")
+#     em.add_field(name="Others", value="`help`, `github`")
+#     em.add_field(name="Mindustry", value="`buyeffect`, `checkexp`, `convertexp`")
+#     em.add_field(name="Other bots' commands", value=f"`a?help`, `lol help`, `,suggest help`")
+#     # todo add thumbnail em.add_field(thumnail)
+#     await ctx.send(embed=em)
 
 
-@bot.group(invoke_without_command=True)
-async def help(ctx: discord.ext.commands.Context):
-    em = discord.Embed(title=f"All commands from `[{prefix}] {bot.user.display_name}`", description=f"Type {prefix}<command> to use them.")
-    em.add_field(name="Games", value="`guess`, `highlow`")
-    em.add_field(name="Utilities", value="`addemoji`, `addhype`, `help`, `github`")
-    em.add_field(name="Others", value="`help`, `github`")
-    em.add_field(name="Mindustry", value="`buyeffect`, `checkexp`, `convertexp`")
-    em.add_field(name="Other bots' commands",value=f"`a?help`, `lol help`, `,suggest help`")
-    # todo add thumbnail em.add_field(thumnail)
-    await ctx.send(embed=em)
+@bot.command()
+async def help(ctx, args=None):
+    help_embed = discord.Embed(title=f"All commands from `[{prefix}] {bot.user.display_name}`",
+                               colour=int(discord.Colour.green().value))
+    command_names_list = [x.name for x in bot.commands]
+
+    # If there are no arguments, just list the commands:
+    if not args:
+        help_embed.add_field(
+            name="List of supported commands:",
+            value="\n".join([str(i+1)+". "+x.name for i, x in enumerate(bot.commands)]),
+            inline=False
+        )
+        help_embed.add_field(
+            name="Details",
+            value=f"Type `{prefix}help <command name>` for more details about each command.",
+            inline=False
+        )
+
+    # If the argument is a command, get the help text from that command:
+    elif args in command_names_list:
+        help_embed.add_field(
+            name=args,
+            value=bot.get_command(args).help
+        )
+
+    # If someone is just trolling:
+    else:
+        help_embed.add_field(
+            name="Nope.",
+            value="Don't think I got that command, boss!"
+        )
+
+    await ctx.send(embed=help_embed)
 
 
 @bot.event
@@ -142,7 +180,9 @@ async def getemojis(ctx):
     await ctx.channel.send("added animated all emojis")
 
 
-@bot.command(description="adds <:EMOJI:> to the desired <message_id>. max 20 emojis per message")
+@bot.command(description="adds <:EMOJI:> to the desired <message_id> in [channel]. max 20 emojis per message",
+             help="adds <:emoji:> to <message_id> in [channel]",
+             brief="adds <:emoji:> to <message_id> in [channel]")
 async def addemoji(ctx, emoji: str, messageid: int, channel: discord.TextChannel = None):
     # todo fix error message when command invalid
     emojis = await ctx.guild.fetch_emojis()
