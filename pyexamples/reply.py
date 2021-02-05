@@ -627,9 +627,8 @@ async def on_message(message):
         await message.reply(fig, mention_author=True)
     elif message.content == ':pepoclap:' and prefix == "t?":
         await message.reply(pepo_clap)
-    elif message.content == prefix + "highlow2":
-        print("test 2")
-        await message.channel.send("this is highlow2")
+    elif prefix == "w?" and message.channel.id == 805105861450137600: # counting hardcore channel
+        await counting_bot.run_counterbot(message, bot)
     else:
         await bot.process_commands(message)
 
@@ -670,8 +669,7 @@ async def on_message(message):
 #             await message.channel.send(prefix + 'is my prefix')
 #     elif message.content.startswith(prefix):
 #         await message.channel.send("Unknown command, type `" + prefix + "help` for help.")
-#     elif prefix == "w?" and message.channel.id == 805105861450137600:
-#         await counting_bot.run_counterbot(message, bot)
+#
 #     elif prefix == "t?" and message.channel.id == 805105861450137600:
 #         pass
 
