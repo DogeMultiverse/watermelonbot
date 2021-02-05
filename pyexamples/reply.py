@@ -370,7 +370,7 @@ async def getemojis(ctx):
 
 
 @bot.command(description="adds <:EMOJI:> to the desired <message_id>. max 20 emojis per message")
-async def addemoji(ctx, emoji: str, messageid: int,channel: discord.TextChannel = None):
+async def addemoji(ctx, emoji: str, messageid: int, channel: discord.TextChannel = None):
     # todo fix error message when command invalid
     emojis = await ctx.guild.fetch_emojis()
     try:
@@ -407,13 +407,24 @@ async def addhype(ctx, messageid: int, channel: discord.TextChannel = None, coun
                                              "catdance", "pog", "hypertada", "cata", "petangry", "typing",
                                              "petmelon", "petalex"]:
                 total_emojis += 1
-                time.sleep(random.randint(3, 3 + counts*10))
+                time.sleep(random.randint(3, 3 + counts * 10))
                 await msg.add_reaction(emoji_custom)
             if total_emojis > counts:
                 break
     except discord.NotFound:
         await ctx.send("Message id not found. Maybe message was deleted?", delete_after=3)
     await ctx.message.delete(delay=3)
+
+
+@bot.event
+async def on_command_error(ctx: discord.ext.commands.Context, error: Exception):
+    print(ctx, str(error))
+    if isinstance(type(error), discord.ext.commands.UserInputError):
+        await ctx.message.channel.send("Wrong arguments:" + str(error))
+    elif isinstance(error, discord.ext.commands.errors.BadArgument):
+        await ctx.message.channel.send("Bad arugments: " + str(error))
+    else:
+        await ctx.message.channel.send("Wrong arguments3:" + str(type(error)) + str(error))
 
 
 @bot.event
