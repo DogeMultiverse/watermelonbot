@@ -365,7 +365,6 @@ async def getemojis(ctx):
     emojis = await ctx.guild.fetch_emojis()
     for emoji in emojis:
         if emoji.animated:
-            print(emoji.name)
             await ctx.message.add_reaction(emoji)
     await ctx.channel.send("added animated all emojis")
 
