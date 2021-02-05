@@ -457,17 +457,12 @@ async def checkexp(ctx: discord.ext.commands.Context):
         await ctx.channel.send("no testing for u")
         return
     await ctx.channel.send('getting exp', delete_after=3)
-    clientdb = pymongo.MongoClient(mongo_key)
-    db1 = clientdb.get_database("AlexMindustry")
-    convertedexp1 = db1["convertedexp"]
-    expgains1 = db1["expgains"]
-    cursor = expgains1.find({"duuid": ctx.author.id})
-    convertedexp_doc = convertedexp1.find_one({"duuid": ctx.author.id})
+    cursor = expgains.find({"duuid": ctx.author.id})
+    convertedexp_doc = convertedexp.find_one({"duuid": ctx.author.id})
     if convertedexp_doc is None:
-        convertedexp1.insert_one({"duuid": ctx.author.id, "converted": None})
+        convertedexp.insert_one({"duuid": ctx.author.id, "converted": None})
     else:
         convertedexp_doc = convertedexp_doc["converted"]
-    print("im here")
     res = []
     for i, cur in enumerate(cursor):
         res.append(cur)
@@ -478,10 +473,11 @@ async def checkexp(ctx: discord.ext.commands.Context):
         # await message.channel.send('user found')
         str_builder, exp_dict, convertedexp_doc = get_latest_exp(res, convertedexp_doc)
         if len(str_builder) > 0:
-            convertedexp1.find_one_and_replace({"duuid": ctx.author.id},
+            convertedexp.find_one_and_replace({"duuid": ctx.author.id},
                                                {"duuid": ctx.author.id, "converted": convertedexp_doc})
             await ctx.channel.send(
-                str_builder + f"\n Type `{prefix}convertexp` to convert your EXP into {ax_emoji}. (You still can keep your EXP)")
+                str_builder + f"\n Type `{prefix}convertexp` to convert your EXP into {ax_emoji}."
+                              f"(You still can keep your EXP)")
         else:
             await ctx.channel.send("You have no exp. ;-;")
 
@@ -513,12 +509,9 @@ async def on_message(message):
 #             'Prefix is `' + prefix + "` .\n" +
 #             "Other bots commands: `a?help`, `lol help`, `,suggest help`")
 #     elif message.content.startswith(prefix + 'guess'):
-#
-#
 #     elif message.content.startswith(prefix + 'hello'):
 #         await message.reply('Hello!', mention_author=True)
 #     elif message.content.startswith(prefix + "checkexp"):
-
 #     elif message.content.startswith(prefix + "claimeffect"):
 #         # todo @BOUNTY # check for role precondition then give effect
 #         #  https://discordpy.readthedocs.io/en/latest/api.html#reaction
