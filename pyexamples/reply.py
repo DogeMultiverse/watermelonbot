@@ -321,8 +321,8 @@ There are a number of utility commands being showcased here.'''
 
 with open("watermelon.config", "rb") as f:
     js = json.load(f)
-    mongo_key = js["mongo_key"]
-    prefix = js["prefix"]
+    mongo_key: str = js["mongo_key"]
+    prefix: str = js["prefix"]
 
 if prefix in ["w?", "t?"]:  # only access mongodb for w? and t?
     client = pymongo.MongoClient(mongo_key)
@@ -331,6 +331,7 @@ if prefix in ["w?", "t?"]:  # only access mongodb for w? and t?
     convertedexp = db["convertedexp"]
     ax = db["ax"]
     ingamecosmetics = db["ingamecosmetics"]
+    print("mongodb key loaded")
 
 banner_gif = "https://tenor.com/view/rainbow-bar-rainbow-bar-colorful-line-gif-17716887"
 ax_emoji = "<:Ax:789661633214676992>"
@@ -348,7 +349,7 @@ bot = commands.Bot(command_prefix=prefix, description=description, intents=inten
 
 @bot.event
 async def on_ready():
-    print('Logged in as22 ')
+    print('Logged in as')
     print(bot.user.name)
     print(bot.user.id)
     print('------')
@@ -443,12 +444,47 @@ async def guess(ctx: discord.ext.commands.Context):
     if int(guess1.content) > 1000000:
         await ctx.channel.send('Number too large, should be <1000000. Game ends.')
         return
-    if int(guess1.content) == answer or False \
-            and ((ctx.author.id in [500744743660158987, 612861256189083669])
-                 and random.randint(1, 10) > 5):
+    if int(guess1.content) == answer or False and ((ctx.author.id in [500744743660158987, 612861256189083669])
+                                                   and random.randint(1, 10) > 5):
         await ctx.channel.send('You are right!!!!')
     else:
         await ctx.channel.send('Oops. It is actually {}.'.format(answer))
+
+
+@bot.command(description="command to checkexp")
+async def checkexp(ctx: discord.ext.commands.Context):
+    if prefix == "t?" and ctx.author.id != 612861256189083669:
+        await ctx.channel.send("no testing for u")
+        return
+    await ctx.channel.send('getting exp', delete_after=3)
+    clientdb = pymongo.MongoClient(mongo_key)
+    db1 = clientdb.get_database("AlexMindustry")
+    convertedexp1 = db1["convertedexp"]
+    expgains1 = db1["expgains"]
+    cursor = expgains1.find({"duuid": ctx.author.id})
+    convertedexp_doc = convertedexp1.find_one({"duuid": ctx.author.id})
+    if convertedexp_doc is None:
+        convertedexp1.insert_one({"duuid": ctx.author.id, "converted": None})
+    else:
+        convertedexp_doc = convertedexp_doc["converted"]
+    print("im here")
+    res = []
+    for i, cur in enumerate(cursor):
+        res.append(cur)
+    if len(res) == 0:
+        print("User has no EXP.")
+        await ctx.channel.send("User has no EXP or user not found.")
+    else:
+        # await message.channel.send('user found')
+        str_builder, exp_dict, convertedexp_doc = get_latest_exp(res, convertedexp_doc)
+        if len(str_builder) > 0:
+            convertedexp1.find_one_and_replace({"duuid": ctx.author.id},
+                                               {"duuid": ctx.author.id, "converted": convertedexp_doc})
+            await ctx.channel.send(
+                str_builder + f"\n Type `{prefix}convertexp` to convert your EXP into {ax_emoji}. (You still can keep your EXP)")
+        else:
+            await ctx.channel.send("You have no exp. ;-;")
+
 
 @bot.event
 async def on_message(message):
@@ -482,32 +518,7 @@ async def on_message(message):
 #     elif message.content.startswith(prefix + 'hello'):
 #         await message.reply('Hello!', mention_author=True)
 #     elif message.content.startswith(prefix + "checkexp"):
-#         if prefix == "t?" and message.author.id != 612861256189083669:
-#             await message.channel.send("no testing for u")
-#             return
-#         await message.channel.send('getting exp', delete_after=3)
-#         cursor = expgains.find({"duuid": message.author.id})
-#         convertedexp_doc = convertedexp.find_one({"duuid": message.author.id})
-#         if convertedexp_doc is None:
-#             convertedexp.insert_one({"duuid": message.author.id, "converted": None})
-#         else:
-#             convertedexp_doc = convertedexp_doc["converted"]
-#         res = []
-#         for i, cur in enumerate(cursor):
-#             res.append(cur)
-#         if len(res) == 0:
-#             print("User has no EXP.")
-#             await message.channel.send("User has no EXP or user not found.")
-#         else:
-#             # await message.channel.send('user found')
-#             str_builder, exp_dict, convertedexp_doc = get_latest_exp(res, convertedexp_doc)
-#             if len(str_builder) > 0:
-#                 convertedexp.find_one_and_replace({"duuid": message.author.id},
-#                                                   {"duuid": message.author.id, "converted": convertedexp_doc})
-#                 await message.channel.send(
-#                     str_builder + f"\n Type `{prefix}convertexp` to convert your EXP into {ax_emoji}. (You still can keep your EXP)")
-#             else:
-#                 await message.channel.send("You have no exp. ;-;")
+
 #     elif message.content.startswith(prefix + "claimeffect"):
 #         # todo @BOUNTY # check for role precondition then give effect
 #         #  https://discordpy.readthedocs.io/en/latest/api.html#reaction
