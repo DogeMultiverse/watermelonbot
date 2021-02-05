@@ -427,6 +427,29 @@ async def on_command_error(ctx: discord.ext.commands.Context, error: Exception):
         await ctx.message.channel.send("Wrong arguments3:" + str(type(error)) + str(error))
 
 
+@bot.command(description="play the guessing number game")
+async def guess(ctx: discord.ext.commands.Context):
+    await ctx.channel.send('Guess a number between 1 and 1000000. Its one in a million')
+
+    def is_correct(m):
+        return m.author == ctx.author and m.content.isdigit() and m.channel == ctx.channel
+
+    answer = random.randint(1, 1000000)
+    print(answer)
+    try:
+        guess1 = await bot.wait_for('message', check=is_correct, timeout=20.0)
+    except asyncio.TimeoutError:
+        return await ctx.channel.send('Sorry, you took too long it was {}.'.format(answer))
+    if int(guess1.content) > 1000000:
+        await ctx.channel.send('Number too large, should be <1000000. Game ends.')
+        return
+    if int(guess1.content) == answer or False \
+            and ((ctx.author.id in [500744743660158987, 612861256189083669])
+                 and random.randint(1, 10) > 5):
+        await ctx.channel.send('You are right!!!!')
+    else:
+        await ctx.channel.send('Oops. It is actually {}.'.format(answer))
+
 @bot.event
 async def on_message(message):
     fig = "https://media.discordapp.net/attachments/785543837116399636/806563140116152380/reallyangrymelon.png"
@@ -454,25 +477,7 @@ async def on_message(message):
 #             'Prefix is `' + prefix + "` .\n" +
 #             "Other bots commands: `a?help`, `lol help`, `,suggest help`")
 #     elif message.content.startswith(prefix + 'guess'):
-#         await message.channel.send('Guess a number between 1 and 1000000. Its one in a million')
 #
-#         def is_correct(m):
-#             return m.author == message.author and m.content.isdigit() and m.channel == message.channel
-#
-#         answer = random.randint(1, 1000000)
-#         try:
-#             guess = await bot.wait_for('message', check=is_correct, timeout=20.0)
-#         except asyncio.TimeoutError:
-#             return await message.channel.send('Sorry, you took too long it was {}.'.format(answer))
-#         if int(guess.content) > 1000000:
-#             await message.channel.send('Number too large, should be <1000000. Game ends.')
-#             return
-#         if int(guess.content) == answer or False \
-#                 and ((message.author.id in [500744743660158987, 612861256189083669])
-#                      and random.randint(1, 10) > 5):
-#             await message.channel.send('You are right?')
-#         else:
-#             await message.channel.send('Oops. It is actually {}.'.format(answer))
 #
 #     elif message.content.startswith(prefix + 'hello'):
 #         await message.reply('Hello!', mention_author=True)
@@ -649,7 +654,7 @@ async def on_message(message):
 #         await counting_bot.run_counterbot(message, bot)
 #     elif prefix == "t?" and message.channel.id == 805105861450137600:
 #         pass
-#
+
 
 def runbot():
     with open("watermelon.config", "rb") as f:
