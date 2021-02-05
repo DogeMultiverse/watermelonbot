@@ -423,9 +423,11 @@ async def on_command_error(ctx: discord.ext.commands.Context, error: Exception):
     if isinstance(type(error), discord.ext.commands.UserInputError):
         await ctx.message.channel.send("Wrong arguments:" + str(error))
     elif isinstance(error, discord.ext.commands.errors.BadArgument):
-        await ctx.message.channel.send("Bad arugments: " + str(error))
+        await ctx.message.channel.send("ERROR: Bad arugments" + str(error))
+    elif isinstance(error, discord.ext.commands.errors.CommandNotFound):
+        await ctx.message.channel.send("ERROR: CommandNotFound")
     else:
-        await ctx.message.channel.send("Wrong arguments3:" + str(type(error)) + str(error))
+        await ctx.message.channel.send("Unknown error:" + str(type(error)) + str(error))
 
 
 @bot.command(description="play the guessing number game")
@@ -576,7 +578,8 @@ async def convertexp(ctx: discord.ext.commands.Context):
     if prefix == "t?" and ctx.author.id != 612861256189083669:
         await ctx.channel.send("t? is only for alex to test")
         return
-    await ctx.channel.send(f'Conversion rate: 1000 EXP -> 1 {ax_emoji}. Minimum conversion = 1000 EXP.', delete_after=9)
+    await ctx.channel.send(f'Conversion rate: 1000 EXP -> 1 {ax_emoji}. '
+                           f'Minimum conversion = 1000 EXP.', delete_after=20)
     # add a new collection to show how much was claimed # add last claimed time.
     cursor = expgains.find({"duuid": ctx.author.id})
     convertedexp_doc = convertedexp.find_one({"duuid": ctx.author.id})
@@ -633,6 +636,13 @@ async def on_message(message):
         await bot.process_commands(message)
 
 
+def runbot():
+    with open("watermelon.config", "rb") as f:
+        js = json.load(f)
+        bot_token = js["bot_token"]
+    # clientdisc = MyClient(intents=discord.Intents().all())
+    bot.run(bot_token)
+
 #
 # @bot.event
 # async def on_message(message):  # todo rewrite this whole chunk into their individual commands see eg above
@@ -672,11 +682,3 @@ async def on_message(message):
 #
 #     elif prefix == "t?" and message.channel.id == 805105861450137600:
 #         pass
-
-
-def runbot():
-    with open("watermelon.config", "rb") as f:
-        js = json.load(f)
-        bot_token = js["bot_token"]
-    # clientdisc = MyClient(intents=discord.Intents().all())
-    bot.run(bot_token)

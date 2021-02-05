@@ -57,8 +57,8 @@ async def run_counterbot(message, self):
         data["current_players"] = []
         save_data_reset_count(data)
         await message.channel.send(f"New highscore!")
-        topic = "hardcore counting. if any subsequent count is wrong, the bot restarts the count. Lets see what " \
-                "is the highest score we can get. "
+        topic = "EXTREME Hardcore counting (10sec cd). If any subsequent count is wrong, the bot RESTARTS the count. " \
+                "Lets see what is the highest score we can get. "
         playersstr = ""
         for playerid in set(data["highscore_players"]):
             player = self.get_user(playerid)
