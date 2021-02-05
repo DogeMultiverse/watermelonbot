@@ -474,12 +474,93 @@ async def checkexp(ctx: discord.ext.commands.Context):
         str_builder, exp_dict, convertedexp_doc = get_latest_exp(res, convertedexp_doc)
         if len(str_builder) > 0:
             convertedexp.find_one_and_replace({"duuid": ctx.author.id},
-                                               {"duuid": ctx.author.id, "converted": convertedexp_doc})
+                                              {"duuid": ctx.author.id, "converted": convertedexp_doc})
             await ctx.channel.send(
                 str_builder + f"\n Type `{prefix}convertexp` to convert your EXP into {ax_emoji}."
                               f"(You still can keep your EXP)")
         else:
             await ctx.channel.send("You have no exp. ;-;")
+
+
+@bot.command()
+async def buyeffect(ctx: discord.ext.commands.Context, peffect: str= None ):
+    if prefix == "t?" and ctx.author.id != 612861256189083669:
+        await ctx.channel.send("t? is only for alex to test")
+        return
+    await ctx.channel.send("Fetching effects...", delete_after=2)
+    effects_cost = {20: ["yellowDiamond", "yellowSquare", "yellowCircle"],
+                    30: ["greenCircle", "whiteDoor", "yellowLargeDiam", "yellowSpark"],
+                    50: ["whiteLancerRandom"], 80: ["whiteLancerRadius", "pixel", "bubble"],
+                    200: ["rainbowPixel", "rainbowBubble"]}
+    effects = [ee for c, e in effects_cost.items() for ee in e]
+    owned_effects_collection = ingamecosmetics.find_one({"duuid": ctx.author.id})
+    if owned_effects_collection is None:
+        await ctx.channel.send("error, pls **PING** alex! error 170")
+        return
+    owned_effects = owned_effects_collection["effects"]
+    duuid = ctx.author.id
+    if ax.find_one({"duuid": duuid}) is None:
+        balance = 0
+        ax.insert_one({"duuid": duuid, "ax": 0})
+    else:
+        balance = ax.find_one({"duuid": duuid})["ax"]
+    if isinstance(peffect, type(None)):
+        strbuilder = ""
+        for cost, effectname in effects_cost.items():
+            strbuilder += f"`{cost:>3} `" + ax_emoji + "`  " + \
+                          "`, `".join([eff + ("✅" if eff + "Effect" in owned_effects else "")
+                                       for eff in effectname]) + "`\n"
+        content = f"(Current balance: `{balance}` {ax_emoji})"
+        desc = f"`  Price   Effects`  {content}\n" + strbuilder + \
+               "\nType `" + prefix + "buyeffect XXXX` to buy the effect. (cAsE sEnSiTiVe)" + \
+               "\nNote: `✅`=owned. Purchased effects are non-refundable. " \
+               "\nIf color is not specified in the effect, it is *configurable* via `/color` in game."
+        embed = discord.Embed.from_dict({"title": f"Alex Mindustry *special* `Effects MENU`", "description": desc,
+                                         "color": discord.Colour.dark_grey().value})
+        await ctx.channel.send(embed=embed)
+        await ctx.channel.send(banner_gif)
+    else:
+        await ctx.channel.send("Validating purchase...", delete_after=2)
+        try:
+            if (peffect in effects) and not (peffect + "Effect" in owned_effects):
+                peffectcost = [c for c, e in effects_cost.items() if peffect in e][0]
+                duuid = ctx.author.id
+                balance = ax.find_one({"duuid": duuid})["ax"]
+                if balance >= peffectcost:
+                    ax.find_one_and_replace({"duuid": duuid},
+                                            {"duuid": duuid, "ax": balance - peffectcost})
+                    ingamecosmetics.find_one_and_update({"duuid": duuid},
+                                                        {"$push": {"effects": peffect + "Effect"}})
+                    desc = f"Purchase successful. Congrats! Now you can flex `{peffect}`" \
+                           f"\nYou have {balance - peffectcost} {ax_emoji} now." \
+                           f"\nType `/effect {peffect}` in **Alex Mindustry** to use it."
+                    embed = discord.Embed.from_dict(
+                        {"description": desc, "color": discord.Colour.green().value})
+                    react = await ctx.channel.send(embed=embed)
+                    await sleep_add_reaction(react, 5)
+                else:
+                    desc = f"You **dont** have enough {ax_emoji} to make the purchase. Balance: " \
+                           f"{balance} {ax_emoji}.\nPlay more for **EXP** or " \
+                           f"collect <#786110451549208586>. "
+                    embed = discord.Embed.from_dict(
+                        {"description": desc, "color": discord.Colour.dark_red().value})
+                    react = await ctx.channel.send(embed=embed)
+                    await sleep_add_reaction(react, 5, emoji=feelsbm_emoji)
+            elif peffect in effects:
+                desc = f"You already **have** this effect.\nType `/effect {peffect}` in **Alex Mindustry** to use it."
+                embed = discord.Embed.from_dict(
+                    {"description": desc, "color": discord.Colour.dark_red().value})
+                react = await ctx.channel.send(embed=embed)
+                await sleep_add_reaction(react, 5)
+            else:
+                await ctx.channel.send("Effect not known. Spell properly and effects *are* cAsE sEnSiTiVe.")
+        except Exception as e:
+            print(str(e))
+            await ctx.channel.send("error, pls **PING** alex! error 189:" + str(e))
+    #else:
+    #    await ctx.channel.send("Wrong usage of command.")
+    # await message.channel.send("coming soon")
+    # checks for price n balance, if valid, make purchase, else error message
 
 
 @bot.event
@@ -520,85 +601,7 @@ async def on_message(message):
 #         # todo @BOUNTY # check for role precondition then soft restart and hard restart
 #         pass
 #     elif message.content.startswith(prefix + "buyeffect"):
-#         if prefix == "t?" and message.author.id != 612861256189083669:
-#             await message.channel.send("t? is only for alex to test")
-#             return
-#         await message.channel.send("Fetching effects...", delete_after=2)
-#         effects_cost = {20: ["yellowDiamond", "yellowSquare", "yellowCircle"],
-#                         30: ["greenCircle", "whiteDoor", "yellowLargeDiam", "yellowSpark"],
-#                         50: ["whiteLancerRandom"], 80: ["whiteLancerRadius", "pixel", "bubble"],
-#                         200: ["rainbowPixel", "rainbowBubble"]}
-#         effects = [ee for c, e in effects_cost.items() for ee in e]
-#         owned_effects_collection = ingamecosmetics.find_one({"duuid": message.author.id})
-#         if owned_effects_collection is None:
-#             await message.channel.send("error, pls **PING** alex! error 170")
-#             return
-#         owned_effects = owned_effects_collection["effects"]
-#         duuid = message.author.id
-#         if ax.find_one({"duuid": duuid}) is None:
-#             balance = 0
-#             ax.insert_one({"duuid": duuid, "ax": 0})
-#         else:
-#             balance = ax.find_one({"duuid": duuid})["ax"]
-#         if message.content == (prefix + "buyeffect"):
-#             strbuilder = ""
-#             for cost, effectname in effects_cost.items():
-#                 strbuilder += f"`{cost:>3} `" + ax_emoji + "`  " + \
-#                               "`, `".join([eff + ("✅" if eff + "Effect" in owned_effects else "")
-#                                            for eff in effectname]) + "`\n"
-#             content = f"(Current balance: `{balance}` {ax_emoji})"
-#             desc = f"`  Price   Effects`  {content}\n" + strbuilder + \
-#                    "\nType `" + prefix + "buyeffect XXXX` to buy the effect. (cAsE sEnSiTiVe)" + \
-#                    "\nNote: `✅`=owned. Purchased effects are non-refundable. " \
-#                    "\nIf color is not specified in the effect, it is *configurable* via `/color` in game."
-#             embed = discord.Embed.from_dict(
-#                 {"title": f"Alex Mindustry *special* `Effects MENU`", "description": desc,
-#                  "color": discord.Colour.dark_grey().value})
-#             await message.channel.send(embed=embed)
-#             await message.channel.send(banner_gif)
-#         elif len(message.content.split(" ")) == 2:
-#             await message.channel.send("Validating purchase...", delete_after=2)
-#             try:
-#                 peffect = message.content.split(" ")[1]
-#                 if (peffect in effects) and not (peffect + "Effect" in owned_effects):
-#                     peffectcost = [c for c, e in effects_cost.items() if peffect in e][0]
-#                     duuid = message.author.id
-#                     balance = ax.find_one({"duuid": duuid})["ax"]
-#                     if balance >= peffectcost:
-#                         ax.find_one_and_replace({"duuid": duuid},
-#                                                 {"duuid": duuid, "ax": balance - peffectcost})
-#                         ingamecosmetics.find_one_and_update({"duuid": duuid},
-#                                                             {"$push": {"effects": peffect + "Effect"}})
-#                         desc = f"Purchase successful. Congrats! Now you can flex `{peffect}`" \
-#                                f"\nYou have {balance - peffectcost} {ax_emoji} now." \
-#                                f"\nType `/effect {peffect}` in **Alex Mindustry** to use it."
-#                         embed = discord.Embed.from_dict(
-#                             {"description": desc, "color": discord.Colour.green().value})
-#                         react = await message.channel.send(embed=embed)
-#                         await sleep_add_reaction(react, 5)
-#                     else:
-#                         desc = f"You **dont** have enough {ax_emoji} to make the purchase. Balance: " \
-#                                f"{balance} {ax_emoji}.\nPlay more for **EXP** or " \
-#                                f"collect <#786110451549208586>. "
-#                         embed = discord.Embed.from_dict(
-#                             {"description": desc, "color": discord.Colour.dark_red().value})
-#                         react = await message.channel.send(embed=embed)
-#                         await sleep_add_reaction(react, 5, emoji=feelsbm_emoji)
-#                 elif peffect in effects:
-#                     desc = f"You already **have** this effect.\nType `/effect {peffect}` in **Alex Mindustry** to use it."
-#                     embed = discord.Embed.from_dict(
-#                         {"description": desc, "color": discord.Colour.dark_red().value})
-#                     react = await message.channel.send(embed=embed)
-#                     await sleep_add_reaction(react, 5)
-#                 else:
-#                     await message.channel.send("Effect not known. Spell properly and effects *are* cAsE sEnSiTiVe.")
-#             except Exception as e:
-#                 print(str(e))
-#                 await message.channel.send("error, pls **PING** alex! error 189:" + str(e))
-#         else:
-#             await message.channel.send("Wrong usage of command.")
-#         # await message.channel.send("coming soon")
-#         # checks for price n balance, if valid, make purchase, else error message
+#         i
 #     elif message.content.startswith(prefix + "axleaderboard"):
 #         await message.channel.send("type `a?axleaderboard`")
 #     elif message.content.startswith(prefix + "convertexp"):
