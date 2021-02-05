@@ -405,7 +405,7 @@ async def addhype(ctx, messageid: int, channel: discord.TextChannel = None, coun
                                              "catdance", "pog", "hypertada", "cata", "petangry", "typing",
                                              "petmelon", "petalex"]:
                 total_emojis += 1
-                time.sleep(random.randint(3, 3 + min(counts, 15)))
+                time.sleep(random.randint(3, 3 + counts*10))
                 await msg.add_reaction(emoji_custom)
             if total_emojis > counts:
                 break
