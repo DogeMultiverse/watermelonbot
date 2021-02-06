@@ -96,6 +96,7 @@ banner_gif = "https://tenor.com/view/rainbow-bar-rainbow-bar-colorful-line-gif-1
 ax_emoji = "<:Ax:789661633214676992>"
 pog_emoji = "<:pog:786886696552890380>"
 feelsbm_emoji = "<:feelsbadman:789511704777064469>"
+hypertada_emoji = "<a:HyperTada:804302792058994699>"
 
 
 async def sleep_add_reaction(msg, duration, emoji="<:pog:786886696552890380>"):
@@ -105,10 +106,11 @@ async def sleep_add_reaction(msg, duration, emoji="<:pog:786886696552890380>"):
 
 bot = commands.Bot(command_prefix=prefix, description=description, intents=intents)
 
-
 # todo , make a nicer help command
 # todo command "help"
 bot.remove_command("help")
+
+
 # @bot.group(invoke_without_command=True)
 # async def help(ctx: discord.ext.commands.Context):
 #     em = discord.Embed(title=f"All commands from `[{prefix}] {bot.user.display_name}`",
@@ -132,7 +134,7 @@ async def help(ctx, args=None):
     if not args:
         help_embed.add_field(
             name="List of supported commands:",
-            value="\n".join([str(i+1)+". "+x.name for i, x in enumerate(bot.commands)]),
+            value="\n".join([str(i + 1) + ". " + x.name for i, x in enumerate(bot.commands)]),
             inline=False
         )
         help_embed.add_field(
@@ -216,9 +218,9 @@ async def addhype(ctx, messageid: int, channel: discord.TextChannel = None, coun
         total_emojis = 0
         await ctx.send(f"Hype sending! Self destructing...", delete_after=3)
         for emoji_custom in random.sample(emojis, k=len(emojis)):
-            if emoji_custom.name.lower() in ["partyglasses", "pepoclap", "roll", "blob", "auke",
-                                             "catdance", "pog", "hypertada", "cata", "petangry", "typing",
-                                             "petmelon", "petalex"]:
+            if emoji_custom.name.lower() in ["partyglasses", "pepoclap", "roll", "blob", "auke", "catdance", "pog",
+                                             "hypertada", "feelsgoodman", "cata", "petangry",
+                                             "typing", "petmelon", "petalex"]:
                 total_emojis += 1
                 time.sleep(random.randint(3, 3 + counts * 10))
                 await msg.add_reaction(emoji_custom)
@@ -238,6 +240,8 @@ async def on_command_error(ctx: discord.ext.commands.Context, error: Exception):
         await ctx.message.channel.send("ERROR: Bad arugments" + str(error))
     elif isinstance(error, discord.ext.commands.errors.CommandNotFound):
         await ctx.message.channel.send("ERROR: CommandNotFound")
+    elif isinstance(error, discord.ext.commands.MissingRole):
+        await ctx.channel.send("You dont have the permission to run this command.")
     else:
         await ctx.message.channel.send("Unknown error:" + str(type(error)) + str(error))
 
@@ -384,9 +388,37 @@ async def github(ctx: discord.ext.commands.Context):
     await ctx.channel.send("watermelonbot: https://github.com/alexpvpmindustry/watermelonbot\n" +
                            "lol bot: https://github.com/unjown/unjownbot")
 
-@bot.command()
-async def addgiveaway(ctx:discord.ext.commands.Context,name :str):
-    bot.add_cog(giveaway_bot2.Giveaway)
+
+@bot.command(description="creates giveaways",
+             help="<add/remove> <giveawaychannel> <anncchannel> <amount> <winners> <days> <hours> <'msg'>")
+@commands.has_role("Admin (Discord)")
+async def giveaway(ctx: discord.ext.commands.Context, what: str, channel: discord.TextChannel,
+                   channelannc: discord.TextChannel, amount: int = 1,
+                   winners: int = 0, days: int = 0, hours: int = 0, message: str = ""):
+    cog: giveaway_bot2.Giveaway = bot.get_cog("giveaway")
+    if isinstance(cog, type(None)):
+        bot.add_cog(giveaway_bot2.Giveaway(bot))
+        cog: giveaway_bot2.Giveaway = bot.get_cog("giveaway")
+        print("cog not started, started it")
+    if what == "add":
+        title = hypertada_emoji + f" {amount} {ax_emoji} GIVEAWAY! " + hypertada_emoji
+        string = ""
+        if days > 0:
+            string += f"{days} day" + ("s" if days > 1 else "")
+        string += f" {hours} hour" + ("s" if hours > 1 else "")
+        footer = f"ends in {string}, react with any emoji to receive giveaway :)"
+        embed = discord.Embed.from_dict({"description": message, "title": title,
+                                         "color": discord.Colour.gold().value}).set_footer(text=footer)
+        msg = await channel.send(embed=embed)
+        cog.addGiveawayEvent(msg.id, channel, channelannc, message, amount, winners, days, hours)
+        await msg.add_reaction(ax_emoji)
+    elif what.startswith("remove"):
+        pass
+    elif what == "findall":
+        pass
+    else:
+        await ctx.channel.send("invalid command usage")
+
 
 @bot.command()
 async def convertexp(ctx: discord.ext.commands.Context):
@@ -457,6 +489,7 @@ def runbot():
         bot_token = js["bot_token"]
     # clientdisc = MyClient(intents=discord.Intents().all())
     # bot.load_extension("pyexamples.giveaway_bot2")
+    bot.add_cog(giveaway_bot2.Giveaway(bot))
     bot.run(bot_token)
 
 #
