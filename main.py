@@ -13,12 +13,12 @@ def print_hi(name):
 
 
 # Press the green button in the gutter to run the script.
-from pyexamples import guessing_game
-from pyexamples import reply
+from mastermelon import guessing_game
+from mastermelon import melon
 
 if __name__ == '__main__':
     print_hi('PyCharm')
     #guessing_game.runbot()
-    reply.runbot()
+    melon.runbot()
 
 

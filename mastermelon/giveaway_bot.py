@@ -1,3 +1,5 @@
+import asyncio
+
 import discord
 import pymongo
 from discord.ext import commands
@@ -13,6 +15,7 @@ general_channel_id = 785543837116399636
 ga_channel_id = 790529627260321813
 pog_emoji = "<:pog:786886696552890380>"
 ax_emoji = "<:Ax:789661633214676992>"
+hypertada_emoji = "<a:HyperTada:804302792058994699>"
 
 with open("watermelon.config", "rb") as f:
     js = json.load(f)
@@ -26,8 +29,26 @@ if prefix in ["w?", "t?"]:  # only access mongodb for w? and t?
     ingamecosmetics = db["ingamecosmetics"]
 
 
+def form_msg_embed(message, amount, winners, days, seconds, claimed):
+    title = hypertada_emoji + f" {amount} {ax_emoji} GIVEAWAY! " + hypertada_emoji
+    string = ""
+    if days > 0:
+        string += f" {days} day" + ("s" if days > 1 else "")
+    hours = seconds // 3600
+    mins = seconds // 60 - 60 * hours
+    secs = seconds % 60
+    string += f" {hours} hour" + ("s" if hours > 1 else "")
+    if hours < 1:
+        string += f" {mins} min" + ("s" if mins > 1 else "")
+        string += f" {secs} sec" + ("s" if secs > 1 else "")
+    footer = f"ends in{string}, react with any emoji to receive giveaway. ({claimed}/{winners} claimed)"
+    embed = discord.Embed.from_dict({"description": message, "title": title,
+                                     "color": discord.Colour.gold().value}).set_footer(text=footer)
+    return embed
+
+
 class Giveaway(commands.Cog, name="giveaway"):
-    def __init__(self, bot):  # set up all the existing giveaways
+    def __init__(self, bot: discord.ext.commands.Bot):  # set up all the existing giveaways
         self.bot = bot
         try:
             with open("data/giveaway_bot.config", "r") as f:
@@ -39,6 +60,7 @@ class Giveaway(commands.Cog, name="giveaway"):
                     self.data = data
         except FileNotFoundError:
             self.data = {"running": [], "ended": []}
+        self.bot.loop.create_task(self.giveaway_background_task())
 
     def savedata(self):
         with open("data/giveaway_bot.config", "w") as f:
@@ -49,7 +71,8 @@ class Giveaway(commands.Cog, name="giveaway"):
         message: discord.Message = await channel.fetch_message(gaws["messageid"])
         title = feelsbm_emoji + f" {gaws['amount']} {ax_emoji} GIVEAWAY ENDED " + feelsbm_emoji
         await message.edit(
-            embed=discord.Embed(title=title, description=gaws["message"]).set_footer(text=";-;"))
+            embed=discord.Embed(title=title, description=gaws["message"]).set_footer(
+                text=f";-; come back again... ig {feelsbm_emoji}"))
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent):  # todo on emoji reaction!
@@ -60,13 +83,14 @@ class Giveaway(commands.Cog, name="giveaway"):
         for gaws in self.data["running"]:
             if gaws["messageid"] == payload.message_id:
                 if (gaws["enddate"] < current_time) or gaws["winners"] <= len(set(gaws["participants"])):
-                    #for parts in set(gaws["participants"]):
+                    # for parts in set(gaws["participants"]):
                     #    #print("winner", parts)
                     await self.edit_end_msg(gaws)
                     self.data["ended"].append(gaws)
                     self.data["running"].remove(gaws)
                     self.savedata()
         for gaws in self.data["running"]:
+            timeleft = gaws["enddate"] - current_time
             if gaws["messageid"] == payload.message_id and payload.user_id not in gaws["participants"]:
                 # print("new participant" + payload.member.name)
                 gaws["participants"].append(payload.user_id)
@@ -78,11 +102,15 @@ class Giveaway(commands.Cog, name="giveaway"):
                     ax.find_one_and_update({"duuid": payload.user_id}, {"$inc": {"ax": gaws["amount"]}})
                 await channel.send(content=f"{payload.member.name}#{payload.member.discriminator} just claimed a "
                                            f"Giveaway in {channelga.mention} {pog_emoji}")
+                embed = form_msg_embed(gaws["message"], gaws["amount"], gaws["winners"], timeleft.days,
+                                       timeleft.seconds, len(set(gaws["participants"])))
+                message: discord.Message = await channelga.fetch_message(gaws["messageid"])
+                await message.edit(embed=embed)
                 self.savedata()
 
     def addGiveawayEvent(self, messageid: int, channel: discord.TextChannel, channelannc: discord.TextChannel,
                          msg: str, amount: int, winners: int, days: int, hours: int):
-        enddate = datetime.now().replace(tzinfo=pytz.UTC) + timedelta(days=days, seconds=hours)
+        enddate = datetime.now().replace(tzinfo=pytz.UTC) + timedelta(days=days, hours=hours)
         gaws = {"winners": winners, "amount": amount, "messageid": messageid, "channelid": channel.id,
                 "channelanncid": channelannc.id, "message": msg, "enddate": enddate, "participants": []}
         self.data["running"].append(gaws)
@@ -100,6 +128,27 @@ class Giveaway(commands.Cog, name="giveaway"):
         st = [f"{gaws['messageid']}: timeleft{gaws['enddate'] - datetime.now().replace(tzinfo=pytz.UTC)}"
               for gaws in self.data["running"]]
         await ctx.channel.send(", ".join(st), delete_after=15)
+
+    async def giveaway_background_task(self):
+        await self.bot.wait_until_ready()
+        await asyncio.sleep(20)
+        while not self.bot.is_closed():
+            await asyncio.sleep(180)
+            current_time = datetime.now().replace(tzinfo=pytz.UTC)
+            for gaws in self.data["running"]:  # update the time in the footer, if ended, edit end msg
+                if (gaws["enddate"] < current_time) or gaws["winners"] <= len(set(gaws["participants"])):
+                    await self.edit_end_msg(gaws)
+                    self.data["ended"].append(gaws)
+                    self.data["running"].remove(gaws)
+                    self.savedata()
+                else:  # update the time
+                    timeleft = gaws["enddate"] - current_time
+                    channelga: discord.TextChannel = await self.bot.fetch_channel(gaws["channelid"])
+                    message: discord.Message = await channelga.fetch_message(gaws["messageid"])
+                    embed = form_msg_embed(gaws["message"], gaws["amount"], gaws["winners"], timeleft.days,
+                                           timeleft.seconds, len(set(gaws["participants"])))
+                    await message.edit(embed=embed)
+
         # management = discord.utils.get(self.bot.get_all_channels(), name='bot-staff-only')
         # if ctx.message.channel != management:
         #    return

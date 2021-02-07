@@ -5,9 +5,9 @@ import pymongo
 import asyncio
 import random
 from discord.ext import commands
-from pyexamples import counting_bot
-from pyexamples import highlow_game
-from pyexamples import giveaway_bot2
+from mastermelon import counting_bot
+from mastermelon import highlow_game
+from mastermelon import giveaway_bot
 import time
 
 
@@ -137,6 +137,10 @@ async def help(ctx, args=None):
             value="\n".join([str(i + 1) + ". " + x.name for i, x in enumerate(bot.commands)]),
             inline=False
         )
+        dictt = {} # category:{name:,help:}
+        for i,x in enumerate(bot.commands):
+            x.des
+            x.name
         help_embed.add_field(
             name="Details",
             value=f"Type `{prefix}help <command name>` for more details about each command.",
@@ -206,7 +210,8 @@ async def addemoji(ctx, emoji: str, messageid: int, channel: discord.TextChannel
         await ctx.send("Message id not found. Maybe message was deleted?", delete_after=3)
 
 
-@bot.command(description="adds hype emojis")
+@bot.command(description="adds hype emojis",
+             help="<message_id> <channel> <counts> (duration will be ~ counts*10 secs)")
 async def addhype(ctx, messageid: int, channel: discord.TextChannel = None, counts: int = 5):
     # todo fix error message when command invalid
     emojis = await ctx.guild.fetch_emojis()
@@ -222,7 +227,7 @@ async def addhype(ctx, messageid: int, channel: discord.TextChannel = None, coun
                                              "hypertada", "feelsgoodman", "cata", "petangry",
                                              "typing", "petmelon", "petalex"]:
                 total_emojis += 1
-                time.sleep(random.randint(3, 3 + counts * 10))
+                await asyncio.sleep(random.randint(3, 3 + counts * 10))
                 await msg.add_reaction(emoji_custom)
             if total_emojis > counts:
                 break
@@ -395,23 +400,17 @@ async def github(ctx: discord.ext.commands.Context):
 async def giveaway(ctx: discord.ext.commands.Context, what: str, channel: discord.TextChannel,
                    channelannc: discord.TextChannel, amount: int = 1,
                    winners: int = 0, days: int = 0, hours: int = 0, message: str = ""):
-    cog: giveaway_bot2.Giveaway = bot.get_cog("giveaway")
+    cog: giveaway_bot.Giveaway = bot.get_cog("giveaway")
     if isinstance(cog, type(None)):
-        bot.add_cog(giveaway_bot2.Giveaway(bot))
-        cog: giveaway_bot2.Giveaway = bot.get_cog("giveaway")
+        bot.add_cog(giveaway_bot.Giveaway(bot))
+        cog: giveaway_bot.Giveaway = bot.get_cog("giveaway")
         print("cog not started, started it")
     if what == "add":
-        title = hypertada_emoji + f" {amount} {ax_emoji} GIVEAWAY! " + hypertada_emoji
-        string = ""
-        if days > 0:
-            string += f"{days} day" + ("s" if days > 1 else "")
-        string += f" {hours} hour" + ("s" if hours > 1 else "")
-        footer = f"ends in {string}, react with any emoji to receive giveaway :)"
-        embed = discord.Embed.from_dict({"description": message, "title": title,
-                                         "color": discord.Colour.gold().value}).set_footer(text=footer)
+        embed = giveaway_bot.form_msg_embed(message, amount, winners, days, hours * 3600, 0)
         msg = await channel.send(embed=embed)
         cog.addGiveawayEvent(msg.id, channel, channelannc, message, amount, winners, days, hours)
         await msg.add_reaction(ax_emoji)
+        await ctx.channel.send(f"giveaway added to {channel}. Giving {amount} {ax_emoji} to {winners} people.")
     elif what.startswith("remove"):
         pass
     elif what == "findall":
@@ -488,8 +487,8 @@ def runbot():
         js = json.load(f)
         bot_token = js["bot_token"]
     # clientdisc = MyClient(intents=discord.Intents().all())
-    # bot.load_extension("pyexamples.giveaway_bot2")
-    bot.add_cog(giveaway_bot2.Giveaway(bot))
+    # bot.load_extension("mastermelon.giveaway_bot2")
+    bot.add_cog(giveaway_bot.Giveaway(bot))
     bot.run(bot_token)
 
 #
