@@ -130,17 +130,18 @@ async def help(ctx, args=None):
                                colour=int(discord.Colour.green().value))
     command_names_list = [x.name for x in bot.commands]
 
-    # If there are no arguments, just list the commands:
     if not args:
-        help_embed.add_field(
-            name="List of supported commands:",
-            value="\n".join([str(i + 1) + ". " + x.name for i, x in enumerate(bot.commands)]),
-            inline=False
-        )
-        dictt = {} # category:{name:,help:}
-        for i,x in enumerate(bot.commands):
-            x.des
-            x.name
+        help_embed.set_thumbnail(url=str(bot.user.avatar_url))
+        dictt = {}  # category:{name:,help:}
+        x: discord.ext.commands
+        for i, x in enumerate(bot.commands):
+            if str(x.brief) in dictt:
+                dictt[str(x.brief)].append({"name": x.name, "description": x.description})
+            else:
+                dictt[str(x.brief)] = [{"name": x.name, "description": x.description}]
+        for category, commandss in dictt.items():
+            help_embed.add_field(name=category if category != "None" else "Others/Misc",
+                                 value="`" + ("`, `".join([c["name"] for c in commandss])) + "`")
         help_embed.add_field(
             name="Details",
             value=f"Type `{prefix}help <command name>` for more details about each command.",
@@ -149,9 +150,14 @@ async def help(ctx, args=None):
 
     # If the argument is a command, get the help text from that command:
     elif args in command_names_list:
+        help_embed.title = "Command Information"
+        command = bot.get_command(args)
+        command_help = "" if isinstance(command.help, type(None)) else ("Help: " + command.help + "\n")
+        command_desc = "" if (isinstance(command.description, type(None)) or command.description == "") else (
+                "\nDescription: " + command.description)
         help_embed.add_field(
-            name=args,
-            value=bot.get_command(args).help
+            name="Command name: `" + args + "`",
+            value=command_help + "Usage: `" + prefix + args + command.signature + "`" + command_desc
         )
 
     # If someone is just trolling:
@@ -172,12 +178,12 @@ async def on_ready():
     print('------')
 
 
-@bot.command(description="high low game, try to guess the correct number by clicking higher or lower.")
+@bot.command(description="High low game, try to guess the correct number by clicking higher or lower.", brief="Game")
 async def highlow(ctx):
     await highlow_game.run_highlowgame(ctx, bot)
 
 
-@bot.command(description="gets all animated emojis from this discord.")
+@bot.command(description="Gets all animated emojis from this discord.", brief="None", )
 async def getemojis(ctx):
     emojis = await ctx.guild.fetch_emojis()
     for emoji in emojis:
@@ -188,7 +194,7 @@ async def getemojis(ctx):
 
 @bot.command(description="adds <:EMOJI:> to the desired <message_id> in [channel]. max 20 emojis per message",
              help="adds <:emoji:> to <message_id> in [channel]",
-             brief="adds <:emoji:> to <message_id> in [channel]")
+             brief="Hype")
 async def addemoji(ctx, emoji: str, messageid: int, channel: discord.TextChannel = None):
     # todo fix error message when command invalid
     emojis = await ctx.guild.fetch_emojis()
@@ -211,7 +217,7 @@ async def addemoji(ctx, emoji: str, messageid: int, channel: discord.TextChannel
 
 
 @bot.command(description="adds hype emojis",
-             help="<message_id> <channel> <counts> (duration will be ~ counts*10 secs)")
+             help="<message_id> <channel> <counts> (duration will be ~ counts*10 secs)", brief="Hype")
 async def addhype(ctx, messageid: int, channel: discord.TextChannel = None, counts: int = 5):
     # todo fix error message when command invalid
     emojis = await ctx.guild.fetch_emojis()
@@ -251,7 +257,7 @@ async def on_command_error(ctx: discord.ext.commands.Context, error: Exception):
         await ctx.message.channel.send("Unknown error:" + str(type(error)) + str(error))
 
 
-@bot.command(description="play the guessing number game")
+@bot.command(description="Play the guessing number game.", brief="Game")
 async def guess(ctx: discord.ext.commands.Context):
     await ctx.channel.send('Guess a number between 1 and 1000000. Its one in a million')
 
@@ -274,7 +280,7 @@ async def guess(ctx: discord.ext.commands.Context):
         await ctx.channel.send('Oops. It is actually {}.'.format(answer))
 
 
-@bot.command(description="command to checkexp")
+@bot.command(description="Check user's registered account's EXP", brief="Utility")
 async def checkexp(ctx: discord.ext.commands.Context):
     if prefix == "t?" and ctx.author.id != 612861256189083669:
         await ctx.channel.send("no testing for u")
@@ -305,7 +311,7 @@ async def checkexp(ctx: discord.ext.commands.Context):
             await ctx.channel.send("You have no exp. ;-;")
 
 
-@bot.command()
+@bot.command(description="Displays buyeffect menu.", brief="Utility")
 async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
     if prefix == "t?" and ctx.author.id != 612861256189083669:
         await ctx.channel.send("t? is only for alex to test")
@@ -383,18 +389,21 @@ async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
                                    "\nIf you get this error again, pls **PING** alex! error 189:" + str(e))
 
 
-@bot.command()
+@bot.command(description=f"Check user's ranking in {ax_emoji}", brief="Utility")
 async def axleaderboard(ctx: discord.ext.commands.Context):
     await ctx.channel.send(f'for axleaderboard, type `a?axleaderboard`')
 
 
-@bot.command()
+@bot.command(brief="Links", description="Shows the links to github.")
 async def github(ctx: discord.ext.commands.Context):
-    await ctx.channel.send("watermelonbot: https://github.com/alexpvpmindustry/watermelonbot\n" +
-                           "lol bot: https://github.com/unjown/unjownbot")
+    embed = discord.Embed(title=f"Github links", colour=discord.Colour.random().value)
+    embed.add_field(name="watermelonbot (python)", value="https://github.com/alexpvpmindustry/watermelonbot",
+                    inline=False)
+    embed.add_field(name="lol bot (javascript)", value="https://github.com/unjown/unjownbot", inline=False)
+    await ctx.channel.send(embed=embed)
 
 
-@bot.command(description="creates giveaways",
+@bot.command(description="Create giveaway.", brief="Admin Utility",
              help="<add/remove> <giveawaychannel> <anncchannel> <amount> <winners> <days> <hours> <'msg'>")
 @commands.has_role("Admin (Discord)")
 async def giveaway(ctx: discord.ext.commands.Context, what: str, channel: discord.TextChannel,
@@ -419,7 +428,7 @@ async def giveaway(ctx: discord.ext.commands.Context, what: str, channel: discor
         await ctx.channel.send("invalid command usage")
 
 
-@bot.command()
+@bot.command(description=f"Convert user's exp into {ax_emoji}.", brief="Utility")
 async def convertexp(ctx: discord.ext.commands.Context):
     if prefix == "t?" and ctx.author.id != 612861256189083669:
         await ctx.channel.send("t? is only for alex to test")
