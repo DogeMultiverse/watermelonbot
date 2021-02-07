@@ -127,7 +127,7 @@ bot.remove_command("help")
 @bot.command()
 async def help(ctx, args=None):
     help_embed = discord.Embed(title=f"All commands from `[{prefix}] {bot.user.display_name}`",
-                               colour=int(discord.Colour.green().value))
+                               colour=discord.Colour.random().value)
     command_names_list = [x.name for x in bot.commands]
 
     if not args:
