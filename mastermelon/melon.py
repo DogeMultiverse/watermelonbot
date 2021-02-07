@@ -157,7 +157,7 @@ async def help(ctx, args=None):
                 "\nDescription: " + command.description)
         help_embed.add_field(
             name="Command name: `" + args + "`",
-            value=command_help + "Usage: `" + prefix + args + command.signature + "`" + command_desc
+            value=command_help + "Usage: `" + prefix + args + " " +command.signature + "`" + command_desc
         )
 
     # If someone is just trolling:
