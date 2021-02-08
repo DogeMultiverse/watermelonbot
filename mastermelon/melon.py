@@ -478,7 +478,7 @@ async def convertexp(ctx: discord.ext.commands.Context):
 
 
 @bot.event
-async def on_message(message):
+async def on_message(message: discord.Message):
     fig = "https://media.discordapp.net/attachments/785543837116399636/806563140116152380/reallyangrymelon.png"
     pepo_clap = "https://media.discordapp.net/attachments/799855760011427880/806869234122358794/792177151448973322.gif"
     if "<@!500744743660158987>" in message.content and prefix == "t?":
@@ -486,7 +486,8 @@ async def on_message(message):
     elif message.content == ':pepoclap:' and prefix == "t?":
         await message.reply(pepo_clap)
     elif prefix == "w?" and message.channel.id == 805105861450137600:  # counting hardcore channel
-        await counting_bot.run_counterbot(message, bot)
+        if message.author.id != bot.user.id:
+            await counting_bot.run_counterbot(message, bot)
     else:
         await bot.process_commands(message)
 
