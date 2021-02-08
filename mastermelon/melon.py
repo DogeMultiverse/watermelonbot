@@ -314,6 +314,9 @@ async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
     if prefix == "t?" and ctx.author.id != 612861256189083669:
         await ctx.channel.send("t? is only for alex to test")
         return
+    if True:
+        await ctx.channel.send("buy effects is updating, please try again later.")
+        return
     await ctx.channel.send("Fetching effects...", delete_after=2)
     effects_cost = {20: ["yellowDiamond", "yellowSquare", "yellowCircle"],
                     30: ["greenCircle", "whiteDoor", "yellowLargeDiam", "yellowSpark"],
