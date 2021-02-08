@@ -9,7 +9,6 @@ from mastermelon import counting_bot
 from mastermelon import highlow_game
 from mastermelon import giveaway_bot
 from mastermelon import effects_display
-import time
 from mastermelon import emojis as ej
 
 
@@ -93,14 +92,6 @@ if prefix in ["w?", "t?"]:  # only access mongodb for w? and t?
     convertedexp = db["convertedexp"]
     ax = db["ax"]
     ingamecosmetics = db["ingamecosmetics"]
-
-banner_gif = "https://tenor.com/view/rainbow-bar-rainbow-bar-colorful-line-gif-17716887"
-
-
-async def sleep_add_reaction(msg, duration, emoji=ej.pog_emoji):
-    await asyncio.sleep(duration)
-    await msg.add_reaction(emoji)
-
 
 bot = commands.Bot(command_prefix=prefix, description=description, intents=intents)
 
@@ -314,9 +305,6 @@ async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
     if prefix == "t?" and ctx.author.id != 612861256189083669:
         await ctx.channel.send("t? is only for alex to test")
         return
-    if True:
-        await ctx.channel.send("buy effects is updating, please try again later.")
-        return
     await ctx.channel.send("Fetching effects...", delete_after=2)
     effects_cost = {20: ["yellowDiamond", "yellowSquare", "yellowCircle"],
                     30: ["greenCircle", "whiteDoor", "yellowLargeDiam", "yellowSpark"],
@@ -335,70 +323,10 @@ async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
     else:
         balance = ax.find_one({"duuid": duuid})["ax"]
     if isinstance(peffect, type(None)):
-        emojis_used = []
-        emoji_i =0
-        strbuilder = ""
-        for cost, effectname in effects_cost.items():
-            t_str=[]
-            for eff in effectname:
-                if eff + "Effect" in owned_effects:
-                    emoji_to_add = "✅"
-                else:
-                    emoji_to_add = ej.letter_emoji[emoji_i]
-                    emojis_used += ej.letter_emoji[emoji_i]
-                    emoji_i += 1
-                t_str.append( eff + emoji_to_add )
-            strbuilder += f"`{cost:>3} `" + ej.ax_emoji + "`  `, `".join(t_str) + "`\n"
-        content = f"(Current balance: `{balance}` {ej.ax_emoji})"
-        desc = f"`  Price   Effects`  {content}\n" + strbuilder + \
-               "\nClick on the corresponding emoji to view more." + \
-               "\nNote: `✅`=owned. Purchased effects are non-refundable. " \
-               "\nIf color is not specified in the effect, it is *configurable* via `/color` in game."
-        embed = discord.Embed.from_dict({"title": f"Alex Mindustry *special* `Effects MENU`", "description": desc,
-                                         "color": discord.Colour.dark_grey().value})
-        msg = await ctx.channel.send(embed=embed)
-        for emoj in emojis_used:
-            await msg.add_reaction(emoj)
-        await ctx.channel.send(banner_gif)
+        await effects_display.showeffectsmenu(ctx, effects_cost, owned_effects, effects, balance, ax, ingamecosmetics)
     else:
         await ctx.channel.send("Validating purchase...", delete_after=2)
-        try:
-            if (peffect in effects) and not (peffect + "Effect" in owned_effects):
-                peffectcost = [c for c, e in effects_cost.items() if peffect in e][0]
-                duuid = ctx.author.id
-                balance = ax.find_one({"duuid": duuid})["ax"]
-                if balance >= peffectcost:
-                    ax.find_one_and_replace({"duuid": duuid},
-                                            {"duuid": duuid, "ax": balance - peffectcost})
-                    ingamecosmetics.find_one_and_update({"duuid": duuid},
-                                                        {"$push": {"effects": peffect + "Effect"}})
-                    desc = f"Purchase successful. Congrats! Now you can flex `{peffect}`" \
-                           f"\nYou have {balance - peffectcost} {ej.ax_emoji} now." \
-                           f"\nType `/effect {peffect}` in **Alex Mindustry** to use it."
-                    embed = discord.Embed.from_dict(
-                        {"description": desc, "color": discord.Colour.green().value})
-                    react = await ctx.channel.send(embed=embed)
-                    await sleep_add_reaction(react, 5)
-                else:
-                    desc = f"You **dont** have enough {ej.ax_emoji} to make the purchase. Balance: " \
-                           f"{balance} {ej.ax_emoji}.\nPlay more for **EXP** or " \
-                           f"collect <#786110451549208586>. "
-                    embed = discord.Embed.from_dict(
-                        {"description": desc, "color": discord.Colour.dark_red().value})
-                    react = await ctx.channel.send(embed=embed)
-                    await sleep_add_reaction(react, 5, emoji=ej.feelsbm_emoji)
-            elif peffect in effects:
-                desc = f"You already **have** this effect.\nType `/effect {peffect}` in **Alex Mindustry** to use it."
-                embed = discord.Embed.from_dict(
-                    {"description": desc, "color": discord.Colour.dark_red().value})
-                react = await ctx.channel.send(embed=embed)
-                await sleep_add_reaction(react, 5)
-            else:
-                await ctx.channel.send("Effect not known. Spell properly and effects *are* cAsE sEnSiTiVe.")
-        except Exception as e:
-            print(str(e))
-            await ctx.channel.send("Please re-join Alex mindustry."
-                                   "\nIf you get this error again, pls **PING** alex! error 189:" + str(e))
+        await effects_display.makepurchase(ctx, effects_cost, owned_effects, effects, peffect, ax, ingamecosmetics)
 
 
 @bot.command(description=f"Shows effects", brief="Utility")
@@ -407,7 +335,7 @@ async def showeffects(ctx: discord.ext.commands.Context):
         msg: discord.Message = await ctx.channel.send("t? is only for alex to test")
         await msg.add_reaction(ej.pog_emoji)
         return
-    await effects_display.showeffects()
+    await effects_display.showeffectsmenu()
 
 
 @bot.command(description=f"Check user's ranking in {ej.ax_emoji}", brief="Utility")
