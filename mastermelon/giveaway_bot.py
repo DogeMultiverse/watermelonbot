@@ -6,16 +6,16 @@ from discord.ext import commands
 from random import choice
 import json
 from datetime import datetime, timedelta
-
 from bson import json_util
 import pytz
+from mastermelon import emojis as ej
 
-feelsbm_emoji = "<:feelsbadman:789511704777064469>"
+feelsbm_emoji = ej.feelsbm_emoji
 general_channel_id = 785543837116399636
 ga_channel_id = 790529627260321813
-pog_emoji = "<:pog:786886696552890380>"
-ax_emoji = "<:Ax:789661633214676992>"
-hypertada_emoji = "<a:HyperTada:804302792058994699>"
+pog_emoji = ej.pog_emoji
+ax_emoji = ej.ax_emoji
+hypertada_emoji = ej.hypertada_emoji
 
 with open("watermelon.config", "rb") as f:
     js = json.load(f)

@@ -8,7 +8,9 @@ from discord.ext import commands
 from mastermelon import counting_bot
 from mastermelon import highlow_game
 from mastermelon import giveaway_bot
+from mastermelon import effects_display
 import time
+from mastermelon import emojis as ej
 
 
 def get_latest_exp(res, convertedexp_doc):
@@ -93,13 +95,9 @@ if prefix in ["w?", "t?"]:  # only access mongodb for w? and t?
     ingamecosmetics = db["ingamecosmetics"]
 
 banner_gif = "https://tenor.com/view/rainbow-bar-rainbow-bar-colorful-line-gif-17716887"
-ax_emoji = "<:Ax:789661633214676992>"
-pog_emoji = "<:pog:786886696552890380>"
-feelsbm_emoji = "<:feelsbadman:789511704777064469>"
-hypertada_emoji = "<a:HyperTada:804302792058994699>"
 
 
-async def sleep_add_reaction(msg, duration, emoji="<:pog:786886696552890380>"):
+async def sleep_add_reaction(msg, duration, emoji=ej.pog_emoji):
     await asyncio.sleep(duration)
     await msg.add_reaction(emoji)
 
@@ -157,7 +155,7 @@ async def help(ctx, args=None):
                 "\nDescription: " + command.description)
         help_embed.add_field(
             name="Command name: `" + args + "`",
-            value=command_help + "Usage: `" + prefix + args + " " +command.signature + "`" + command_desc
+            value=command_help + "Usage: `" + prefix + args + " " + command.signature + "`" + command_desc
         )
 
     # If someone is just trolling:
@@ -183,7 +181,7 @@ async def highlow(ctx):
     await highlow_game.run_highlowgame(ctx, bot)
 
 
-@bot.command(description="Gets all animated emojis from this discord.", brief="None", )
+@bot.command(description="Gets all animated emojis from this discord.", brief="None")
 async def getemojis(ctx):
     emojis = await ctx.guild.fetch_emojis()
     for emoji in emojis:
@@ -305,7 +303,7 @@ async def checkexp(ctx: discord.ext.commands.Context):
                                               {"duuid": ctx.author.id, "converted": convertedexp_doc})
 
             # todo count the amount of unconverted exp and trigger the next line if there is
-            await ctx.channel.send(str_builder + f"\n Type `{prefix}convertexp` to convert your EXP into {ax_emoji}."
+            await ctx.channel.send(str_builder + f"\n Type `{prefix}convertexp` to convert your EXP into {ej.ax_emoji}."
                                                  f"(You still can keep your EXP)")
         else:
             await ctx.channel.send("You have no exp. ;-;")
@@ -334,19 +332,30 @@ async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
     else:
         balance = ax.find_one({"duuid": duuid})["ax"]
     if isinstance(peffect, type(None)):
+        emojis_used = []
+        emoji_i =0
         strbuilder = ""
         for cost, effectname in effects_cost.items():
-            strbuilder += f"`{cost:>3} `" + ax_emoji + "`  " + \
-                          "`, `".join([eff + ("✅" if eff + "Effect" in owned_effects else "")
-                                       for eff in effectname]) + "`\n"
-        content = f"(Current balance: `{balance}` {ax_emoji})"
+            t_str=[]
+            for eff in effectname:
+                if eff + "Effect" in owned_effects:
+                    emoji_to_add = "✅"
+                else:
+                    emoji_to_add = ej.letter_emoji[emoji_i]
+                    emojis_used += ej.letter_emoji[emoji_i]
+                    emoji_i += 1
+                t_str.append( eff + emoji_to_add )
+            strbuilder += f"`{cost:>3} `" + ej.ax_emoji + "`  `, `".join(t_str) + "`\n"
+        content = f"(Current balance: `{balance}` {ej.ax_emoji})"
         desc = f"`  Price   Effects`  {content}\n" + strbuilder + \
-               "\nType `" + prefix + "buyeffect XXXX` to buy the effect. (cAsE sEnSiTiVe)" + \
+               "\nClick on the corresponding emoji to view more." + \
                "\nNote: `✅`=owned. Purchased effects are non-refundable. " \
                "\nIf color is not specified in the effect, it is *configurable* via `/color` in game."
         embed = discord.Embed.from_dict({"title": f"Alex Mindustry *special* `Effects MENU`", "description": desc,
                                          "color": discord.Colour.dark_grey().value})
-        await ctx.channel.send(embed=embed)
+        msg = await ctx.channel.send(embed=embed)
+        for emoj in emojis_used:
+            await msg.add_reaction(emoj)
         await ctx.channel.send(banner_gif)
     else:
         await ctx.channel.send("Validating purchase...", delete_after=2)
@@ -361,20 +370,20 @@ async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
                     ingamecosmetics.find_one_and_update({"duuid": duuid},
                                                         {"$push": {"effects": peffect + "Effect"}})
                     desc = f"Purchase successful. Congrats! Now you can flex `{peffect}`" \
-                           f"\nYou have {balance - peffectcost} {ax_emoji} now." \
+                           f"\nYou have {balance - peffectcost} {ej.ax_emoji} now." \
                            f"\nType `/effect {peffect}` in **Alex Mindustry** to use it."
                     embed = discord.Embed.from_dict(
                         {"description": desc, "color": discord.Colour.green().value})
                     react = await ctx.channel.send(embed=embed)
                     await sleep_add_reaction(react, 5)
                 else:
-                    desc = f"You **dont** have enough {ax_emoji} to make the purchase. Balance: " \
-                           f"{balance} {ax_emoji}.\nPlay more for **EXP** or " \
+                    desc = f"You **dont** have enough {ej.ax_emoji} to make the purchase. Balance: " \
+                           f"{balance} {ej.ax_emoji}.\nPlay more for **EXP** or " \
                            f"collect <#786110451549208586>. "
                     embed = discord.Embed.from_dict(
                         {"description": desc, "color": discord.Colour.dark_red().value})
                     react = await ctx.channel.send(embed=embed)
-                    await sleep_add_reaction(react, 5, emoji=feelsbm_emoji)
+                    await sleep_add_reaction(react, 5, emoji=ej.feelsbm_emoji)
             elif peffect in effects:
                 desc = f"You already **have** this effect.\nType `/effect {peffect}` in **Alex Mindustry** to use it."
                 embed = discord.Embed.from_dict(
@@ -389,7 +398,16 @@ async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
                                    "\nIf you get this error again, pls **PING** alex! error 189:" + str(e))
 
 
-@bot.command(description=f"Check user's ranking in {ax_emoji}", brief="Utility")
+@bot.command(description=f"Shows effects", brief="Utility")
+async def showeffects(ctx: discord.ext.commands.Context):
+    if prefix == "t?" and ctx.author.id != 612861256189083669:
+        msg: discord.Message = await ctx.channel.send("t? is only for alex to test")
+        await msg.add_reaction(ej.pog_emoji)
+        return
+    await effects_display.showeffects()
+
+
+@bot.command(description=f"Check user's ranking in {ej.ax_emoji}", brief="Utility")
 async def axleaderboard(ctx: discord.ext.commands.Context):
     await ctx.channel.send(f'for axleaderboard, type `a?axleaderboard`')
 
@@ -418,8 +436,8 @@ async def giveaway(ctx: discord.ext.commands.Context, what: str, channel: discor
         embed = giveaway_bot.form_msg_embed(message, amount, winners, days, hours * 3600, 0)
         msg = await channel.send(embed=embed)
         cog.addGiveawayEvent(msg.id, channel, channelannc, message, amount, winners, days, hours)
-        await msg.add_reaction(ax_emoji)
-        await ctx.channel.send(f"giveaway added to {channel}. Giving {amount} {ax_emoji} to {winners} people.")
+        await msg.add_reaction(ej.ax_emoji)
+        await ctx.channel.send(f"giveaway added to {channel}. Giving {amount} {ej.ax_emoji} to {winners} people.")
     elif what.startswith("remove"):
         pass
     elif what == "findall":
@@ -428,12 +446,12 @@ async def giveaway(ctx: discord.ext.commands.Context, what: str, channel: discor
         await ctx.channel.send("invalid command usage")
 
 
-@bot.command(description=f"Convert user's exp into {ax_emoji}.", brief="Utility")
+@bot.command(description=f"Convert user's exp into {ej.ax_emoji}.", brief="Utility")
 async def convertexp(ctx: discord.ext.commands.Context):
     if prefix == "t?" and ctx.author.id != 612861256189083669:
         await ctx.channel.send("t? is only for alex to test")
         return
-    await ctx.channel.send(f'Conversion rate: 1000 EXP -> 1 {ax_emoji}. '
+    await ctx.channel.send(f'Conversion rate: 1000 EXP -> 1 {ej.ax_emoji}. '
                            f'Minimum conversion = 1000 EXP.', delete_after=20)
     # add a new collection to show how much was claimed # add last claimed time.
     cursor = expgains.find({"duuid": ctx.author.id})
@@ -471,8 +489,8 @@ async def convertexp(ctx: discord.ext.commands.Context):
             else:
                 ax.find_one_and_update({"duuid": ctx.author.id}, {"$inc": {"ax": new_Ax}})
             await ctx.channel.send(
-                f"You have converted {new_Ax * 1000} EXP into {new_Ax} {ax_emoji}.\nCongrats!. Type "
-                f"`a?checkax @user` to check your current {ax_emoji}.")
+                f"You have converted {new_Ax * 1000} EXP into {new_Ax} {ej.ax_emoji}.\nCongrats!. Type "
+                f"`a?checkax @user` to check your current {ej.ax_emoji}.")
         else:
             await ctx.channel.send("You have no exp. ;-; Can't convert emptiness.")
 
