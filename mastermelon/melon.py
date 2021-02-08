@@ -329,13 +329,14 @@ async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
         await effects_display.makepurchase(ctx, effects_cost, owned_effects, effects, peffect, ax, ingamecosmetics)
 
 
-@bot.command(description=f"Shows effects", brief="Utility")
-async def showeffects(ctx: discord.ext.commands.Context):
-    if prefix == "t?" and ctx.author.id != 612861256189083669:
-        msg: discord.Message = await ctx.channel.send("t? is only for alex to test")
-        await msg.add_reaction(ej.pog_emoji)
-        return
-    await effects_display.showeffectsmenu()
+# todo show all effects?
+#  @bot.command(description=f"Shows effects", brief="Utility")
+# async def showeffects(ctx: discord.ext.commands.Context):
+#     if prefix == "t?" and ctx.author.id != 612861256189083669:
+#         msg: discord.Message = await ctx.channel.send("t? is only for alex to test")
+#         await msg.add_reaction(ej.pog_emoji)
+#         return
+#     await effects_display.showeffectsmenu()
 
 
 @bot.command(description=f"Check user's ranking in {ej.ax_emoji}", brief="Utility")
