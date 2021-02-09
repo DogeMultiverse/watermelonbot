@@ -5,7 +5,7 @@ import pymongo
 import asyncio
 import random
 from discord.ext import commands
-from mastermelon import counting_bot
+from mastermelon import counting_bot, show_countries
 from mastermelon import highlow_game
 from mastermelon import giveaway_bot
 from mastermelon import effects_display
@@ -92,6 +92,8 @@ if prefix in ["w?", "t?"]:  # only access mongodb for w? and t?
     convertedexp = db["convertedexp"]
     ax = db["ax"]
     ingamecosmetics = db["ingamecosmetics"]
+    ipaddress_access_key: str = js["ipaddress_access_key"]
+    serverplayerupdates = db["serverplayerupdates"]
 
 bot = commands.Bot(command_prefix=prefix, description=description, intents=intents)
 
@@ -179,6 +181,14 @@ async def getemojis(ctx):
         if emoji.animated:
             await ctx.message.add_reaction(emoji)
     await ctx.channel.send("added animated all emojis")
+
+
+@bot.command(description="get countries played", brief="None")
+async def gettest(ctx):
+    if prefix == "t?" and ctx.author.id != 612861256189083669:
+        await ctx.channel.send("no testing for u")
+        return
+    await show_countries.getcountries(serverplayerupdates,ipaddress_access_key)
 
 
 @bot.command(description="adds <:EMOJI:> to the desired <message_id> in [channel]. max 20 emojis per message",
