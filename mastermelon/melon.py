@@ -270,14 +270,14 @@ async def guess(ctx: discord.ext.commands.Context):
 
 
 @bot.command(description="Check user's registered account's EXP", brief="Utility")
-async def checkexp(ctx: discord.ext.commands.Context, member: discord.User = None):
+async def checkexp(ctx: discord.ext.commands.Context, user: discord.User = None):
     if prefix == "t?" and ctx.author.id != 612861256189083669:
         await ctx.channel.send("no testing for u")
         return
-    if isinstance(member, type(None)):
+    if isinstance(user, type(None)):
         userTarget = ctx.author.id
     else:
-        userTarget = member.id
+        userTarget = user.id
     await ctx.channel.send('getting exp', delete_after=3)
     cursor = expgains.find({"duuid": userTarget})
     convertedexp_doc = convertedexp.find_one({"duuid": userTarget})
