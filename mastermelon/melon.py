@@ -5,7 +5,7 @@ import pymongo
 import asyncio
 import random
 from discord.ext import commands
-from mastermelon import counting_bot, show_countries
+from mastermelon import counting_bot, show_countries, console_commands
 from mastermelon import highlow_game
 from mastermelon import giveaway_bot
 from mastermelon import effects_display
@@ -185,10 +185,28 @@ async def getemojis(ctx):
 
 @bot.command(description="get countries played", brief="None")
 async def gettest(ctx):
-    if prefix == "t?" and ctx.author.id != 612861256189083669:
+    if ctx.author.id != 612861256189083669:
         await ctx.channel.send("no testing for u")
         return
-    await show_countries.getcountries(serverplayerupdates,ipaddress_access_key)
+    await show_countries.getcountries(serverplayerupdates, ipaddress_access_key)
+
+
+@bot.command(description="restart servers (admin only)", brief="None")
+@commands.has_role("Admin (Discord)")
+async def restartserver(ctx: commands.Context, serverid: int, servercommand: str = "hubkick"):
+    if ctx.author.id != 612861256189083669:
+        await ctx.channel.send("no testing for u")
+        return
+    await console_commands.restartserver(ctx, serverid, servercommand)
+
+
+@bot.command(description="get servers (admin only)", brief="None")
+@commands.has_role("Admin (Discord)")
+async def getserver(ctx):
+    if ctx.author.id != 612861256189083669:
+        await ctx.channel.send("no testing for u")
+        return
+    await console_commands.getserver(ctx)
 
 
 @bot.command(description="adds <:EMOJI:> to the desired <message_id> in [channel]. max 20 emojis per message",
