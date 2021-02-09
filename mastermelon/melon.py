@@ -270,15 +270,18 @@ async def guess(ctx: discord.ext.commands.Context):
 
 
 @bot.command(description="Check user's registered account's EXP", brief="Utility")
-async def checkexp(ctx: discord.ext.commands.Context):
+async def checkexp(ctx: discord.ext.commands.Context, member: discord.Member):
     if prefix == "t?" and ctx.author.id != 612861256189083669:
         await ctx.channel.send("no testing for u")
         return
+    if userTarget not member.id:
+        userTarger = ctx.author.id
+        return
     await ctx.channel.send('getting exp', delete_after=3)
-    cursor = expgains.find({"duuid": ctx.author.id})
-    convertedexp_doc = convertedexp.find_one({"duuid": ctx.author.id})
+    cursor = expgains.find({"duuid": userTarget})
+    convertedexp_doc = convertedexp.find_one({"duuid": usertarget})
     if convertedexp_doc is None:
-        convertedexp.insert_one({"duuid": ctx.author.id, "converted": None})
+        convertedexp.insert_one({"duuid": userTarget, "converted": None})
     else:
         convertedexp_doc = convertedexp_doc["converted"]
     res = []
@@ -290,8 +293,8 @@ async def checkexp(ctx: discord.ext.commands.Context):
     else:
         str_builder, exp_dict, convertedexp_doc = get_latest_exp(res, convertedexp_doc)
         if len(str_builder) > 0:
-            convertedexp.find_one_and_replace({"duuid": ctx.author.id},
-                                              {"duuid": ctx.author.id, "converted": convertedexp_doc})
+            convertedexp.find_one_and_replace({"duuid": userTarget},
+                                              {"duuid": userTarget, "converted": convertedexp_doc})
 
             # todo count the amount of unconverted exp and trigger the next line if there is
             await ctx.channel.send(str_builder + f"\n Type `{prefix}convertexp` to convert your EXP into {ej.ax_emoji}."
