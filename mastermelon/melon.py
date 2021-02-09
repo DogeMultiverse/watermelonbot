@@ -194,18 +194,12 @@ async def gettest(ctx):
 @bot.command(description="restart servers (admin only)", brief="None")
 @commands.has_role("Admin (Discord)")
 async def restartserver(ctx: commands.Context, serverid: int, servercommand: str = "hubkick"):
-    if ctx.author.id != 612861256189083669:
-        await ctx.channel.send("no testing for u")
-        return
     await console_commands.restartserver(ctx, serverid, servercommand)
 
 
 @bot.command(description="get servers (admin only)", brief="None")
 @commands.has_role("Admin (Discord)")
 async def getserver(ctx):
-    if ctx.author.id != 612861256189083669:
-        await ctx.channel.send("no testing for u")
-        return
     await console_commands.getserver(ctx)
 
 
