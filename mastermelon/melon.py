@@ -43,7 +43,7 @@ def get_latest_exp(res, convertedexp_doc):
         for server, exp in sorted(list(exps.items()),
                                   key=lambda x: 0 if isinstance(x[1], type(None)) else x[1], reverse=True):
             if server in ["ALEX | ATTACK SERVER", "ALEX | PVP SERVER", "ALEX | SURVIVAL SERVER",
-                          'ALEX | TURBO PVP SERVER', "ALEX | PVP SERVER (ASIA)"]:
+                          'ALEX | TURBO PVP SERVER', "ALEX | PVP SERVER (ASIA)", "ALEX | HEX SERVER"]:
                 try:
                     exp = 0 if exp is None else exp
                     rservername = server[7:].replace(" SERVER", "")
