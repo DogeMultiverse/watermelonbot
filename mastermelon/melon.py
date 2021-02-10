@@ -175,6 +175,7 @@ async def highlow(ctx):
 
 
 @bot.command(description="Gets all animated emojis from this discord.", brief="None")
+@commands.has_any_role("Admin (Discord)", "Mod (Discord)")
 async def getemojis(ctx):
     emojis = await ctx.guild.fetch_emojis()
     for emoji in emojis:
@@ -183,7 +184,7 @@ async def getemojis(ctx):
     await ctx.channel.send("added animated all emojis")
 
 
-@bot.command(description="get countries played", brief="None")
+@bot.command(description="get countries played", brief="Admin Utility")
 async def gettest(ctx):
     if ctx.author.id != 612861256189083669:
         await ctx.channel.send("no testing for u")
@@ -191,13 +192,13 @@ async def gettest(ctx):
     await show_countries.getcountries(serverplayerupdates, ipaddress_access_key)
 
 
-@bot.command(description="restart servers (admin only)", brief="None")
+@bot.command(description="restart servers (admin only)", brief="Admin Utility")
 @commands.has_role("Admin (Discord)")
 async def restartserver(ctx: commands.Context, serverid: int, servercommand: str = "hubkick"):
     await console_commands.restartserver(ctx, serverid, servercommand)
 
 
-@bot.command(description="get servers (admin only)", brief="None")
+@bot.command(description="get servers (admin only)", brief="Admin Utility")
 @commands.has_role("Admin (Discord)")
 async def getserver(ctx):
     await console_commands.getserver(ctx)
@@ -206,6 +207,7 @@ async def getserver(ctx):
 @bot.command(description="adds <:EMOJI:> to the desired <message_id> in [channel]. max 20 emojis per message",
              help="adds <:emoji:> to <message_id> in [channel]",
              brief="Hype")
+@commands.has_any_role("Admin (Discord)", "Mod (Discord)")
 async def addemoji(ctx, emoji: str, messageid: int, channel: discord.TextChannel = None):
     # todo fix error message when command invalid
     emojis = await ctx.guild.fetch_emojis()
@@ -229,6 +231,7 @@ async def addemoji(ctx, emoji: str, messageid: int, channel: discord.TextChannel
 
 @bot.command(description="adds hype emojis",
              help="<message_id> <channel> <counts> (duration will be ~ counts*10 secs)", brief="Hype")
+@commands.has_any_role("Admin (Discord)", "Mod (Discord)")
 async def addhype(ctx, messageid: int, channel: discord.TextChannel = None, counts: int = 5):
     # todo fix error message when command invalid
     emojis = await ctx.guild.fetch_emojis()
