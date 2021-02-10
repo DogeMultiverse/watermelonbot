@@ -73,6 +73,16 @@ async def restartserver(ctx: commands.Context, serverid: int, servercommand: str
         pass
 
 
+def getgame_status():
+    # todo, gets the game status, and if it is available for restart
+    return
+
+
+def queueforrestart():
+    # todo command to wait for the game to be over and then initiate the restart
+    return
+
+
 async def getserver(ctx: commands.Context):
     servers = getservers()
     strr = [f"`{s1:>3}  {s2:<30}  , id= {s3:<10} , owner:{s4}`" for s1, s2, s3, s4 in servers]
