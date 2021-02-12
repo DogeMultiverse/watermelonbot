@@ -455,6 +455,9 @@ async def convertexp(ctx: discord.ext.commands.Context):
         else:
             await ctx.channel.send("You have no exp. ;-; Can't convert emptiness.")
 
+@bot.command
+async def appeal(ctx, idoruuid: string, punishment: string, reason: string)
+
 
 @bot.event
 async def on_message(message: discord.Message):
