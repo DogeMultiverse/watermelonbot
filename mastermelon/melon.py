@@ -95,24 +95,24 @@ if prefix in ["w?", "t?"]:  # only access mongodb for w? and t?
     ipaddress_access_key: str = js["ipaddress_access_key"]
     serverplayerupdates = db["serverplayerupdates"]
 
-bot = commands.Bot(command_prefix=prefix, description=description, intents=intents)
 
-# todo , make a nicer help command
-# todo command "help"
+# bot = commands.Bot(command_prefix=prefix, description=description, intents=intents)
+
+
+class bb(commands.Bot):
+    def __init__(self, command_prefix, *args, **options):
+        super().__init__(command_prefix, *args, **options)
+
+    async def on_member_join(self, member):
+        guild: discord.Guild = member.guild
+        if guild.system_channel is not None:
+            to_send = 'Welcome {0.mention} to {1.name}!'.format(member, guild)
+            await guild.system_channel.send(to_send)
+
+
+bot = bb(command_prefix=prefix, description=description, intents=intents)
+
 bot.remove_command("help")
-
-
-# @bot.group(invoke_without_command=True)
-# async def help(ctx: discord.ext.commands.Context):
-#     em = discord.Embed(title=f"All commands from `[{prefix}] {bot.user.display_name}`",
-#                        description=f"Type {prefix}<command> to use them.")
-#     em.add_field(name="Games", value="`guess`, `highlow`")
-#     em.add_field(name="Utilities", value="`addemoji`, `addhype`, `help`, `github`")
-#     em.add_field(name="Others", value="`help`, `github`")
-#     em.add_field(name="Mindustry", value="`buyeffect`, `checkexp`, `convertexp`")
-#     em.add_field(name="Other bots' commands", value=f"`a?help`, `lol help`, `,suggest help`")
-#     # todo add thumbnail em.add_field(thumnail)
-#     await ctx.send(embed=em)
 
 
 @bot.command()
@@ -462,6 +462,10 @@ async def on_message(message: discord.Message):
     pepo_clap = "https://media.discordapp.net/attachments/799855760011427880/806869234122358794/792177151448973322.gif"
     if "<@!500744743660158987>" in message.content and prefix == "t?":
         await message.reply(fig, mention_author=True)
+    elif message.content.startswith(prefix + "test"):
+        await message.channel.send(f"this is to test stuff")
+    elif (message.content.startswith("ty") or message.content.startswith("Ty")) and (bot.user in message.mentions):
+        await message.reply("😊", mention_author=True)
     elif message.content == ':pepoclap:' and prefix == "t?":
         await message.reply(pepo_clap)
     elif prefix == "w?" and message.channel.id == 805105861450137600:  # counting hardcore channel
@@ -480,42 +484,7 @@ def runbot():
     bot.add_cog(giveaway_bot.Giveaway(bot))
     bot.run(bot_token)
 
-#
-# @bot.event
-# async def on_message(message):  # todo rewrite this whole chunk into their individual commands see eg above
-#     # we do not want the bot to reply to itself
-#     if message.author.id == bot.user.id:
-#         return
-#     if message.content.startswith(prefix + 'help'):
-#         await message.channel.send(
-#             'Available commands: `help`, `hello`, `guess`, `checkexp`, `convertexp`, `buyeffect`, `github`. '
-#             'Prefix is `' + prefix + "` .\n" +
-#             "Other bots commands: `a?help`, `lol help`, `,suggest help`")
-#     elif message.content.startswith(prefix + 'guess'):
-#     elif message.content.startswith(prefix + 'hello'):
-#         await message.reply('Hello!', mention_author=True)
-#     elif message.content.startswith(prefix + "checkexp"):
 #     elif message.content.startswith(prefix + "claimeffect"):
 #         # todo @BOUNTY # check for role precondition then give effect
 #         #  https://discordpy.readthedocs.io/en/latest/api.html#reaction
-#         pass
-#     elif message.content.startswith(prefix + "restartservers"):
-#         # todo @BOUNTY # check for role precondition then soft restart and hard restart
-#         pass
-#     elif message.content.startswith(prefix + "buyeffect"):
-#         i
-#     elif message.content.startswith(prefix + "axleaderboard"):
-#         await message.channel.send("type `a?axleaderboard`")
-#     elif message.content.startswith(prefix + "convertexp"):
-#
-#     elif message.content.startswith(prefix + "github"):
-#         await message.channel.send("watermelonbot: https://github.com/alexpvpmindustry/watermelonbot\n" +
-#                                    "lol bot: https://github.com/unjown/unjownbot")
-#     elif '<@!804013622963208213>' in message.content:
-#         if prefix == "w?":
-#             await message.channel.send(prefix + 'is my prefix')
-#     elif message.content.startswith(prefix):
-#         await message.channel.send("Unknown command, type `" + prefix + "help` for help.")
-#
-#     elif prefix == "t?" and message.channel.id == 805105861450137600:
 #         pass
