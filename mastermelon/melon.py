@@ -464,11 +464,11 @@ async def appeal(ctx, args, punishment: str, idoruuid: str = None, reason: str =
      if isinstance(reason, type(None)):
         return ctx.channel.send("you must fill a reason of you got banned/kick")
      else:
-          channel = discord.utils.get(ctx.guild.channels, id="")
+          channel = discord.utils.get(ctx.guild.channels, id="810024495029026856") #appeal-submission
           embed = discord.Embed("Appeal")
           embed.set_author(ctx.author.name, ctx.author.avatar_url, ctx.author.avatar_url)
           embed.add_field("Type:", punishment)
-          embed.add_field("ID/UUID:", idoruuid)
+          embed.add_field("ID/UUID/In-game Player Name:", idoruuid)
           embed.add_field("Reason:", reason)
           ctx.channel.send("thanks for appealing")
           channel.send(embed=embed)
