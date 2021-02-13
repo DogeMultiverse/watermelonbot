@@ -105,13 +105,68 @@ class bb(commands.Bot):
 
     async def on_member_join(self, member):
         guild: discord.Guild = member.guild
-        if guild.system_channel is not None:
-            to_send = 'Welcome {0.mention} to {1.name}!'.format(member, guild)
-            await guild.system_channel.send(to_send)
+
+        # Getting the invites before the user joining from our cache for this specific guild
+        invites_before_join = invites[member.guild.id]
+        # Getting the invites after the user joining so we can compare it with the first one, and
+        # see which invite uses number increased
+        invites_after_join = await member.guild.invites()
+        # Loops for each invite we have for the guild the user joined.
+        for invite in invites_before_join:
+            # Now, we're using the function we created just before to check which invite count is bigger
+            # than it was before the user joined.
+            if invite.uses < find_invite_by_code(invites_after_join, invite.code).uses:
+                # Now that we found which link was used, we will print a couple things in our console:
+                # the name, invite code used the the person who created the invite code, or the inviter.
+                print(f"Member {member.name} Joined. Invite Code: {invite.code}. Inviter: {invite.inviter}")
+                if guild.system_channel is not None:
+                    to_send = 'Welcome {0.mention} to {1.name}!'.format(member, guild)
+                    await guild.system_channel.send(
+                        to_send + f". Invite Code: {invite.code}. Inviter: {invite.inviter}")
+                # We will now update our cache so it's ready
+                # for the next user that joins the guild
+
+                invites[member.guild.id] = invites_after_join
+
+                # We return here since we already found which
+                # one was used and there is no point in
+                # looping when we already got what we wanted
+                return
     ## todo track invites here
 
 
 bot = bb(command_prefix=prefix, description=description, intents=intents)
+invites = {}
+
+
+@bot.event
+async def on_member_remove(member):
+    # Updates the cache when a user leaves to make sure everything is up to date
+    invites[member.guild.id] = await member.guild.invites()
+
+
+@bot.event
+async def on_ready():
+    print('Logged in as', bot.user.name, bot.user.id)
+    for guild in bot.guilds:
+        # Adding each guild's invites to our dict
+        invites[guild.id] = await guild.invites()
+
+
+def find_invite_by_code(invite_list, code):
+    # Simply looping through each invite in an
+    # invite list which we will get using guild.invites()
+
+    for inv in invite_list:
+
+        # Check if the invite code in this element
+        # of the list is the one we're looking for
+
+        if inv.code == code:
+            # If it is, we return it.
+
+            return inv
+
 
 bot.remove_command("help")
 
@@ -162,14 +217,6 @@ async def help(ctx, args=None):
     await ctx.send(embed=help_embed)
 
 
-@bot.event
-async def on_ready():
-    print('Logged in as')
-    print(bot.user.name)
-    print(bot.user.id)
-    print('------')
-
-
 @bot.command(description="High low game, try to guess the correct number by clicking higher or lower.", brief="Game")
 async def highlow(ctx):
     await highlow_game.run_highlowgame(ctx, bot)
@@ -210,7 +257,6 @@ async def getserver(ctx):
              brief="Hype")
 @commands.has_any_role("Admin (Discord)", "Mod (Discord)")
 async def addemoji(ctx, emoji: str, messageid: int, channel: discord.TextChannel = None):
-    # todo fix error message when command invalid
     emojis = await ctx.guild.fetch_emojis()
     try:
         await ctx.message.delete(delay=3)
@@ -234,7 +280,6 @@ async def addemoji(ctx, emoji: str, messageid: int, channel: discord.TextChannel
              help="<message_id> <channel> <counts> (duration will be ~ counts*10 secs)", brief="Hype")
 @commands.has_any_role("Admin (Discord)", "Mod (Discord)")
 async def addhype(ctx, messageid: int, channel: discord.TextChannel = None, counts: int = 5):
-    # todo fix error message when command invalid
     emojis = await ctx.guild.fetch_emojis()
     try:
         if channel is None:
@@ -258,7 +303,7 @@ async def addhype(ctx, messageid: int, channel: discord.TextChannel = None, coun
 
 
 @bot.event
-async def on_command_error(ctx: discord.ext.commands.Context, error: Exception):
+async def on_command_error(ctx: discord.ext.commands.Context, error: Exception, *args, **kwargs):
     print(ctx, str(error))
     if isinstance(type(error), discord.ext.commands.UserInputError):
         await ctx.message.channel.send("Wrong arguments:" + str(error))
