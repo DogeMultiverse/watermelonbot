@@ -459,7 +459,7 @@ async def convertexp(ctx: discord.ext.commands.Context):
 async def appeal(ctx, args, punishment: str, idoruuid: str = None, reason: str = None):
      if isinstance(idoruuid, type(None)):
         return ctx.channel.send("you must fill a player id or uuid")
-     if not punishment.startwith("minecraftBan", "terrariaBan", "mindustryKick", "mindustryBan"):
+     if not punishment.startswith(("minecraftBan", "terrariaBan", "mindustryKick", "mindustryBan"))
         return ctx.channel.send("you must fill a punishment type, here is:/nmindustryBan, mindustryKick, terrariaBan, minecraftBan")
      if isinstance(reason, type(None)):
         return ctx.channel.send("you must fill a reason of you got banned/kick")
