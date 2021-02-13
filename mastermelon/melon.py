@@ -132,7 +132,8 @@ class bb(commands.Bot):
                 # one was used and there is no point in
                 # looping when we already got what we wanted
                 return
-    ## todo track invites here
+        ## todo track invites here (count the total number of invites from a user, save to a file maybe?)
+        ## abstract this part into another module.
 
 
 bot = bb(command_prefix=prefix, description=description, intents=intents)
