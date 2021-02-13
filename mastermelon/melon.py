@@ -108,6 +108,7 @@ class bb(commands.Bot):
         if guild.system_channel is not None:
             to_send = 'Welcome {0.mention} to {1.name}!'.format(member, guild)
             await guild.system_channel.send(to_send)
+    ## todo track invites here
 
 
 bot = bb(command_prefix=prefix, description=description, intents=intents)
