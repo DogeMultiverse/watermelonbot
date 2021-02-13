@@ -456,8 +456,23 @@ async def convertexp(ctx: discord.ext.commands.Context):
             await ctx.channel.send("You have no exp. ;-; Can't convert emptiness.")
 
 @bot.command
-async def appeal(ctx, idoruuid: string, punishment: string, reason: string)
-
+async def appeal(ctx, idoruuid: str = None, punishment: str, reason: str = None)
+     if isinstance(idoruuid, type(None)):
+        return message.channel.send("you must fill a player id or uuid")
+     elif not punishment.startwith("minecraftBan", "terrariaBan", "mindustryKick", mindustryBan):
+        return message.channel.send("you must fill a punishment type, here is:/nmindustryBan, mindustryKick, terrariaBan, minecraftBan")
+     elif isinstance(reason, type(None)):
+        return message.channel.send("you must fill a reason of you got banned/kick")
+     else:
+          channel = discord.utils.get(member.guild.channels, id=)
+          embed = discord.Embed("Appeal")
+          embed.set_author(ctx.author.name, ctx.author.avatar_url, ctx.author.avatar_url)
+          embed.add_field("Type:", punishment)
+          embed.add_field("ID/UUID:", idoruuid)
+          embed.add_field("Reason:", reason)
+          message.channel.send("thanks for appealing)
+          channel.send(embed=embed)
+          
 
 @bot.event
 async def on_message(message: discord.Message):
