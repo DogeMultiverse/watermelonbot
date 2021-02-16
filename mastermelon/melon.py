@@ -461,7 +461,7 @@ async def appeal(ctx, punishment: str =None, idoruuid: str = None, reason: str =
         await ctx.channel.send("you must fill a player id, uuid or in game name")
      if isinstance(punishment, type(None)):
         await ctx.channel.send("you must fill a punishment you have")
-     elif not punishment.startswith(("minecraftBan", "terrariaBan", "mindustryKick", "mindustryBan")):
+     if not punishment.startswith(("minecraftBan", "terrariaBan", "mindustryKick", "mindustryBan")):
         await ctx.channel.send("you must fill a punishment type, here is:\nmindustryBan, mindustryKick, terrariaBan, minecraftBan")
      if isinstance(reason, type(None)):
         await ctx.channel.send("you must fill a reason of you got banned/kick")
