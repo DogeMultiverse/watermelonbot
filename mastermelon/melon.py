@@ -455,26 +455,26 @@ async def convertexp(ctx: discord.ext.commands.Context):
         else:
             await ctx.channel.send("You have no exp. ;-; Can't convert emptiness.")
 
-@bot.command(description="For Appealing a member", brief="Utility")
-async def appeal(ctx, punishment: str =None, idoruuid: str = None, reason: str = None):
-     if isinstance(idoruuid, type(None)):
-        await ctx.channel.send("you must fill a player id, uuid or in game name")
-     if isinstance(punishment, type(None)):
-        await ctx.channel.send("you must fill a punishment you have")
-     if not punishment.startswith(("minecraftBan", "terrariaBan", "mindustryKick", "mindustryBan")):
-        await ctx.channel.send("you must fill a punishment type, here is:\nmindustryBan, mindustryKick, terrariaBan, minecraftBan")
-     if isinstance(reason, type(None)):
+
+@bot.command(description="For Appealing a member", brief="Utility",
+             help="<minecraftBan|terrariaBan|mindustryKick|mindustryBan> <in_game_name> <reason>")
+async def appeal(ctx, punishment: str, idoruuid: str, *, reason: str):
+    if not punishment.startswith(("minecraftBan", "terrariaBan", "mindustryKick", "mindustryBan")):
+        await ctx.channel.send(
+            "you must fill a punishment type, here is:\nmindustryBan, mindustryKick, terrariaBan, minecraftBan")
+        return
+    if isinstance(reason, type(None)) or reason == "":
         await ctx.channel.send("you must fill a reason of you got banned/kick")
-     else:
-          await ctx.send("thanks for appealing")
-          channel = bot.get_channel(810024495029026856) #appeal-submission
-          embed = discord.Embed(title="Appeal")
-          embed.set_author(name=ctx.author.name, url=ctx.author.avatar_url, icon_url=ctx.author.avatar_url)
-          embed.add_field(name="Type:", value=str(punishment), inline=False)
-          embed.add_field(name="ID/UUID/In-game Player Name:", value=str(idoruuid), inline=False)
-          embed.add_field(name="Reason:", value=str(reason), inline=False)
-          await channel.send(embed=embed)
-          
+        return
+    await ctx.send("thanks for appealing")
+    channel = bot.get_channel(810024495029026856)  # appeal-submission
+    embed = discord.Embed(title="Appeal")
+    embed.set_author(name=ctx.author.name, url=ctx.author.avatar_url, icon_url=ctx.author.avatar_url)
+    embed.add_field(name="Type:", value=str(punishment), inline=False)
+    embed.add_field(name="ID/UUID/In-game Player Name:", value=str(idoruuid), inline=False)
+    embed.add_field(name="Reason:", value=str(reason), inline=False)
+    await channel.send(embed=embed)
+
 
 @bot.event
 async def on_message(message: discord.Message):
