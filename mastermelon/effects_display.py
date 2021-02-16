@@ -93,7 +93,7 @@ async def showeffectsmenu(ctx: ext.commands.Context, effects_cost: dict, owned_e
                     react_msg = await ctx.channel.send(
                         f"No preview for this effect yet. Please go to HUB to view it.\nTo "
                         f"purchase, type `{ctx.bot.command_prefix}buyeffect {emoj[1]}`.")
-                    await ej.sleep_add_reaction(react_msg, ej.feelsbm_emoji)
+                    await ej.sleep_add_reaction(react_msg, 5, ej.feelsbm_emoji)
 
     for emoj in emojis_used:
         await msg.remove_reaction(emoj[0], ctx.bot.user)

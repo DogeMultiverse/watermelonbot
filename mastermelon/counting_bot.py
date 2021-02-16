@@ -1,6 +1,7 @@
 # this bots just reads a file and see if the count is valid, if it is, append to the file. if fails, reset the file
 
 import json
+from mastermelon import emojis as ej
 
 
 def read_data():
@@ -48,7 +49,7 @@ async def run_counterbot(message, self):
     except Exception as e:
         # print(str(e))
         pass
-    await message.channel.send(f"FAILED! {message.author.mention} CAN'T COUNT <:kekw:786876427311251466>!!")
+    await message.channel.send(f"FAILED! {message.author.mention} CAN'T COUNT {ej.kekw_emoji}!!")
     if current_count > data["highscore"]:
         data["highscore"] = current_count
         data["highscore_players"] = data["current_players"]

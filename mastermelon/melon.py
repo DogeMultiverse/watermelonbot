@@ -95,24 +95,81 @@ if prefix in ["w?", "t?"]:  # only access mongodb for w? and t?
     ipaddress_access_key: str = js["ipaddress_access_key"]
     serverplayerupdates = db["serverplayerupdates"]
 
-bot = commands.Bot(command_prefix=prefix, description=description, intents=intents)
 
-# todo , make a nicer help command
-# todo command "help"
+# bot = commands.Bot(command_prefix=prefix, description=description, intents=intents)
+
+
+class bb(commands.Bot):
+
+    def __init__(self, command_prefix, *args, **options):
+        self.invites = {}
+        super().__init__(command_prefix, *args, **options)
+
+    async def on_member_join(self, member):
+        guild: discord.Guild = member.guild
+
+        # Getting the invites before the user joining from our cache for this specific guild
+        invites_before_join = self.invites[member.guild.id]
+        # Getting the invites after the user joining so we can compare it with the first one, and
+        # see which invite uses number increased
+        invites_after_join = await member.guild.invites()
+        # Loops for each invite we have for the guild the user joined.
+        for invite in invites_before_join:
+            # Now, we're using the function we created just before to check which invite count is bigger
+            # than it was before the user joined.
+            if invite.uses < find_invite_by_code(invites_after_join, invite.code).uses:
+                # Now that we found which link was used, we will print a couple things in our console:
+                # the name, invite code used the the person who created the invite code, or the inviter.
+                print(f"Member {member.name} Joined. Invite Code: {invite.code}. Inviter: {invite.inviter}")
+                if guild.system_channel is not None:
+                    to_send = 'Welcome {0.mention} to {1.name}!'.format(member, guild)
+                    await guild.system_channel.send(
+                        to_send + f". Invite Code: {invite.code}. Inviter: {invite.inviter}")
+                # We will now update our cache so it's ready
+                # for the next user that joins the guild
+
+                self.invites[member.guild.id] = invites_after_join
+
+                # We return here since we already found which
+                # one was used and there is no point in
+                # looping when we already got what we wanted
+                return
+        ## todo track invites here (count the total number of invites from a user, save to a file maybe?)
+        ## abstract this part into another module.
+
+    async def on_member_remove(self, member: discord.Member):
+        # Updates the cache when a user leaves to make sure everything is up to date
+        invites_before_remove = self.invites[member.guild.id]
+        invites_after_remove = await member.guild.invites()
+        self.invites[member.guild.id] = await member.guild.invites()
+        guild: discord.Guild = member.guild
+        for invite in invites_before_remove:
+            if invite.uses > find_invite_by_code(invites_after_remove, invite.code).uses:
+                print(f"Member {member.name} left. Invite Code: {invite.code}. Inviter: {invite.inviter}")
+                await guild.system_channel.send(f"{member.name} just left this discord, -1 invite for Invite Code: {invite.code}. Inviter: {invite.inviter}")
+
+    async def on_ready(self):
+        print('Logged in as', bot.user.name, bot.user.id)
+        for guild in bot.guilds:
+            # Adding each guild's invites to our dict
+            self.invites[guild.id] = await guild.invites()
+
+
+bot = bb(command_prefix=prefix, description=description, intents=intents)
+
+
+def find_invite_by_code(invite_list, code):
+    # Simply looping through each invite in an
+    # invite list which we will get using guild.invites()
+    for inv in invite_list:
+        # Check if the invite code in this element
+        # of the list is the one we're looking for
+        if inv.code == code:
+            # If it is, we return it.
+            return inv
+
+
 bot.remove_command("help")
-
-
-# @bot.group(invoke_without_command=True)
-# async def help(ctx: discord.ext.commands.Context):
-#     em = discord.Embed(title=f"All commands from `[{prefix}] {bot.user.display_name}`",
-#                        description=f"Type {prefix}<command> to use them.")
-#     em.add_field(name="Games", value="`guess`, `highlow`")
-#     em.add_field(name="Utilities", value="`addemoji`, `addhype`, `help`, `github`")
-#     em.add_field(name="Others", value="`help`, `github`")
-#     em.add_field(name="Mindustry", value="`buyeffect`, `checkexp`, `convertexp`")
-#     em.add_field(name="Other bots' commands", value=f"`a?help`, `lol help`, `,suggest help`")
-#     # todo add thumbnail em.add_field(thumnail)
-#     await ctx.send(embed=em)
 
 
 @bot.command()
@@ -161,14 +218,6 @@ async def help(ctx, args=None):
     await ctx.send(embed=help_embed)
 
 
-@bot.event
-async def on_ready():
-    print('Logged in as')
-    print(bot.user.name)
-    print(bot.user.id)
-    print('------')
-
-
 @bot.command(description="High low game, try to guess the correct number by clicking higher or lower.", brief="Game")
 async def highlow(ctx):
     await highlow_game.run_highlowgame(ctx, bot)
@@ -209,7 +258,6 @@ async def getserver(ctx):
              brief="Hype")
 @commands.has_any_role("Admin (Discord)", "Mod (Discord)")
 async def addemoji(ctx, emoji: str, messageid: int, channel: discord.TextChannel = None):
-    # todo fix error message when command invalid
     emojis = await ctx.guild.fetch_emojis()
     try:
         await ctx.message.delete(delay=3)
@@ -233,7 +281,6 @@ async def addemoji(ctx, emoji: str, messageid: int, channel: discord.TextChannel
              help="<message_id> <channel> <counts> (duration will be ~ counts*10 secs)", brief="Hype")
 @commands.has_any_role("Admin (Discord)", "Mod (Discord)")
 async def addhype(ctx, messageid: int, channel: discord.TextChannel = None, counts: int = 5):
-    # todo fix error message when command invalid
     emojis = await ctx.guild.fetch_emojis()
     try:
         if channel is None:
@@ -257,7 +304,7 @@ async def addhype(ctx, messageid: int, channel: discord.TextChannel = None, coun
 
 
 @bot.event
-async def on_command_error(ctx: discord.ext.commands.Context, error: Exception):
+async def on_command_error(ctx: discord.ext.commands.Context, error: Exception, *args, **kwargs):
     print(ctx, str(error))
     if isinstance(type(error), discord.ext.commands.UserInputError):
         await ctx.message.channel.send("Wrong arguments:" + str(error))
@@ -482,6 +529,10 @@ async def on_message(message: discord.Message):
     pepo_clap = "https://media.discordapp.net/attachments/799855760011427880/806869234122358794/792177151448973322.gif"
     if "<@!500744743660158987>" in message.content and prefix == "t?":
         await message.reply(fig, mention_author=True)
+    elif message.content.startswith(prefix + "test"):
+        await message.channel.send(f"this is to test stuff")
+    elif (message.content.startswith("ty") or message.content.startswith("Ty")) and (bot.user in message.mentions):
+        await message.reply("😊", mention_author=True)
     elif message.content == ':pepoclap:' and prefix == "t?":
         await message.reply(pepo_clap)
     elif prefix == "w?" and message.channel.id == 805105861450137600:  # counting hardcore channel
@@ -500,42 +551,7 @@ def runbot():
     bot.add_cog(giveaway_bot.Giveaway(bot))
     bot.run(bot_token)
 
-#
-# @bot.event
-# async def on_message(message):  # todo rewrite this whole chunk into their individual commands see eg above
-#     # we do not want the bot to reply to itself
-#     if message.author.id == bot.user.id:
-#         return
-#     if message.content.startswith(prefix + 'help'):
-#         await message.channel.send(
-#             'Available commands: `help`, `hello`, `guess`, `checkexp`, `convertexp`, `buyeffect`, `github`. '
-#             'Prefix is `' + prefix + "` .\n" +
-#             "Other bots commands: `a?help`, `lol help`, `,suggest help`")
-#     elif message.content.startswith(prefix + 'guess'):
-#     elif message.content.startswith(prefix + 'hello'):
-#         await message.reply('Hello!', mention_author=True)
-#     elif message.content.startswith(prefix + "checkexp"):
 #     elif message.content.startswith(prefix + "claimeffect"):
 #         # todo @BOUNTY # check for role precondition then give effect
 #         #  https://discordpy.readthedocs.io/en/latest/api.html#reaction
-#         pass
-#     elif message.content.startswith(prefix + "restartservers"):
-#         # todo @BOUNTY # check for role precondition then soft restart and hard restart
-#         pass
-#     elif message.content.startswith(prefix + "buyeffect"):
-#         i
-#     elif message.content.startswith(prefix + "axleaderboard"):
-#         await message.channel.send("type `a?axleaderboard`")
-#     elif message.content.startswith(prefix + "convertexp"):
-#
-#     elif message.content.startswith(prefix + "github"):
-#         await message.channel.send("watermelonbot: https://github.com/alexpvpmindustry/watermelonbot\n" +
-#                                    "lol bot: https://github.com/unjown/unjownbot")
-#     elif '<@!804013622963208213>' in message.content:
-#         if prefix == "w?":
-#             await message.channel.send(prefix + 'is my prefix')
-#     elif message.content.startswith(prefix):
-#         await message.channel.send("Unknown command, type `" + prefix + "help` for help.")
-#
-#     elif prefix == "t?" and message.channel.id == 805105861450137600:
 #         pass
