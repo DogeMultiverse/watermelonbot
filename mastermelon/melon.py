@@ -146,7 +146,8 @@ class bb(commands.Bot):
         for invite in invites_before_remove:
             if invite.uses > find_invite_by_code(invites_after_remove, invite.code).uses:
                 print(f"Member {member.name} left. Invite Code: {invite.code}. Inviter: {invite.inviter}")
-                await guild.system_channel.send(f"{member.name} just left this discord, -1 invite for Invite Code: {invite.code}. Inviter: {invite.inviter}")
+                await guild.system_channel.send(
+                    f"{member.name} just left this discord, -1 invite for Invite Code: {invite.code}. Inviter: {invite.inviter}")
 
     async def on_ready(self):
         print('Logged in as', bot.user.name, bot.user.id)
@@ -307,9 +308,11 @@ async def addhype(ctx, messageid: int, channel: discord.TextChannel = None, coun
 async def on_command_error(ctx: discord.ext.commands.Context, error: Exception, *args, **kwargs):
     print(ctx, str(error))
     if isinstance(type(error), discord.ext.commands.UserInputError):
-        await ctx.message.channel.send("Wrong arguments:" + str(error))
+        await ctx.message.channel.send("Wrong arguments: " + str(error))
     elif isinstance(error, discord.ext.commands.errors.BadArgument):
-        await ctx.message.channel.send("ERROR: Bad arugments" + str(error))
+        await ctx.message.channel.send("Bad arguments: " + str(error))
+    elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
+        await ctx.message.channel.send("Missing argument: " + str(error))
     elif isinstance(error, discord.ext.commands.errors.CommandNotFound):
         await ctx.message.channel.send("ERROR: CommandNotFound")
     elif isinstance(error, discord.ext.commands.MissingRole):
@@ -505,10 +508,10 @@ async def convertexp(ctx: discord.ext.commands.Context):
 
 @bot.command(description="For Appealing a member", brief="Utility",
              help="<minecraftBan|terrariaBan|mindustryKick|mindustryBan> <in_game_name> <reason>")
-async def appeal(ctx, punishment: str, idoruuid: str, *, reason: str):
+async def appeal(ctx: discord.ext.commands.Context, punishment: str, idoruuid: str, *, reason: str):
     if not punishment.startswith(("minecraftBan", "terrariaBan", "mindustryKick", "mindustryBan")):
         await ctx.channel.send(
-            "you must fill a punishment type, here is:\nmindustryBan, mindustryKick, terrariaBan, minecraftBan")
+            "you must fill a punishment type:\nmindustryBan, mindustryKick, terrariaBan, minecraftBan")
         return
     if isinstance(reason, type(None)) or reason == "":
         await ctx.channel.send("you must fill a reason of you got banned/kick")
@@ -516,8 +519,8 @@ async def appeal(ctx, punishment: str, idoruuid: str, *, reason: str):
     await ctx.send("thanks for appealing")
     channel = bot.get_channel(810024495029026856)  # appeal-submission
     embed = discord.Embed(title="Appeal")
-    embed.set_author(name=ctx.author.name, url=ctx.author.avatar_url, icon_url=ctx.author.avatar_url)
-    embed.add_field(name="Type:", value=str(punishment), inline=False)
+    embed.set_author(name=ctx.author.name + "#" + ctx.author.discriminator, icon_url=ctx.author.avatar_url)
+    embed.add_field(name="Type:", value=str(punishment) + f" {ctx.author.mention}", inline=False)
     embed.add_field(name="ID/UUID/In-game Player Name:", value=str(idoruuid), inline=False)
     embed.add_field(name="Reason:", value=str(reason), inline=False)
     await channel.send(embed=embed)
@@ -531,7 +534,7 @@ async def on_message(message: discord.Message):
         await message.reply(fig, mention_author=True)
     elif message.content.startswith(prefix + "test"):
         await message.channel.send(f"this is to test stuff")
-    elif (message.content.startswith("ty") or message.content.startswith("Ty")) and (bot.user in message.mentions):
+    elif (message.content.startswith(("ty", "Ty", "TY"))) and (bot.user in message.mentions):
         await message.reply("😊", mention_author=True)
     elif message.content == ':pepoclap:' and prefix == "t?":
         await message.reply(pepo_clap)
