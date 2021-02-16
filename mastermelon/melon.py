@@ -120,10 +120,10 @@ class bb(commands.Bot):
                 print(f"Member {member.name} Joined. Invite Code: {invite.code}. Inviter: {invite.inviter}")
                 if guild.system_channel is not None:
                     if invite.code in invitecode_mapping:
-                        to_send = f'Welcome {member.mention} to {guild.name}! You are the #{total_members} member' + \
+                        to_send = f'Welcome {member.mention} to {guild.name}!\nYou are the #{total_members} member' + \
                                   f".\n Inviter: {invitecode_mapping[invite.code]}. Uses: {invite.uses}"
                     else:
-                        to_send = 'Welcome {0.mention} to {1.name}! '.format(member, guild) + \
+                        to_send = f'Welcome {member.mention} to {guild.name}!\nYou are the #{total_members} member' + \
                                   f".\nInvite Code: {invite.code}. Inviter: {invite.inviter}. Uses: {invite.uses}"
                     embed = discord.Embed(colour=discord.Colour.random().value)
                     embed.add_field(name=f"Welcome!", value=to_send)
