@@ -136,6 +136,7 @@ class bb(commands.Bot):
                 return
         ## todo track invites here (count the total number of invites from a user, save to a file maybe?)
         ## abstract this part into another module.
+        ## todo todo
 
     async def on_member_remove(self, member: discord.Member):
         # Updates the cache when a user leaves to make sure everything is up to date
