@@ -100,14 +100,16 @@ if prefix in ["w?", "t?"]:  # only access mongodb for w? and t?
 
 
 class bb(commands.Bot):
+
     def __init__(self, command_prefix, *args, **options):
+        self.invites = {}
         super().__init__(command_prefix, *args, **options)
 
     async def on_member_join(self, member):
         guild: discord.Guild = member.guild
 
         # Getting the invites before the user joining from our cache for this specific guild
-        invites_before_join = invites[member.guild.id]
+        invites_before_join = self.invites[member.guild.id]
         # Getting the invites after the user joining so we can compare it with the first one, and
         # see which invite uses number increased
         invites_after_join = await member.guild.invites()
@@ -126,7 +128,7 @@ class bb(commands.Bot):
                 # We will now update our cache so it's ready
                 # for the next user that joins the guild
 
-                invites[member.guild.id] = invites_after_join
+                self.invites[member.guild.id] = invites_after_join
 
                 # We return here since we already found which
                 # one was used and there is no point in
@@ -135,37 +137,35 @@ class bb(commands.Bot):
         ## todo track invites here (count the total number of invites from a user, save to a file maybe?)
         ## abstract this part into another module.
 
+    async def on_member_remove(self, member: discord.Member):
+        # Updates the cache when a user leaves to make sure everything is up to date
+        invites_before_remove = self.invites[member.guild.id]
+        invites_after_remove = await member.guild.invites()
+        self.invites[member.guild.id] = await member.guild.invites()
+        guild: discord.Guild = member.guild
+        for invite in invites_before_remove:
+            if invite.uses > find_invite_by_code(invites_after_remove, invite.code).uses:
+                print(f"Member {member.name} left. Invite Code: {invite.code}. Inviter: {invite.inviter}")
+                await guild.system_channel.send(f"{member.name} just left this discord, -1 invite for Invite Code: {invite.code}. Inviter: {invite.inviter}")
+
+    async def on_ready(self):
+        print('Logged in as', bot.user.name, bot.user.id)
+        for guild in bot.guilds:
+            # Adding each guild's invites to our dict
+            self.invites[guild.id] = await guild.invites()
+
 
 bot = bb(command_prefix=prefix, description=description, intents=intents)
-invites = {}
-
-
-@bot.event
-async def on_member_remove(member):
-    # Updates the cache when a user leaves to make sure everything is up to date
-    invites[member.guild.id] = await member.guild.invites()
-
-
-@bot.event
-async def on_ready():
-    print('Logged in as', bot.user.name, bot.user.id)
-    for guild in bot.guilds:
-        # Adding each guild's invites to our dict
-        invites[guild.id] = await guild.invites()
 
 
 def find_invite_by_code(invite_list, code):
     # Simply looping through each invite in an
     # invite list which we will get using guild.invites()
-
     for inv in invite_list:
-
         # Check if the invite code in this element
         # of the list is the one we're looking for
-
         if inv.code == code:
             # If it is, we return it.
-
             return inv
 
 
