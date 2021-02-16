@@ -95,8 +95,8 @@ if prefix in ["w?", "t?"]:  # only access mongodb for w? and t?
     ipaddress_access_key: str = js["ipaddress_access_key"]
     serverplayerupdates = db["serverplayerupdates"]
 
-
-# bot = commands.Bot(command_prefix=prefix, description=description, intents=intents)
+invitecode_mapping = {"KPVVsj2MGW": "Alex Mindustry Invite", "BnBf2STAAd": "Alex Youtube Invite",
+                      "GSdkpZZuxN": "Alex Youtube Premium Invite", "BmCssqnhX6": "Alex TOP MC Invite"}
 
 
 class bb(commands.Bot):
@@ -105,35 +105,34 @@ class bb(commands.Bot):
         self.invites = {}
         super().__init__(command_prefix, *args, **options)
 
-    async def on_member_join(self, member):
+    async def on_member_join(self, member: discord.Member):
         guild: discord.Guild = member.guild
-
-        # Getting the invites before the user joining from our cache for this specific guild
+        if member.bot:
+            return
         invites_before_join = self.invites[member.guild.id]
-        # Getting the invites after the user joining so we can compare it with the first one, and
-        # see which invite uses number increased
         invites_after_join = await member.guild.invites()
-        # Loops for each invite we have for the guild the user joined.
+        total_members = len([m for m in guild.members if not m.bot])
         for invite in invites_before_join:
-            # Now, we're using the function we created just before to check which invite count is bigger
-            # than it was before the user joined.
-            if invite.uses < find_invite_by_code(invites_after_join, invite.code).uses:
-                # Now that we found which link was used, we will print a couple things in our console:
-                # the name, invite code used the the person who created the invite code, or the inviter.
+            found_invite = find_invite_by_code(invites_after_join, invite.code)
+            if found_invite is None:
+                continue
+            if invite.uses < found_invite.uses:
                 print(f"Member {member.name} Joined. Invite Code: {invite.code}. Inviter: {invite.inviter}")
                 if guild.system_channel is not None:
-                    to_send = 'Welcome {0.mention} to {1.name}!'.format(member, guild)
-                    await guild.system_channel.send(
-                        to_send + f". Invite Code: {invite.code}. Inviter: {invite.inviter}")
-                # We will now update our cache so it's ready
-                # for the next user that joins the guild
+                    if invite.code in invitecode_mapping:
+                        to_send = f'Welcome {member.mention} to {guild.name}! You are the #{total_members} member' + \
+                                  f".\n Inviter: {invitecode_mapping[invite.code]}. Uses: {invite.uses}"
+                    else:
+                        to_send = 'Welcome {0.mention} to {1.name}! '.format(member, guild) + \
+                                  f".\nInvite Code: {invite.code}. Inviter: {invite.inviter}. Uses: {invite.uses}"
+                    embed = discord.Embed(colour=discord.Colour.random().value) \
+                        .add_field(name=f"Welcome!", value=to_send).set_image(str(member.avatar_url))
+                    await guild.system_channel.send(embed=embed)
 
                 self.invites[member.guild.id] = invites_after_join
-
-                # We return here since we already found which
-                # one was used and there is no point in
-                # looping when we already got what we wanted
                 return
+        if guild.system_channel is not None:
+            await guild.system_channel.send(f"someone left or joined, we have {total_members} members now.")
         ## todo track invites here (count the total number of invites from a user, save to a file maybe?)
         ## abstract this part into another module.
         ## todo todo
@@ -169,6 +168,7 @@ def find_invite_by_code(invite_list, code):
         if inv.code == code:
             # If it is, we return it.
             return inv
+    return None
 
 
 bot.remove_command("help")
@@ -236,11 +236,12 @@ async def getemojis(ctx):
 
 
 @bot.command(description="get countries played", brief="Admin Utility")
-async def gettest(ctx):
+async def gettest(ctx: commands.Context):
     if ctx.author.id != 612861256189083669:
         await ctx.channel.send("no testing for u")
         return
-    await show_countries.getcountries(serverplayerupdates, ipaddress_access_key)
+    # await show_countries.getcountries(serverplayerupdates, ipaddress_access_key)
+    await ctx.channel.send(len([m for m in ctx.guild.members if not m.bot]))
 
 
 @bot.command(description="restart servers (admin only)", brief="Admin Utility")
