@@ -125,8 +125,9 @@ class bb(commands.Bot):
                     else:
                         to_send = 'Welcome {0.mention} to {1.name}! '.format(member, guild) + \
                                   f".\nInvite Code: {invite.code}. Inviter: {invite.inviter}. Uses: {invite.uses}"
-                    embed = discord.Embed(colour=discord.Colour.random().value) \
-                        .add_field(name=f"Welcome!", value=to_send).set_image(str(member.avatar_url))
+                    embed = discord.Embed(colour=discord.Colour.random().value)
+                    embed.add_field(name=f"Welcome!", value=to_send)
+                    embed.set_thumbnail(url=str(member.avatar_url))
                     await guild.system_channel.send(embed=embed)
 
                 self.invites[member.guild.id] = invites_after_join
