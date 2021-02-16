@@ -521,7 +521,7 @@ async def appeal(ctx: discord.ext.commands.Context, punishment: str, idoruuid: s
     embed = discord.Embed(title="Appeal")
     embed.set_author(name=ctx.author.name + "#" + ctx.author.discriminator, icon_url=ctx.author.avatar_url)
     embed.add_field(name="Type:", value=str(punishment) + f" {ctx.author.mention}", inline=False)
-    embed.add_field(name="ID/UUID/In-game Player Name:", value=str(idoruuid), inline=False)
+    embed.add_field(name="In-game Player Name:", value=str(idoruuid), inline=False)
     embed.add_field(name="Reason:", value=str(reason), inline=False)
     await channel.send(embed=embed)
 
