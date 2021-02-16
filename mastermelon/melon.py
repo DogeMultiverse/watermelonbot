@@ -510,14 +510,14 @@ async def convertexp(ctx: discord.ext.commands.Context):
              help="<minecraftBan|terrariaBan|mindustryKick|mindustryBan> <in_game_name> <reason>")
 async def appeal(ctx: discord.ext.commands.Context, punishment: str, idoruuid: str, *, reason: str):
     if not punishment.startswith(("minecraftBan", "terrariaBan", "mindustryKick", "mindustryBan")):
-        await ctx.channel.send(
-            "you must fill a punishment type:\nmindustryBan, mindustryKick, terrariaBan, minecraftBan")
+        await ctx.channel.send("you must fill a punishment type:"
+                               "\nmindustryBan, mindustryKick, terrariaBan, minecraftBan")
         return
     if isinstance(reason, type(None)) or reason == "":
         await ctx.channel.send("you must fill a reason of you got banned/kick")
         return
-    await ctx.send("thanks for appealing")
-    channel = bot.get_channel(810024495029026856)  # appeal-submission
+    await ctx.send("Thanks for appealing. Please be patient while our moderators attend to your appeal.")
+    channel = bot.get_channel(791490149753683988)  # appeal-submission
     embed = discord.Embed(title="Appeal")
     embed.set_author(name=ctx.author.name + "#" + ctx.author.discriminator, icon_url=ctx.author.avatar_url)
     embed.add_field(name="Type:", value=str(punishment) + f" {ctx.author.mention}", inline=False)
