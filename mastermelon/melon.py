@@ -120,19 +120,19 @@ class bb(commands.Bot):
             if invite.uses < found_invite.uses:
                 print(f"Member {member.name} Joined. Invite Code: {invite.code}. Inviter: {invite.inviter}")
                 if invite.code in invitecode_mapping:
-                    to_send = f'You are the #{total_members} member' + \
+                    to_send = f'{member.mention}, you are the #{total_members} member' + \
                               f".\n Inviter: {invitecode_mapping[invite.code]}. Invite counts: {invite.uses}"
                 else:
-                    to_send = f'You are the #{total_members} member' + \
+                    to_send = f'{member.mention}, you are the #{total_members} member' + \
                               f".\nInvite Code: {invite.code}. Inviter: {invite.inviter}. Invite counts: {invite.uses}"
                 self.invites[member.guild.id] = invites_after_join
                 break
         if to_send == "":
-            to_send = f'You are the #{total_members} member' + \
+            to_send = f'{member.mention}, you are the #{total_members} member' + \
                       f".\n Unable to identify invite code."
         if guild.system_channel is not None:
             embed = discord.Embed(colour=discord.Colour.random().value)
-            embed.add_field(name=f"Welcome to {guild.name}, {member.mention} !", value=to_send)
+            embed.add_field(name=f"Welcome to {guild.name}!", value=to_send)
             embed.set_thumbnail(url=str(member.avatar_url))
             await guild.system_channel.send(embed=embed)
 
