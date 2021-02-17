@@ -121,10 +121,10 @@ class bb(commands.Bot):
                 if guild.system_channel is not None:
                     if invite.code in invitecode_mapping:
                         to_send = f'Welcome {member.mention} to {guild.name}!\nYou are the #{total_members} member' + \
-                                  f".\n Inviter: {invitecode_mapping[invite.code]}. Uses: {invite.uses}"
+                                  f".\n Inviter: {invitecode_mapping[invite.code]}. Invite counts: {invite.uses}"
                     else:
                         to_send = f'Welcome {member.mention} to {guild.name}!\nYou are the #{total_members} member' + \
-                                  f".\nInvite Code: {invite.code}. Inviter: {invite.inviter}. Uses: {invite.uses}"
+                                  f".\nInvite Code: {invite.code}. Inviter: {invite.inviter}. Invite counts: {invite.uses}"
                     embed = discord.Embed(colour=discord.Colour.random().value)
                     embed.add_field(name=f"Welcome!", value=to_send)
                     embed.set_thumbnail(url=str(member.avatar_url))
@@ -144,11 +144,12 @@ class bb(commands.Bot):
         invites_after_remove = await member.guild.invites()
         self.invites[member.guild.id] = await member.guild.invites()
         guild: discord.Guild = member.guild
+        msg_builder = "One person left ;-;"
+        total_members = len([m for m in guild.members if not m.bot])
         for invite in invites_before_remove:
             if invite.uses > find_invite_by_code(invites_after_remove, invite.code).uses:
-                print(f"Member {member.name} left. Invite Code: {invite.code}. Inviter: {invite.inviter}")
-                await guild.system_channel.send(
-                    f"{member.name} just left this discord, -1 invite for Invite Code: {invite.code}. Inviter: {invite.inviter}")
+                msg_builder += f" {member.name}, -1 invite for Invite Code: {invite.code}. Inviter: {invite.inviter}"
+        await guild.system_channel.send(msg_builder+f".\nNow we have {total_members} members.")
 
     async def on_ready(self):
         print('Logged in as', bot.user.name, bot.user.id)
