@@ -112,31 +112,29 @@ class bb(commands.Bot):
         invites_before_join = self.invites[member.guild.id]
         invites_after_join = await member.guild.invites()
         total_members = len([m for m in guild.members if not m.bot])
+        to_send = ""
         for invite in invites_before_join:
             found_invite = find_invite_by_code(invites_after_join, invite.code)
             if found_invite is None:
                 continue
             if invite.uses < found_invite.uses:
                 print(f"Member {member.name} Joined. Invite Code: {invite.code}. Inviter: {invite.inviter}")
-                if guild.system_channel is not None:
-                    if invite.code in invitecode_mapping:
-                        to_send = f'Welcome {member.mention} to {guild.name}!\nYou are the #{total_members} member' + \
-                                  f".\n Inviter: {invitecode_mapping[invite.code]}. Invite counts: {invite.uses}"
-                    else:
-                        to_send = f'Welcome {member.mention} to {guild.name}!\nYou are the #{total_members} member' + \
-                                  f".\nInvite Code: {invite.code}. Inviter: {invite.inviter}. Invite counts: {invite.uses}"
-                    embed = discord.Embed(colour=discord.Colour.random().value)
-                    embed.add_field(name=f"Welcome!", value=to_send)
-                    embed.set_thumbnail(url=str(member.avatar_url))
-                    await guild.system_channel.send(embed=embed)
-
+                if invite.code in invitecode_mapping:
+                    to_send = f'You are the #{total_members} member' + \
+                              f".\n Inviter: {invitecode_mapping[invite.code]}. Invite counts: {invite.uses}"
+                else:
+                    to_send = f'You are the #{total_members} member' + \
+                              f".\nInvite Code: {invite.code}. Inviter: {invite.inviter}. Invite counts: {invite.uses}"
                 self.invites[member.guild.id] = invites_after_join
-                return
+                break
+        if to_send == "":
+            to_send = f'You are the #{total_members} member' + \
+                      f".\n Unable to identify invite code."
         if guild.system_channel is not None:
-            await guild.system_channel.send(f"someone left or joined, we have {total_members} members now.")
-        ## todo track invites here (count the total number of invites from a user, save to a file maybe?)
-        ## abstract this part into another module.
-        ## todo todo
+            embed = discord.Embed(colour=discord.Colour.random().value)
+            embed.add_field(name=f"Welcome to {guild.name}, {member.mention} !", value=to_send)
+            embed.set_thumbnail(url=str(member.avatar_url))
+            await guild.system_channel.send(embed=embed)
 
     async def on_member_remove(self, member: discord.Member):
         # Updates the cache when a user leaves to make sure everything is up to date
@@ -144,12 +142,12 @@ class bb(commands.Bot):
         invites_after_remove = await member.guild.invites()
         self.invites[member.guild.id] = await member.guild.invites()
         guild: discord.Guild = member.guild
-        msg_builder = "One person left ;-;"
+        msg_builder = f'`{member.display_name.replace("`","")}` left ;-;'
         total_members = len([m for m in guild.members if not m.bot])
         for invite in invites_before_remove:
             if invite.uses > find_invite_by_code(invites_after_remove, invite.code).uses:
-                msg_builder += f" {member.name}, -1 invite for Invite Code: {invite.code}. Inviter: {invite.inviter}"
-        await guild.system_channel.send(msg_builder+f".\nNow we have {total_members} members.")
+                msg_builder += f" {member.display_name}, -1 invite for Invite Code: {invite.code}. Inviter: {invite.inviter}"
+        await guild.system_channel.send(msg_builder + f"\nNow we have {total_members} members.")
 
     async def on_ready(self):
         print('Logged in as', bot.user.name, bot.user.id)
