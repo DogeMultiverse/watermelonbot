@@ -10,6 +10,7 @@ from mastermelon import highlow_game
 from mastermelon import giveaway_bot
 from mastermelon import effects_display
 from mastermelon import emojis as ej
+from mastermelon import cookiegame
 
 
 def get_latest_exp(res, convertedexp_doc):
@@ -121,10 +122,10 @@ class bb(commands.Bot):
                 print(f"Member {member.name} Joined. Invite Code: {invite.code}. Inviter: {invite.inviter}")
                 if invite.code in invitecode_mapping:
                     to_send = f'{member.mention}, you are the #{total_members} member' + \
-                              f".\n Inviter: {invitecode_mapping[invite.code]}. Invite counts: {invite.uses}"
+                              f".\n Inviter: {invitecode_mapping[invite.code]}. \nInvite counts: {invite.uses}"
                 else:
                     to_send = f'{member.mention}, you are the #{total_members} member' + \
-                              f".\nInvite Code: {invite.code}. Inviter: {invite.inviter}. Invite counts: {invite.uses}"
+                              f".\nInvite Code: {invite.code}. Inviter: {invite.inviter}. \nInvite counts: {invite.uses}"
                 self.invites[member.guild.id] = invites_after_join
                 break
         if to_send == "":
@@ -142,7 +143,7 @@ class bb(commands.Bot):
         invites_after_remove = await member.guild.invites()
         self.invites[member.guild.id] = await member.guild.invites()
         guild: discord.Guild = member.guild
-        msg_builder = f'`{member.display_name.replace("`","")}` left ;-;'
+        msg_builder = f'`{member.display_name.replace("`", "")}` left ;-;'
         total_members = len([m for m in guild.members if not m.bot])
         for invite in invites_before_remove:
             if invite.uses > find_invite_by_code(invites_after_remove, invite.code).uses:
@@ -543,6 +544,8 @@ async def on_message(message: discord.Message):
     elif prefix == "w?" and message.channel.id == 805105861450137600:  # counting hardcore channel
         if message.author.id != bot.user.id:
             await counting_bot.run_counterbot(message, bot)
+    elif ("#alexcookie" in message.content) and (message.channel.id == 811993295114076190) and (prefix == "w?"):
+        await cookiegame.triggercookieclaim(message, ax, bot)
     else:
         await bot.process_commands(message)
 
