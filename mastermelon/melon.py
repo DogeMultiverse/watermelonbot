@@ -97,7 +97,8 @@ if prefix in ["w?", "t?"]:  # only access mongodb for w? and t?
     serverplayerupdates = db["serverplayerupdates"]
 
 invitecode_mapping = {"KPVVsj2MGW": "Alex Mindustry Invite", "BnBf2STAAd": "Alex Youtube Invite",
-                      "GSdkpZZuxN": "Alex Youtube Premium Invite", "BmCssqnhX6": "Alex TOP MC Invite"}
+                      "GSdkpZZuxN": "Alex Youtube Premium Invite", "BmCssqnhX6": "Alex TOP MC Invite",
+                      "A33dUt6r7n":"Alex Factorio Invite"}
 
 
 class bb(commands.Bot):
@@ -128,6 +129,14 @@ class bb(commands.Bot):
                               f".\nInvite Code: {invite.code}. Inviter: {invite.inviter}. \nInvite counts: {invite.uses}"
                 self.invites[member.guild.id] = invites_after_join
                 break
+        curr_invite: discord.guild.Invite
+        for curr_invite in invites_after_join:
+            pass
+        # todo everytime someone joins, compare old invite list to new invite list
+        # find the invitecode with the increment OR with a new invitecode with >1 invite
+        #   # print it out
+        # save all invites to invite list
+        self.invites[member.guild.id] = invites_after_join
         if to_send == "":
             to_send = f'{member.mention}, you are the #{total_members} member' + \
                       f".\n Unable to identify invite code."
