@@ -95,16 +95,18 @@ if prefix in ["w?", "t?"]:  # only access mongodb for w? and t?
     ingamecosmetics = db["ingamecosmetics"]
     ipaddress_access_key: str = js["ipaddress_access_key"]
     serverplayerupdates = db["serverplayerupdates"]
+    discordinvites: pymongo.collection = db["discordinvites"]
 
 invitecode_mapping = {"KPVVsj2MGW": "Alex Mindustry Invite", "BnBf2STAAd": "Alex Youtube Invite",
                       "GSdkpZZuxN": "Alex Youtube Premium Invite", "BmCssqnhX6": "Alex TOP MC Invite",
-                      "A33dUt6r7n":"Alex Factorio Invite"}
+                      "A33dUt6r7n": "Alex Factorio Invite"}
 
 
 class bb(commands.Bot):
 
     def __init__(self, command_prefix, *args, **options):
         self.invites = {}
+        self.inviter_dict = {}
         super().__init__(command_prefix, *args, **options)
 
     async def on_member_join(self, member: discord.Member):
@@ -114,32 +116,52 @@ class bb(commands.Bot):
         invites_before_join = self.invites[member.guild.id]
         invites_after_join = await member.guild.invites()
         total_members = len([m for m in guild.members if not m.bot])
-        to_send = ""
-        for invite in invites_before_join:
-            found_invite = find_invite_by_code(invites_after_join, invite.code)
-            if found_invite is None:
-                continue
-            if invite.uses < found_invite.uses:
-                print(f"Member {member.name} Joined. Invite Code: {invite.code}. Inviter: {invite.inviter}")
-                if invite.code in invitecode_mapping:
-                    to_send = f'{member.mention}, you are the #{total_members} member' + \
-                              f".\n Inviter: {invitecode_mapping[invite.code]}. \nInvite counts: {invite.uses}"
-                else:
-                    to_send = f'{member.mention}, you are the #{total_members} member' + \
-                              f".\nInvite Code: {invite.code}. Inviter: {invite.inviter}. \nInvite counts: {invite.uses}"
-                self.invites[member.guild.id] = invites_after_join
-                break
+
         curr_invite: discord.guild.Invite
+        existing_invite: discord.guild.Invite
+        found_resp_invite = False
+        resp_invite: discord.guild.Invite
         for curr_invite in invites_after_join:
-            pass
+            found_old_invite = False
+            for existing_invite in invites_before_join:
+                if curr_invite.code == existing_invite.code:
+                    found_old_invite = True
+                    if curr_invite.uses > existing_invite.uses:
+                        found_resp_invite = True
+                        resp_invite = curr_invite  # this is the invite that was used
+            if not found_old_invite:
+                await self.update_self_invite_dict(guild, curr_invite)
+                # update mongo with the new entry
+                discordinvites.find_one_and_update({"duuid": curr_invite.inviter.id},
+                                                   {"$set": {"codes." + curr_invite.code: curr_invite.uses}})
+                if curr_invite.uses > 0:
+                    found_resp_invite = True
+                    resp_invite = curr_invite
+
+        if found_resp_invite:
+            # type the msg here
+            invite = resp_invite
+            # add the invited member to the inviter's list
+            invite_dict_info = {"invited": {"name": f"{member.name}#{member.discriminator}", "duuid": member.id, "date": datetime.utcnow()}}
+            discordinvites.find_one_and_update({"duuid": invite.inviter.id}, {"$push": invite_dict_info})
+            print(f"Member {member.name} Joined. Invite Code: {invite.code}. Inviter: {invite.inviter}")
+            if invite.code in invitecode_mapping:
+                to_send = f'{member.mention}, you are the #{total_members} member' + \
+                          f".\n Inviter: {invitecode_mapping[invite.code]}. \nInvite counts: {invite.uses}"
+            else:
+                to_send = f'{member.mention}, you are the #{total_members} member' + \
+                          f".\nInvite Code: {invite.code}. Inviter: {invite.inviter}. \nInvite counts: {invite.uses}"
+        else:
+            # invite code unknown.
+            to_send = f'{member.mention}, you are the #{total_members} member' + \
+                      f".\n Unable to identify invite code."
+
         # todo everytime someone joins, compare old invite list to new invite list
         # find the invitecode with the increment OR with a new invitecode with >1 invite
         #   # print it out
         # save all invites to invite list
         self.invites[member.guild.id] = invites_after_join
-        if to_send == "":
-            to_send = f'{member.mention}, you are the #{total_members} member' + \
-                      f".\n Unable to identify invite code."
+
         if guild.system_channel is not None:
             embed = discord.Embed(colour=discord.Colour.random().value)
             embed.add_field(name=f"Welcome to {guild.name}!", value=to_send)
@@ -164,6 +186,23 @@ class bb(commands.Bot):
         for guild in bot.guilds:
             # Adding each guild's invites to our dict
             self.invites[guild.id] = await guild.invites()
+            self.inviter_dict[guild.id] = {}
+            invite: discord.guild.Invite
+            for invite in self.invites[guild.id]:
+                await self.update_self_invite_dict(guild, invite)
+
+    async def update_self_invite_dict(self, guild, invite):
+        if invite.inviter.id not in self.inviter_dict[guild.id]:
+            self.inviter_dict[guild.id][invite.inviter.id] = {"total": invite.uses,
+                                                              "name": f"{invite.inviter.name}#{invite.inviter.discriminator}",
+                                                              "codes": {invite.code: invite.uses}}
+        else:
+            prev_uses = self.inviter_dict[guild.id][invite.inviter.id]["total"]
+            prev_codes = self.inviter_dict[guild.id][invite.inviter.id]["codes"]
+            inviter_name = self.inviter_dict[guild.id][invite.inviter.id]["name"]
+            self.inviter_dict[guild.id][invite.inviter.id] = {"total": invite.uses + prev_uses,
+                                                              "name": inviter_name,
+                                                              "codes": {invite.code: invite.uses, **prev_codes}}
 
 
 bot = bb(command_prefix=prefix, description=description, intents=intents)
