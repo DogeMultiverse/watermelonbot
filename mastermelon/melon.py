@@ -171,7 +171,11 @@ class bb(commands.Bot):
             embed = discord.Embed(colour=discord.Colour.random().value)
             embed.add_field(name=f"Welcome to {guild.name}!", value=to_send)
             embed.set_thumbnail(url=str(member.avatar_url))
-            await guild.system_channel.send(embed=embed)
+
+            avatar = member.avatar_url_as(format="png", static_format="png", size=64)
+            name = f"{member.name}#{member.discriminator}"
+            image_data = await gen_image.getwelcomeimage(name=name, avatar=avatar)
+            await guild.system_channel.send(embed=embed,file=image_data)
 
     async def on_member_remove(self, member: discord.Member):
         # Updates the cache when a user leaves to make sure everything is up to date
