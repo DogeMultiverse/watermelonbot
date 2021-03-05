@@ -98,7 +98,8 @@ if prefix in ["w?", "t?"]:  # only access mongodb for w? and t?
     discordinvites: pymongo.collection = db["discordinvites"]
 
 invitecode_mapping = {"KPVVsj2MGW": "Alex Mindustry Invite", "BnBf2STAAd": "Alex Youtube Invite",
-                      "GSdkpZZuxN": "Alex Youtube Premium Invite", "BmCssqnhX6": "Alex TOP MC Invite","FpKnzzQFne": "Alex TOP MC SERVERS Invite",
+                      "GSdkpZZuxN": "Alex Youtube Premium Invite", "BmCssqnhX6": "Alex TOP MC Invite",
+                      "FpKnzzQFne": "Alex TOP MC SERVERS Invite",
                       "A33dUt6r7n": "Alex Factorio Invite"}
 
 
@@ -110,6 +111,8 @@ class bb(commands.Bot):
         super().__init__(command_prefix, *args, **options)
 
     async def on_member_join(self, member: discord.Member):
+        if prefix == "t?":
+            return
         guild: discord.Guild = member.guild
         if member.bot:
             return
@@ -142,7 +145,8 @@ class bb(commands.Bot):
             # type the msg here
             invite = resp_invite
             # add the invited member to the inviter's list
-            invite_dict_info = {"invited": {"name": f"{member.name}#{member.discriminator}", "duuid": member.id, "date": datetime.utcnow()}}
+            invite_dict_info = {"invited": {"name": f"{member.name}#{member.discriminator}", "duuid": member.id,
+                                            "date": datetime.utcnow()}}
             discordinvites.find_one_and_update({"duuid": invite.inviter.id}, {"$push": invite_dict_info})
             print(f"Member {member.name} Joined. Invite Code: {invite.code}. Inviter: {invite.inviter}")
             if invite.code in invitecode_mapping:
@@ -424,8 +428,25 @@ async def checkexp(ctx: discord.ext.commands.Context, user: discord.User = None)
                                               {"duuid": userTarget, "converted": convertedexp_doc})
 
             # todo count the amount of unconverted exp and trigger the next line if there is
-            await ctx.channel.send(str_builder + f"\n Type `{prefix}convertexp` to convert your EXP into {ej.ax_emoji}."
-                                                 f"(You still can keep your EXP)")
+            if len(str_builder) >= 1850:
+                temp_str_builder = ""
+                sent = False
+                for i, strr in enumerate(str_builder.split("In Game Name: ")):
+                    if i != 0:
+                        temp_str_builder += "In Game Name: " + strr
+                        sent = False
+                        if i % 3 == 0:
+                            await ctx.channel.send(temp_str_builder)
+                            sent = True
+                            temp_str_builder = ""
+                if not sent:
+                    await ctx.channel.send(temp_str_builder)
+                await ctx.channel.send(f"\n Type `{prefix}convertexp` to convert your EXP into {ej.ax_emoji}."
+                                       f"(You still can keep your EXP)")
+            else:
+                await ctx.channel.send(
+                    str_builder + f"\n Type `{prefix}convertexp` to convert your EXP into {ej.ax_emoji}."
+                                  f"(You still can keep your EXP)")
         else:
             await ctx.channel.send("You have no exp. ;-;")
 
