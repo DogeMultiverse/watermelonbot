@@ -6,8 +6,10 @@ from discord import File
 import io
 import random
 
+warm_colors = [(70,56,41),(87,51,22),(64,79,36),(78,90,100)]
 
 async def getwelcomeimage(name: str = "nobody", avatar: discord.Asset = None):
+    font_colors = random.choice(warm_colors)
     img: Image = Image.open("image_data/fancyborder.jpg")
     draw = ImageDraw.Draw(img)
     buffer_avatar = io.BytesIO()
@@ -30,16 +32,16 @@ async def getwelcomeimage(name: str = "nobody", avatar: discord.Asset = None):
     font_name = ImageFont.truetype("fonts/DejaVuSansMono.ttf", 14, )
     draw.text((50, 20), f"Certificate of Entry", (25, 25, 25), font=font_title, align="center")
     draw.text((49, 19), f"Certificate of Entry", (255, 215, 0), font=font_title, align="center")
-    draw.text((130, 49), "Alex Servers", (25, 25, 215), font=ImageFont.truetype("calibril.ttf", 17))
-    draw.text((52, 50), f"Welcome to", (25, 25, 215), font=font)
+    draw.text((130, 49), "Alex Servers", fill=font_colors, font=ImageFont.truetype("calibril.ttf", 17))
+    draw.text((52, 50), f"Welcome to", fill=font_colors, font=font)
     name1 = [c for c in name if c.isalnum() or c in "_!@#$%^ &*()-=+~`'[],.?;:"]
     name1 = "".join(name1)
     name1 = name1[:28] + "..." if len(name1) > 28 else name1
     draw.text((18, 70), f"{name1: ^30}", (25, 25, 25), font=font_name)
-    draw.text((35, 147), "Have fun and make some friends.", (25, 25, 215), font=font, align="center")
+    draw.text((35, 147), "Have fun and make some friends.", fill=font_colors, font=font, align="center")
     admins = ["Alex", "Lin", "Sylerfire", "Unjown", "Watermelon"]
     admin = random.choice(admins)
-    draw.text((160 - len(admin) * 5, 167), f"from, {admin}", (25, 25, 215), font=font)
+    draw.text((160 - len(admin) * 5, 167), f"from, {admin}", fill=font_colors, font=font)
     img_byte_arr = io.BytesIO()
     img.save(img_byte_arr, format='png')
     img_byte_arr.seek(0)
