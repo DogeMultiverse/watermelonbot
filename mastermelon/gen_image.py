@@ -10,6 +10,7 @@ warm_colors = [(70,56,41),(87,51,22),(64,79,36),(78,90,100)]
 
 async def getwelcomeimage(name: str = "nobody", avatar: discord.Asset = None):
     font_colors = random.choice(warm_colors)
+    print("line 13")
     img: Image = Image.open("image_data/fancyborder.jpg")
     draw = ImageDraw.Draw(img)
     buffer_avatar = io.BytesIO()
@@ -28,10 +29,12 @@ async def getwelcomeimage(name: str = "nobody", avatar: discord.Asset = None):
     img.paste(circle_image2, (101, 88))
     img.paste(avatar_image, (103, 90), circle_image)
     font = ImageFont.truetype("fonts/BrannbollStencil_PERSONAL_USE.ttf", 16)
+    print("line 32")
     font_title = ImageFont.truetype("arial.ttf", 20)
     font_name = ImageFont.truetype("fonts/DejaVuSansMono.ttf", 14, )
     draw.text((50, 20), f"Certificate of Entry", (25, 25, 25), font=font_title, align="center")
     draw.text((49, 19), f"Certificate of Entry", (255, 215, 0), font=font_title, align="center")
+    print("line 37")
     draw.text((127, 48), "Alex Servers", fill=font_colors, font=ImageFont.truetype("arial.ttf", 16))
     draw.text((52, 50), f"Welcome to", fill=font_colors, font=font)
     name1 = [c for c in name if c.isalnum() or c in "_!@#$%^ &*()-=+~`'[],.?;:"]
@@ -45,4 +48,5 @@ async def getwelcomeimage(name: str = "nobody", avatar: discord.Asset = None):
     img_byte_arr = io.BytesIO()
     img.save(img_byte_arr, format='png')
     img_byte_arr.seek(0)
+    print("line 51")
     return File(fp=img_byte_arr, filename="welcome.png")
