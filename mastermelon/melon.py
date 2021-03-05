@@ -11,6 +11,7 @@ from mastermelon import giveaway_bot
 from mastermelon import effects_display
 from mastermelon import emojis as ej
 from mastermelon import cookiegame
+from mastermelon import gen_image
 
 
 def get_latest_exp(res, convertedexp_doc):
@@ -493,6 +494,15 @@ async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
 @bot.command(description=f"Check user's ranking in {ej.ax_emoji}", brief="Utility")
 async def axleaderboard(ctx: discord.ext.commands.Context):
     await ctx.channel.send(f'for axleaderboard, type `a?axleaderboard`')
+
+
+@bot.command(description=f"get image with user's pfp", brief="Utility")
+async def getimage(ctx: discord.ext.commands.Context, user: discord.User):
+    avatar = user.avatar_url_as(format="png",static_format="png",size=64)
+    name = f"{user.name}#{user.discriminator}"
+    image_data = await gen_image.getwelcomeimage(name=name,avatar=avatar)
+    # emb = discord.Embed()
+    await ctx.channel.send(file=image_data)
 
 
 @bot.command(brief="Links", description="Shows the links to github.")
