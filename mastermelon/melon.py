@@ -469,7 +469,7 @@ async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
     effects = [ee for c, e in effects_cost.items() for ee in e]
     owned_effects_collection = ingamecosmetics.find_one({"duuid": ctx.author.id})
     if owned_effects_collection is None:
-        await ctx.channel.send("error, pls **PING** alex! error 170")
+        await ctx.channel.send("You need to have a **REGISTERED** mindustry account.")
         return
     owned_effects = owned_effects_collection["effects"]
     duuid = ctx.author.id
