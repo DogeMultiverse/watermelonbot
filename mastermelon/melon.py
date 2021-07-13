@@ -574,6 +574,11 @@ async def convertexp(ctx: discord.ext.commands.Context):
                     if exp is None:
                         exp = 0
                     claimed = servdata["claimed"]
+                    if exp <0:
+                        exp = 0
+                        await ctx.channel.send("There is a bug here, PING alex. error 579")
+                    if claimed <0:
+                        claimed =0
                     claims = (exp - claimed) // 1000  # integer division
                     new_Ax += claims
                     servdata["claimed"] += claims * 1000
