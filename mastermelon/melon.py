@@ -579,7 +579,11 @@ async def convertexp(ctx: discord.ext.commands.Context):
                         await ctx.channel.send("There is a bug here, PING alex. error 579")
                     if claimed <0:
                         claimed =0
+                        await ctx.channel.send("There is a bug here, PING alex. error 580")
                     claims = (exp - claimed) // 1000  # integer division
+                    if claims<0:
+                        await ctx.channel.send("There is a bug here, PING alex. error 581")
+                        claims=0
                     new_Ax += claims
                     servdata["claimed"] += claims * 1000
                     convertedexp_doc[muuid][rservername] = {"claimed": servdata["claimed"],
