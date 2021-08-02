@@ -98,8 +98,8 @@ if prefix in ["w?", "t?"]:  # only access mongodb for w? and t?
     serverplayerupdates = db["serverplayerupdates"]
     discordinvites: pymongo.collection = db["discordinvites"]
 
-invitecode_mapping = {"KPVVsj2MGW": "Alex Mindustry Invite", "BnBf2STAAd": "Alex Youtube Invite",
-                      "GSdkpZZuxN": "Alex Youtube Premium Invite", "BmCssqnhX6": "Alex TOP MC Invite",
+invitecode_mapping = {"KPVVsj2MGW": "Doge Mindustry Invite", "BnBf2STAAd": "Doge Youtube Invite",
+                      "GSdkpZZuxN": "Doge Youtube Premium Invite", "BmCssqnhX6": "Alex TOP MC Invite",
                       "FpKnzzQFne": "Alex TOP MC SERVERS Invite",
                       "A33dUt6r7n": "Alex Factorio Invite"}
 
