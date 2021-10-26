@@ -221,16 +221,16 @@ class bb(commands.Bot):
         await self.wait_until_ready()
         # counter = 0
         channel_id = 785543837488775218  # channel ID goes here
-        #test_channel_fetch = await self.get_channel(channel_id)
+        # test_channel_fetch = await self.get_channel(channel_id)
         channel_fetch = self.get_channel(id=channel_id)
         # while not self.is_closed():
         #    counter += 1
         #    await channel.send(counter)
         #    await asyncio.sleep(10)  # task runs every 60 seconds
         while True:
-            fetched_data =update_mindustry_status2.fetch_data()
+            fetched_data = update_mindustry_status2.fetch_data()
             print("done fetch data")
-            await update_mindustry_status2.update_data(self, fetched_data,channel_fetch)
+            await update_mindustry_status2.update_data(self, fetched_data, channel_fetch)
             print("done update data")
             await asyncio.sleep(10)
 

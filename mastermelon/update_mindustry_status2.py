@@ -55,8 +55,6 @@ def fetch_single_data(x):
     serr = Server(host, port)
     try:
         res = serr.get_status()
-        # print(name, host, port)
-        # print(res)
         return [name, host, port, res]
     except TimeoutError:
         return [name, host, port, "time out error"]
@@ -66,9 +64,8 @@ def fetch_single_data(x):
         return [name, host, port, "exception occurred"]
 
 def fetch_data():
-    full_string = []
-    for name, host, port in server_data:
-        full_string.append(fetch_single_data([name,host,port]))
+    with Pool() as pool:
+        full_string = pool.map(fetch_single_data, server_data)
     return full_string
 
 
