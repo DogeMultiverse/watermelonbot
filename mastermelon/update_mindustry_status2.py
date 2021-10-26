@@ -69,23 +69,6 @@ def fetch_data():
     full_string = []
     for name, host, port in server_data:
         full_string.append(fetch_single_data([name,host,port]))
-    #     serr = Server(host, port)
-    #     try:
-    #         res = serr.get_status()
-    #         # print(name, host, port)
-    #         # print(res)
-    #         full_string.append([name, host, port, res])
-    #     except TimeoutError:
-    #         # print("time out error")
-    #         full_string.append([name, host, port, "time out error"])
-    #         pass
-    #     except ConnectionRefusedError:
-    #         full_string.append([name, host, port, "connection refused error"])
-    #         pass
-    #     except Exception as e:
-    #         full_string.append([name, host, port, "Exception occurred"])
-    # #for val in full_string:
-    # #    print(val)
     return full_string
 
 
