@@ -12,7 +12,7 @@ from mastermelon import effects_display
 from mastermelon import emojis as ej
 from mastermelon import cookiegame
 from mastermelon import gen_image
-
+from mastermelon import update_mindustry_status2
 
 def get_latest_exp(res, convertedexp_doc):
     muuid = {}
@@ -100,7 +100,7 @@ if prefix in ["w?", "t?"]:  # only access mongodb for w? and t?
 
 invitecode_mapping = {"KPVVsj2MGW": "Doge Mindustry Invite", "BnBf2STAAd": "Doge Youtube Invite",
                       "GSdkpZZuxN": "Doge Youtube Premium Invite", "BmCssqnhX6": "Alex TOP MC Invite",
-                      "FpKnzzQFne": "Alex TOP MC SERVERS Invite", "EhzVgNGxPD":"Doge Annoucement Invite",
+                      "FpKnzzQFne": "Alex TOP MC SERVERS Invite", "EhzVgNGxPD": "Doge Annoucement Invite",
                       "A33dUt6r7n": "Alex Factorio Invite"}
 
 
@@ -110,6 +110,7 @@ class bb(commands.Bot):
         self.invites = {}
         self.inviter_dict = {}
         super().__init__(command_prefix, *args, **options)
+        self.bg_task = self.loop.create_task(self.update_mind_status_task())
 
     async def on_member_join(self, member: discord.Member):
         if prefix == "t?":
@@ -175,7 +176,7 @@ class bb(commands.Bot):
             avatar = member.avatar_url_as(format="png", static_format="png", size=64)
             name = f"{member.name}#{member.discriminator}"
             image_data = await gen_image.getwelcomeimage(name=name, avatar=avatar)
-            await guild.system_channel.send(embed=embed,file=image_data)
+            await guild.system_channel.send(embed=embed, file=image_data)
 
     async def on_member_remove(self, member: discord.Member):
         # Updates the cache when a user leaves to make sure everything is up to date
@@ -212,6 +213,20 @@ class bb(commands.Bot):
             self.inviter_dict[guild.id][invite.inviter.id] = {"total": invite.uses + prev_uses,
                                                               "name": inviter_name,
                                                               "codes": {invite.code: invite.uses, **prev_codes}}
+
+    # background tasks:
+    async def update_mind_status_task(self):
+        await self.wait_until_ready()
+        #counter = 0
+        channel = self.get_channel(785543837488775218)  # channel ID goes here
+        #while not self.is_closed():
+        #    counter += 1
+        #    await channel.send(counter)
+        #    await asyncio.sleep(10)  # task runs every 60 seconds
+        #while True:
+        #    fetched_data = await update_mindustry_status2.fetch_data()
+        #    await update_mindustry_status2.update_data(fetched_data,channel)
+        #    await asyncio.sleep(10)
 
 
 bot = bb(command_prefix=prefix, description=description, intents=intents)
@@ -502,9 +517,9 @@ async def axleaderboard(ctx: discord.ext.commands.Context):
 
 @bot.command(description=f"get image with user's pfp", brief="Utility")
 async def getimage(ctx: discord.ext.commands.Context, user: discord.User):
-    avatar = user.avatar_url_as(format="png",static_format="png",size=64)
+    avatar = user.avatar_url_as(format="png", static_format="png", size=64)
     name = f"{user.name}#{user.discriminator}"
-    image_data = await gen_image.getwelcomeimage(name=name,avatar=avatar)
+    image_data = await gen_image.getwelcomeimage(name=name, avatar=avatar)
     # emb = discord.Embed()
     await ctx.channel.send(file=image_data)
 
@@ -574,16 +589,16 @@ async def convertexp(ctx: discord.ext.commands.Context):
                     if exp is None:
                         exp = 0
                     claimed = servdata["claimed"]
-                    if exp <0:
+                    if exp < 0:
                         exp = 0
                         await ctx.channel.send("There is a bug here, PING alex. error 579")
-                    if claimed <0:
-                        claimed =0
+                    if claimed < 0:
+                        claimed = 0
                         await ctx.channel.send("There is a bug here, PING alex. error 580")
                     claims = (exp - claimed) // 1000  # integer division
-                    if claims<0:
+                    if claims < 0:
                         await ctx.channel.send("There is a bug here, PING alex. error 581")
-                        claims=0
+                        claims = 0
                     new_Ax += claims
                     servdata["claimed"] += claims * 1000
                     convertedexp_doc[muuid][rservername] = {"claimed": servdata["claimed"],

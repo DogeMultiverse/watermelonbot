@@ -1,5 +1,5 @@
 aiohttp>=3.6.0,<3.8.0
-discord~=1.0.1
+discord=1.0.1
 pymongo>=3.11.2
 dnspython
 pytz~=2021.1
