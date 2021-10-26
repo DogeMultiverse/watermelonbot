@@ -14,6 +14,7 @@ from mastermelon import cookiegame
 from mastermelon import gen_image
 from mastermelon import update_mindustry_status2
 
+
 def get_latest_exp(res, convertedexp_doc):
     muuid = {}
     muuid_name = {}
@@ -110,7 +111,7 @@ class bb(commands.Bot):
         self.invites = {}
         self.inviter_dict = {}
         super().__init__(command_prefix, *args, **options)
-        self.bg_task = self.loop.create_task(self.update_mind_status_task())
+        self.bg_task = []
 
     async def on_member_join(self, member: discord.Member):
         if prefix == "t?":
@@ -200,6 +201,7 @@ class bb(commands.Bot):
             invite: discord.guild.Invite
             for invite in self.invites[guild.id]:
                 await self.update_self_invite_dict(guild, invite)
+        self.bg_task.append(self.loop.create_task(self.update_mind_status_task()))
 
     async def update_self_invite_dict(self, guild, invite):
         if invite.inviter.id not in self.inviter_dict[guild.id]:
@@ -217,16 +219,20 @@ class bb(commands.Bot):
     # background tasks:
     async def update_mind_status_task(self):
         await self.wait_until_ready()
-        #counter = 0
-        channel = self.get_channel(785543837488775218)  # channel ID goes here
-        #while not self.is_closed():
+        # counter = 0
+        channel_id = 785543837488775218  # channel ID goes here
+        #test_channel_fetch = await self.get_channel(channel_id)
+        channel_fetch = self.get_channel(id=channel_id)
+        # while not self.is_closed():
         #    counter += 1
         #    await channel.send(counter)
         #    await asyncio.sleep(10)  # task runs every 60 seconds
-        #while True:
-        #    fetched_data = await update_mindustry_status2.fetch_data()
-        #    await update_mindustry_status2.update_data(fetched_data,channel)
-        #    await asyncio.sleep(10)
+        while True:
+            fetched_data =update_mindustry_status2.fetch_data()
+            print("done fetch data")
+            await update_mindustry_status2.update_data(self, fetched_data,channel_fetch)
+            print("done update data")
+            await asyncio.sleep(10)
 
 
 bot = bb(command_prefix=prefix, description=description, intents=intents)
