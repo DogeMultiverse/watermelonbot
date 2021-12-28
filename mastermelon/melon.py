@@ -219,7 +219,8 @@ class bb(commands.Bot):
     # background tasks:
     async def update_mind_status_task(self):
         await self.wait_until_ready()
-        test = True  # 785543837488775218 bot-staff-channel# 791158921443409950  # mindustry status channel #
+        """
+        test = False  # 785543837488775218 bot-staff-channel# 791158921443409950  # mindustry status channel #
         channel_id = 785543837488775218 if test else 791158921443409950
         channel_fetch = self.get_channel(id=channel_id)
         while prefix == ("t?" if test else "w?"):  # only run for test bot
@@ -227,7 +228,7 @@ class bb(commands.Bot):
             await update_mindustry_status2.update_data(self, fetched_data, channel_fetch)
             print("updating mindustry status every 2mins...")
             await asyncio.sleep(60 * 2)  # every 2 mins
-
+        """
 
 bot = bb(command_prefix=prefix, description=description, intents=intents)
 
