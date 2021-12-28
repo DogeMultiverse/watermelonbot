@@ -1,3 +1,4 @@
+from datetime import timedelta
 from datetime import datetime
 import discord
 import json
@@ -98,6 +99,8 @@ if prefix in ["w?", "t?"]:  # only access mongodb for w? and t?
     ipaddress_access_key: str = js["ipaddress_access_key"]
     serverplayerupdates = db["serverplayerupdates"]
     discordinvites: pymongo.collection = db["discordinvites"]
+    registerpin: pymongo.collection = db["registerpin"]
+    duuid1: pymongo.collection = db["duuid1"]
 
 invitecode_mapping = {"KPVVsj2MGW": "Doge Mindustry Invite", "BnBf2STAAd": "Doge Youtube Invite",
                       "GSdkpZZuxN": "Doge Youtube Premium Invite", "BmCssqnhX6": "Alex TOP MC Invite",
@@ -229,6 +232,7 @@ class bb(commands.Bot):
             print("updating mindustry status every 2mins...")
             await asyncio.sleep(60 * 2)  # every 2 mins
         """
+
 
 bot = bb(command_prefix=prefix, description=description, intents=intents)
 
@@ -514,6 +518,47 @@ async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
 @bot.command(description=f"Check user's ranking in {ej.ax_emoji}", brief="Utility")
 async def axleaderboard(ctx: discord.ext.commands.Context):
     await ctx.channel.send(f'for axleaderboard, type `a?axleaderboard`')
+
+
+@bot.command(description=f"Register your mindustry account with your discord account.", brief="Utility")
+async def register(ctx: discord.ext.commands.Context, pin: str):
+    try:
+        int(pin)
+    except ValueError:
+        await ctx.channel.send(f'Pin has to be digits only. eg, `12345` or `12346`')
+    else:
+        await ctx.channel.send(f'Pin input is `{pin}`, please wait.')
+        res = registerpin.find({"pin": pin, "date": {"$gte": datetime.utcnow() - timedelta(minutes=10)}})
+        found = False
+        userdata = None
+        found_objects = []
+        for val in res:
+            found = True
+            userdata = val
+            found_objects.append(val["_id"])
+        if found:
+            role = "Player"
+            isAdmin = False
+            isMod = False
+            for role_temp in ctx.author.roles:
+                if role_temp.name.lower() in ["admin (mindustry)", "admin (discord)", "co-owner"]:
+                    isAdmin = True
+                if role_temp.name.lower() in ["mod (mindustry)", "mod (discord)"]:
+                    isMod = True
+            if isAdmin:
+                role = "Admin"
+            elif isMod:
+                role = "Mod"
+            duuid1.insert_one({"duuid": ctx.author.id, "musername": userdata["musername"],
+                               "muuid": userdata["muuid"], "role": role, "color": "0000ffff",
+                               "date": datetime.utcnow()})
+            for found_object in found_objects: # delete all the pins from database
+                registerpin.find_one_and_delete({"_id": found_object})
+            await ctx.channel.send(f'Successfully registered <@!{ctx.author.id}>. Welcome to Doge Multiverse. Enjoy '
+                                   f'your in game skins/effects.')
+        else:
+            await ctx.channel.send(f'Pin not found. Make sure you did `/register` in Mindustry'
+                                   f'within the last 10 mins.')
 
 
 @bot.command(description=f"get image with user's pfp", brief="Utility")
