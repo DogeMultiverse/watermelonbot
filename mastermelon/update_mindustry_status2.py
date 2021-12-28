@@ -48,6 +48,7 @@ server_data = [  # ("HUB", "alexmindustryhub.ddns.net", 6568, "ALEXHOST"),
     ("PVP USA WEST", "dogemindustry.ddns.net", 25586, "LINODEUSWEST"),
     # ("PVP ASIA", "alexmindustryattac.ddns.net", 25800, "LINODESG"),
     ("HEX", "alexmindustryhex.ddns.net", 25583, "LINODESG"),
+    ("PVP ASIA", "alexmindustryattac.ddns.net", 25800, "LINODESG"),
     ("ATTACK", "alexmindustryattac2.ddns.net", 25582, "HOSTMC"),
     ("PVP", "alexmindustry.ddns.net", 25586, "HOSTMC"),
     ("SURVIVAL", "alexmindustry.ddns.net", 25587, "HOSTMC")]
