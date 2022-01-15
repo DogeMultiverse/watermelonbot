@@ -105,7 +105,7 @@ if prefix in ["w?", "t?"]:  # only access mongodb for w? and t?
 invitecode_mapping = {"KPVVsj2MGW": "Doge Mindustry Invite", "BnBf2STAAd": "Doge Youtube Invite",
                       "GSdkpZZuxN": "Doge Youtube Premium Invite", "BmCssqnhX6": "Alex TOP MC Invite",
                       "FpKnzzQFne": "Alex TOP MC SERVERS Invite", "EhzVgNGxPD": "Doge Annoucement Invite",
-                      "A33dUt6r7n": "Alex Factorio Invite"}
+                      "A33dUt6r7n": "Alex Factorio Invite", "sHBFkzDJhv": "Youtube Invite"}
 
 
 class bb(commands.Bot):
