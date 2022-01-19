@@ -562,10 +562,6 @@ def get_username(duuid: int):
     if isinstance(user, type(None)):
         string = "invalid user"
     else:
-        #if len(user.name)>10:
-        #    username = user.name[:5]+".."+user.name[-3:]
-        #else:
-        #    username = user.name
         string = user.name + "#" + str(user.discriminator)
     return string
 
