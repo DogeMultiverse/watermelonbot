@@ -562,7 +562,7 @@ async def axleaderboard(ctx: discord.ext.commands.Context):
 async def giveax(ctx: discord.ext.commands.Context, amount: int, user: discord.Member, *args):
     old_val = ax.find_one({"duuid": user.id})
     if isinstance(old_val,type(None)):
-        ax.insert_one({"duuid": duuid, "ax": 0})
+        ax.insert_one({"duuid": user.id, "ax": 0})
         old_val = 0
     else:
         old_val = old_val["ax"]
