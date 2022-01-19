@@ -560,10 +560,15 @@ async def axleaderboard(ctx: discord.ext.commands.Context):
 @bot.command(description="Allocate Ax.", brief="Admin Utility", help="<amount:integer> <@user> <reason>")
 @commands.has_role("Admin (Discord)")
 async def giveax(ctx: discord.ext.commands.Context, amount: int, user: discord.Member, *args):
+    old_val = ax.find_one({"duuid": user.id})
+    if isinstance(old_val,type(None)):
+        ax.insert_one({"duuid": duuid, "ax": 0})
+        old_val = 0
+    else:
+        old_val = old_val["ax"]
     ax.find_one_and_update({"duuid": user.id}, {"$inc": {"ax": amount}})
-    new_val = ax.find_one({"duuid": user.id})["ax"]
     await ctx.channel.send(f"{amount}{ej.ax_emoji} awarded to {user.mention}. "
-                           f"Now {new_val}{ej.ax_emoji}.\nReason: {' '.join(args)}")
+                           f"Now {old_val+amount}{ej.ax_emoji}.\nReason: {' '.join(args)}")
 
 
 def get_username(duuid: int):
