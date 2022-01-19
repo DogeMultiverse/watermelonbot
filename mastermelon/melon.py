@@ -552,7 +552,7 @@ async def register(ctx: discord.ext.commands.Context, pin: str):
             duuid1.insert_one({"duuid": ctx.author.id, "musername": userdata["musername"],
                                "muuid": userdata["muuid"], "role": role, "color": "0000ffff",
                                "date": datetime.utcnow()})
-            for found_object in found_objects: # delete all the pins from database
+            for found_object in found_objects:  # delete all the pins from database
                 registerpin.find_one_and_delete({"_id": found_object})
             await ctx.channel.send(f'Successfully registered <@!{ctx.author.id}>. Welcome to Doge Multiverse. Enjoy '
                                    f'your in game skins/effects.')
