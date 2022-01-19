@@ -46,7 +46,7 @@ def get_latest_exp(res, convertedexp_doc):
         muuid_exp_dict = {"In_Game_Name": muuid_name[muuid_i], "servers": []}
         for server, exp in sorted(list(exps.items()),
                                   key=lambda x: 0 if isinstance(x[1], type(None)) else x[1], reverse=True):
-            if server in ["ALEX | ATTACK SERVER", "ALEX | PVP SERVER", "ALEX | SURVIVAL SERVER",
+            if server in ["ALEX | ATTACK SERVER", "ALEX | PVP SERVER", "ALEX | SURVIVAL SERVER", "ALEX | PVP2 SERVER (USA)",
                           'ALEX | TURBO PVP SERVER', "ALEX | PVP SERVER (ASIA)", "ALEX | HEX SERVER"]:
                 try:
                     exp = 0 if exp is None else exp
@@ -105,7 +105,7 @@ if prefix in ["w?", "t?"]:  # only access mongodb for w? and t?
 invitecode_mapping = {"KPVVsj2MGW": "Doge Mindustry Invite", "BnBf2STAAd": "Doge Youtube Invite",
                       "GSdkpZZuxN": "Doge Youtube Premium Invite", "BmCssqnhX6": "Alex TOP MC Invite",
                       "FpKnzzQFne": "Alex TOP MC SERVERS Invite", "EhzVgNGxPD": "Doge Annoucement Invite",
-                      "A33dUt6r7n": "Alex Factorio Invite"}
+                      "A33dUt6r7n": "Alex Factorio Invite", "sHBFkzDJhv": "Youtube Invite"}
 
 
 class bb(commands.Bot):
