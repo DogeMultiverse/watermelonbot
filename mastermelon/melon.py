@@ -517,7 +517,57 @@ async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
 
 @bot.command(description=f"Check user's ranking in {ej.ax_emoji}", brief="Utility")
 async def axleaderboard(ctx: discord.ext.commands.Context):
-    await ctx.channel.send(f'for axleaderboard, type `a?axleaderboard`')
+    cursor = ax.find({"ax": {"$gte": 0}})
+    res = dict()
+    for i, cur in enumerate(cursor):
+        res[cur["duuid"]] = cur["ax"]
+    ranks_temp = sorted(list(res.items()), key=lambda x: x[1], reverse=True)
+    string = f"{ej.ax_emoji} Leader Board\n" + f"Rank, Amount, User\n"
+    found = False
+    ranks =[]
+    for rank, (duuid, axx) in enumerate(ranks_temp):
+        if get_username(duuid)!= "invalid user":
+            ranks.append((duuid, axx))
+    for rank, (duuid, axx) in enumerate(ranks):
+        if rank < 10:
+            username = get_username(duuid)
+            if str(ctx.author.id) == str(duuid):
+                found = True
+                string += f"{rank + 1:>2}.➡{axx:>8}{ej.ax_emoji}  {username} \n"
+            else:
+                string += f"{rank + 1:>2}.  {axx:>8}{ej.ax_emoji}  {username} \n"
+        elif found:
+            break
+        elif str(ctx.author.id) == str(duuid):
+            found = True
+            if rank +1 >13:
+                string += ".\n"
+            if rank +1 >12:
+                string += ".\n"
+            if rank +1 >11: # add the previous rank if rank is >11
+                duuid_temp, axx_temp = ranks[rank-1]
+                username = get_username(duuid_temp)
+                string += f"{rank :>2}.  {axx_temp:>8}{ej.ax_emoji} {username} \n"
+            username = get_username(duuid)
+            string += f"{rank + 1:>2}.➡{axx:>8}{ej.ax_emoji} {username} \n"
+            if len(ranks)>rank+2: # add next rank if there exists
+                duuid_temp, axx_temp = ranks[rank+1]
+                username = get_username(duuid_temp)
+                string += f"{rank +2:>2}.  {axx_temp:>8}{ej.ax_emoji} {username} \n"
+    await ctx.channel.send(string)
+
+
+def get_username(duuid: int):
+    user = bot.get_user(duuid)
+    if isinstance(user, type(None)):
+        string = "invalid user"
+    else:
+        #if len(user.name)>10:
+        #    username = user.name[:5]+".."+user.name[-3:]
+        #else:
+        #    username = user.name
+        string = user.name + "#" + str(user.discriminator)
+    return string
 
 
 @bot.command(description=f"Register your mindustry account with your discord account.", brief="Utility")
