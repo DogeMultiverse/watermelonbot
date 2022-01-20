@@ -1,6 +1,6 @@
 import asyncio
 import random
-
+import emojis as ej
 
 async def run_highlowgame(ctx, bot):
     base_msg = await ctx.channel.send(f"Highlow guess number game for {ctx.author.display_name}."
@@ -9,7 +9,7 @@ async def run_highlowgame(ctx, bot):
     up_emoji = "⬆"
     down_emoji = "⬇"
     party_emoji = "🥳"
-    kekw_emoji = "<:kekw:786876427311251466>"
+    kekw_emoji = ej.kekw_emoji
     await base_msg.add_reaction(up_emoji)
     await base_msg.add_reaction(down_emoji)
 
