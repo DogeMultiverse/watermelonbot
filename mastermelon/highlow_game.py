@@ -1,6 +1,6 @@
 import asyncio
 import random
-import emojis as ej
+from mastermelon import emojis as ej
 
 async def run_highlowgame(ctx, bot):
     base_msg = await ctx.channel.send(f"Highlow guess number game for {ctx.author.display_name}."
