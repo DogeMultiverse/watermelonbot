@@ -578,17 +578,20 @@ async def giveax(ctx: discord.ext.commands.Context, amount: int, user: discord.M
 
 
 @bot.command(description="Check user's Ax. If no user is specified, check your own Ax",
-             brief="Admin Utility", help="[@user(Optional)]")
+             brief="Utility", help="[@user(Optional)]")
 async def checkax(ctx: discord.ext.commands.Context, *user):
     if isinstance(user,type(None)):
         user = ctx.author.id
+    if isinstance(user,type(discord.member.User)):
+        user = user.id
     old_val = ax.find_one({"duuid": user})
     if isinstance(old_val,type(None)):
         ax.insert_one({"duuid": user, "ax": 0})
         old_val = 0
     else:
         old_val = old_val["ax"]
-    await ctx.channel.send(f"{user.mention} currently has {old_val}{ej.ax_emoji}.")
+    username = get_username(user)
+    await ctx.channel.send(f"{username} currently has {old_val}{ej.ax_emoji}.")
 
 
 def get_username(duuid: int):
