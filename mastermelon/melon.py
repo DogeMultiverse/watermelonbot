@@ -565,7 +565,7 @@ async def axleaderboard(ctx: discord.ext.commands.Context):
 
 @bot.command(description="Allocate Ax.", brief="Admin Utility", help="<amount:integer> <@user> <reason>")
 @commands.has_role("Admin (Discord)")
-async def giveax(ctx: discord.ext.commands.Context, amount: int, user: discord.Member, *args):
+async def giveax(ctx: discord.ext.commands.Context, amount: int, user: discord.Member, *reason):
     old_val = ax.find_one({"duuid": user.id})
     if isinstance(old_val,type(None)):
         ax.insert_one({"duuid": user.id, "ax": 0})
