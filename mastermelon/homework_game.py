@@ -52,7 +52,7 @@ async def run_homeworkgame(ctx, bot):
         return message.author == ctx.message.author and ctx.channel == message.channel
 
     try:
-        ans: discord.message.Message = await bot.wait_for('message', timeout=30, check=check)
+        ans: discord.message.Message = await bot.wait_for('message', timeout=120, check=check)
         time_taken = t() - t0
         anss = tuple([int(i) for i in ans.content.split(",")])
         correct = anss == sol or anss == (sol[1], sol[0])
