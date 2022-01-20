@@ -8,6 +8,7 @@ import random
 from discord.ext import commands
 from mastermelon import counting_bot, show_countries, console_commands
 from mastermelon import highlow_game
+from mastermelon import homework_game
 from mastermelon import giveaway_bot
 from mastermelon import effects_display
 from mastermelon import emojis as ej
@@ -301,6 +302,11 @@ async def help(ctx, args=None):
 @bot.command(description="High low game, try to guess the correct number by clicking higher or lower.", brief="Game")
 async def highlow(ctx):
     await highlow_game.run_highlowgame(ctx, bot)
+
+
+@bot.command(description="Do your homework.", brief="Game")
+async def homework(ctx):
+    await homework_game.run_homeworkgame(ctx, bot)
 
 
 @bot.command(description="Gets all animated emojis from this discord.", brief="None")
