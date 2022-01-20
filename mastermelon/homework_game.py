@@ -52,7 +52,7 @@ async def run_homeworkgame(ctx, bot):
         return message.author == ctx.message.author and ctx.channel == message.channel
 
     try:
-        ans: discord.message.Message = await bot.wait_for('message', timeout=30, check=check)
+        ans: discord.message.Message = await bot.wait_for('message', timeout=120, check=check)
         time_taken = t() - t0
         anss = tuple([int(i) for i in ans.content.split(",")])
         correct = anss == sol or anss == (sol[1], sol[0])
@@ -63,7 +63,7 @@ async def run_homeworkgame(ctx, bot):
         if correct:
             highscores.append((time_taken, ctx.author))
         scores = [f"`{rank + 1}`  `{time:.2f}s`  : {name}" for rank, (time, name) in
-                  enumerate(sorted(highscores[:5], reverse=True))]
+                  enumerate(sorted(highscores[:5]))]
         await ctx.channel.send("Homework (BETA) `Leaderboard`\n" + "\n".join(scores))
     except ValueError:
         await ctx.channel.send("Input error. Follow instructions exactly.")
