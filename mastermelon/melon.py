@@ -574,7 +574,7 @@ async def giveax(ctx: discord.ext.commands.Context, amount: int, user: discord.M
         old_val = old_val["ax"]
     ax.find_one_and_update({"duuid": user.id}, {"$inc": {"ax": amount}})
     await ctx.channel.send(f"{amount}{ej.ax_emoji} awarded to {user.mention}. "
-                           f"Now {old_val+amount}{ej.ax_emoji}.\nReason: {' '.join(args)}")
+                           f"Now {old_val+amount}{ej.ax_emoji}.\nReason: {' '.join(reason)}")
 
 
 def get_username(duuid: int):
