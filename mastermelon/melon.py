@@ -47,7 +47,8 @@ def get_latest_exp(res, convertedexp_doc):
         muuid_exp_dict = {"In_Game_Name": muuid_name[muuid_i], "servers": []}
         for server, exp in sorted(list(exps.items()),
                                   key=lambda x: 0 if isinstance(x[1], type(None)) else x[1], reverse=True):
-            if server in ["ALEX | ATTACK SERVER", "ALEX | PVP SERVER", "ALEX | SURVIVAL SERVER", "ALEX | PVP2 SERVER (USA)",
+            if server in ["ALEX | ATTACK SERVER", "ALEX | PVP SERVER", "ALEX | SURVIVAL SERVER",
+                          "ALEX | PVP2 SERVER (USA)",
                           'ALEX | TURBO PVP SERVER', "ALEX | PVP SERVER (ASIA)", "ALEX | HEX SERVER"]:
                 try:
                     exp = 0 if exp is None else exp
@@ -530,9 +531,9 @@ async def axleaderboard(ctx: discord.ext.commands.Context):
     ranks_temp = sorted(list(res.items()), key=lambda x: x[1], reverse=True)
     string = f"{ej.ax_emoji} Leader Board\n" + f"Rank, Amount, User\n"
     found = False
-    ranks =[]
+    ranks = []
     for rank, (duuid, axx) in enumerate(ranks_temp):
-        if get_username(duuid)!= "invalid user":
+        if get_username(duuid) != "invalid user":
             ranks.append((duuid, axx))
     for rank, (duuid, axx) in enumerate(ranks):
         if rank < 10:
@@ -546,20 +547,20 @@ async def axleaderboard(ctx: discord.ext.commands.Context):
             break
         elif str(ctx.author.id) == str(duuid):
             found = True
-            if rank +1 >13:
+            if rank + 1 > 13:
                 string += ".\n"
-            if rank +1 >12:
+            if rank + 1 > 12:
                 string += ".\n"
-            if rank +1 >11: # add the previous rank if rank is >11
-                duuid_temp, axx_temp = ranks[rank-1]
+            if rank + 1 > 11:  # add the previous rank if rank is >11
+                duuid_temp, axx_temp = ranks[rank - 1]
                 username = get_username(duuid_temp)
                 string += f"{rank :>2}.  {axx_temp:>8}{ej.ax_emoji} {username} \n"
             username = get_username(duuid)
             string += f"{rank + 1:>2}.➡{axx:>8}{ej.ax_emoji} {username} \n"
-            if len(ranks)>rank+2: # add next rank if there exists
-                duuid_temp, axx_temp = ranks[rank+1]
+            if len(ranks) > rank + 2:  # add next rank if there exists
+                duuid_temp, axx_temp = ranks[rank + 1]
                 username = get_username(duuid_temp)
-                string += f"{rank +2:>2}.  {axx_temp:>8}{ej.ax_emoji} {username} \n"
+                string += f"{rank + 2:>2}.  {axx_temp:>8}{ej.ax_emoji} {username} \n"
     await ctx.channel.send(string)
 
 
@@ -567,14 +568,14 @@ async def axleaderboard(ctx: discord.ext.commands.Context):
 @commands.has_role("Admin (Discord)")
 async def giveax(ctx: discord.ext.commands.Context, amount: int, user: discord.Member, *reason):
     old_val = ax.find_one({"duuid": user.id})
-    if isinstance(old_val,type(None)):
+    if isinstance(old_val, type(None)):
         ax.insert_one({"duuid": user.id, "ax": 0})
         old_val = 0
     else:
         old_val = old_val["ax"]
     ax.find_one_and_update({"duuid": user.id}, {"$inc": {"ax": amount}})
     await ctx.channel.send(f"{amount}{ej.ax_emoji} awarded to {user.mention}. "
-                           f"Now {old_val+amount}{ej.ax_emoji}.\nReason: {' '.join(reason)}")
+                           f"Now {old_val + amount}{ej.ax_emoji}.\nReason: {' '.join(reason)}")
 
 
 @bot.command(description="Check user's Ax. If no user is specified, check your own Ax",
