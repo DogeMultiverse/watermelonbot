@@ -674,6 +674,15 @@ async def github(ctx: discord.ext.commands.Context):
     await ctx.channel.send(embed=embed)
 
 
+@bot.command(brief="Links", description="Shows the links to donate.")
+async def github(ctx: discord.ext.commands.Context):
+    embed = discord.Embed(title=f"Donation links", colour=discord.Colour.random().value)
+    embed.add_field(name="ko-fi ($0 Fee)", value="https://ko-fi.com/dogemultiverse", inline=False)
+    embed.add_field(name="PayPal", value="https://www.paypal.com/paypalme/alexservers", inline=False)
+    embed.add_field(name="Buy Me A Coffee", value="https://www.buymeacoffee.com/alexservers", inline=False)
+    await ctx.channel.send(embed=embed)
+
+
 @bot.command(description="Create giveaway.", brief="Admin Utility",
              help="<add/remove> <giveawaychannel> <anncchannel> <amount> <winners> <days> <hours> <'msg'>")
 @commands.has_role("Admin (Discord)")
