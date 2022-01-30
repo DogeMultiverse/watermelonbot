@@ -75,7 +75,6 @@ async def run_homeworkgame(ctx, bot):
         await ctx.channel.send("Homework (BETA 2.0) `Leaderboard`\n" + "\n".join(scores))
     except ValueError:
         await ctx.channel.send("Input error. Follow instructions exactly.")
-        raise
     except asyncio.TimeoutError:  # Indent error here, delete one tabulation
         await ctx.channel.send(f"Homework for {ctx.author.display_name}.\n"
                                f"You took too long to answer. Timed out.")
