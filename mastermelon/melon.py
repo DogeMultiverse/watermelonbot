@@ -675,7 +675,7 @@ async def github(ctx: discord.ext.commands.Context):
 
 
 @bot.command(brief="Links", description="Shows the links to donate.")
-async def github(ctx: discord.ext.commands.Context):
+async def donate(ctx: discord.ext.commands.Context):
     embed = discord.Embed(title=f"Donation links", colour=discord.Colour.random().value)
     embed.add_field(name="ko-fi ($0 Fee)", value="https://ko-fi.com/dogemultiverse", inline=False)
     embed.add_field(name="PayPal", value="https://www.paypal.com/paypalme/alexservers", inline=False)
