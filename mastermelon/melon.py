@@ -680,6 +680,7 @@ async def donate(ctx: discord.ext.commands.Context):
     embed.add_field(name="ko-fi ($0 Fee)", value="https://ko-fi.com/dogemultiverse", inline=False)
     embed.add_field(name="PayPal", value="https://www.paypal.com/paypalme/alexservers", inline=False)
     embed.add_field(name="Buy Me A Coffee", value="https://www.buymeacoffee.com/alexservers", inline=False)
+    embed.add_field(name="Patreon", value="https://www.patreon.com/DogeMultiverse", inline=False)
     await ctx.channel.send(embed=embed)
 
 
