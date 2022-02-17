@@ -530,7 +530,7 @@ async def axleaderboard(ctx: discord.ext.commands.Context):
     for i, cur in enumerate(cursor):
         res[cur["duuid"]] = cur["ax"]
     ranks_temp = sorted(list(res.items()), key=lambda x: x[1], reverse=True)
-    string = f"{ej.ax_emoji} Leader Board\n" + f"Rank, Amount, User\n"
+    string = f"{ej.ax_emoji} Leaderboard\n" + f"Rank, Amount, User\n"
     found = False
     ranks = []
     for rank, (duuid, axx) in enumerate(ranks_temp):
