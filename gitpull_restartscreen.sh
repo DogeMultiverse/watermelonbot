@@ -1,1 +1,3 @@
-git pull\nscreen -S watermelonbot -X quit\n./screen_server_start.sh
+git pull
+screen -S watermelonbot -X quit
+./screen_server_start.sh
