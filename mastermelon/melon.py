@@ -686,7 +686,7 @@ async def donate(ctx: discord.ext.commands.Context):
 
 @bot.command(description="Create giveaway.", brief="Admin Utility",
              help="<add/remove> <giveawaychannel> <anncchannel> <amount> <winners> <days> <hours> <'msg'>")
-@commands.has_role("Admin (Discord)")
+@commands.has_any_role("Admin (Discord)","Mod (Giveaway)")
 async def giveaway(ctx: discord.ext.commands.Context, what: str, channel: discord.TextChannel,
                    channelannc: discord.TextChannel, amount: int = 1,
                    winners: int = 0, days: int = 0, hours: int = 0, message: str = ""):
