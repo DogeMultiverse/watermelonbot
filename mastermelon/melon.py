@@ -534,11 +534,11 @@ async def axleaderboard(ctx: discord.ext.commands.Context):
     found = False
     ranks = []
     for rank, (duuid, axx) in enumerate(ranks_temp):
-        if get_username(duuid) != "invalid user":
+        if getUsernameFromDUUID(duuid) != "invalid user":
             ranks.append((duuid, axx))
     for rank, (duuid, axx) in enumerate(ranks):
         if rank < 10:
-            username = get_username(duuid)
+            username = getUsernameFromDUUID(duuid)
             if str(ctx.author.id) == str(duuid):
                 found = True
                 string += f"{rank + 1:>2}.➡{axx:>8}{ej.ax_emoji}  {username} \n"
@@ -554,13 +554,13 @@ async def axleaderboard(ctx: discord.ext.commands.Context):
                 string += ".\n"
             if rank + 1 > 11:  # add the previous rank if rank is >11
                 duuid_temp, axx_temp = ranks[rank - 1]
-                username = get_username(duuid_temp)
+                username = getUsernameFromDUUID(duuid_temp)
                 string += f"{rank :>2}.  {axx_temp:>8}{ej.ax_emoji} {username} \n"
-            username = get_username(duuid)
+            username = getUsernameFromDUUID(duuid)
             string += f"{rank + 1:>2}.➡{axx:>8}{ej.ax_emoji} {username} \n"
             if len(ranks) > rank + 2:  # add next rank if there exists
                 duuid_temp, axx_temp = ranks[rank + 1]
-                username = get_username(duuid_temp)
+                username = getUsernameFromDUUID(duuid_temp)
                 string += f"{rank + 2:>2}.  {axx_temp:>8}{ej.ax_emoji} {username} \n"
     await ctx.channel.send(string)
 
@@ -579,34 +579,39 @@ async def giveax(ctx: discord.ext.commands.Context, amount: int, user: discord.M
                            f"Now {old_val + amount}{ej.ax_emoji}.\nReason: {' '.join(reason)}")
 
 
-@bot.command(description="Check user's Ax. If no user is specified, check your own Ax",
+@bot.command(description="Check user's Ax. If no user is specified, check your own Ax.",
              brief="Utility", help="[@user or discord ID or nothing]")
 async def checkax(ctx: discord.ext.commands.Context, user=None):
     try:
-        if isinstance(user, type(None)):
-            user = int(ctx.author.id)
-        elif isinstance(user, type(discord.Member)):
-            user = int(user.id)
-        elif "<" in user:
-            final_user = ""
-            for char in user:
-                if char in "0123456789":
-                    final_user += char
-            user = int(final_user)
-        else:
-            user = int(user)
+        user = await getDUUIDFromMentionIDElseAuthor(ctx, user)
         old_val = ax.find_one({"duuid": user})
         if isinstance(old_val, type(None)):
             old_val = 0
         else:
             old_val = old_val["ax"]
-        username = get_username(user)
+        username = getUsernameFromDUUID(user)
         await ctx.channel.send(f"{username} currently has {old_val}{ej.ax_emoji}.")
     except ValueError:
         await ctx.channel.send(f"Invalid input. Try the ID in digits or @user.")
 
 
-def get_username(duuid: int):
+async def getDUUIDFromMentionIDElseAuthor(ctx: discord.ext.commands.Context, user=None):
+    if isinstance(user, type(None)):
+        user = int(ctx.author.id)
+    elif isinstance(user, type(discord.Member)):
+        user = int(user.id)
+    elif "<" in user:
+        final_user = ""
+        for char in user:
+            if char in "0123456789":
+                final_user += char
+        user = int(final_user)
+    else:
+        user = int(user)
+    return user
+
+
+def getUsernameFromDUUID(duuid: int):
     user = bot.get_user(duuid)
     if isinstance(user, type(None)):
         string = "invalid user"
@@ -686,7 +691,7 @@ async def donate(ctx: discord.ext.commands.Context):
 
 @bot.command(description="Create giveaway.", brief="Admin Utility",
              help="<add/remove> <giveawaychannel> <anncchannel> <amount> <winners> <days> <hours> <'msg'>")
-@commands.has_any_role("Admin (Discord)","Mod (Giveaway)")
+@commands.has_any_role("Admin (Discord)", "Mod (Giveaway)")
 async def giveaway(ctx: discord.ext.commands.Context, what: str, channel: discord.TextChannel,
                    channelannc: discord.TextChannel, amount: int = 1,
                    winners: int = 0, days: int = 0, hours: int = 0, message: str = ""):
