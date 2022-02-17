@@ -597,18 +597,18 @@ async def checkax(ctx: discord.ext.commands.Context, user=None):
 
 async def getDUUIDFromMentionIDElseAuthor(ctx: discord.ext.commands.Context, user=None):
     if isinstance(user, type(None)):
-        user = int(ctx.author.id)
+        userduuid = int(ctx.author.id)
     elif isinstance(user, type(discord.Member)):
-        user = int(user.id)
+        userduuid = int(user.id)
     elif "<" in user:
         final_user = ""
         for char in user:
             if char in "0123456789":
                 final_user += char
-        user = int(final_user)
+        userduuid = int(final_user)
     else:
-        user = int(user)
-    return user
+        userduuid = int(user)
+    return userduuid
 
 
 def getUsernameFromDUUID(duuid: int):
