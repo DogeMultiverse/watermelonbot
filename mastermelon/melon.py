@@ -583,13 +583,13 @@ async def giveax(ctx: discord.ext.commands.Context, amount: int, user: discord.M
              brief="Utility", help="[@user or discord ID or nothing]")
 async def checkax(ctx: discord.ext.commands.Context, user=None):
     try:
-        user = await getDUUIDFromMentionIDElseAuthor(ctx, user)
-        old_val = ax.find_one({"duuid": user})
+        userduuid = await getDUUIDFromMentionIDElseAuthor(ctx, user)
+        old_val = ax.find_one({"duuid": userduuid})
         if isinstance(old_val, type(None)):
             old_val = 0
         else:
             old_val = old_val["ax"]
-        username = getUsernameFromDUUID(user)
+        username = getUsernameFromDUUID(userduuid)
         await ctx.channel.send(f"{username} currently has {old_val}{ej.ax_emoji}.")
     except ValueError:
         await ctx.channel.send(f"Invalid input. Try the ID in digits or @user.")
