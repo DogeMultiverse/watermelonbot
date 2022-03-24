@@ -1,3 +1,4 @@
+import time
 from datetime import timedelta
 from datetime import datetime
 import discord
@@ -42,7 +43,7 @@ def get_latest_exp(res, convertedexp_doc):
             convertedexp_doc[doc["muuid"]] = {}
     str_builder = ""
     for muuid_i, exps in muuid.items():
-        str_builder += "In Game Name: `" + muuid_name[muuid_i] + "`\n"  # +str(exps) +"\n"
+        str_builder += "In Game Name: `" + muuid_name[muuid_i] + "`\n"
         exp_builder = ""
         muuid_exp_dict = {"In_Game_Name": muuid_name[muuid_i], "servers": []}
         for server, exp in sorted(list(exps.items()),
@@ -225,16 +226,42 @@ class bb(commands.Bot):
     # background tasks:
     async def update_mind_status_task(self):
         await self.wait_until_ready()
-        """
-        test = False  # 785543837488775218 bot-staff-channel# 791158921443409950  # mindustry status channel #
-        channel_id = 785543837488775218 if test else 791158921443409950
-        channel_fetch = self.get_channel(id=channel_id)
-        while prefix == ("t?" if test else "w?"):  # only run for test bot
-            fetched_data = update_mindustry_status2.fetch_data()
-            await update_mindustry_status2.update_data(self, fetched_data, channel_fetch)
-            print("updating mindustry status every 2mins...")
-            await asyncio.sleep(60 * 2)  # every 2 mins
-        """
+        try:
+            test = False
+            status_msg_channel: discord.TextChannel = self.get_channel(791158921443409950)
+            status_log_channel: discord.TextChannel = self.get_channel(791129836948422676)
+            while prefix == ("t?" if test else "w?"):  # only run for test bot
+                t0=time.time()
+                messages = await status_log_channel.history(limit=30, oldest_first=False,
+                                                            after=datetime.utcnow() - timedelta(minutes=7)).flatten()
+                msg: discord.Message
+                servers = set()
+                timestamp = int(datetime.now().timestamp())
+                strbuilder = f"Updated <t:{timestamp}:R>\n"
+                maps = []
+                for msg in messages:
+                    if " is **running**:" in msg.content and "**PLAYERS**" in msg.content:
+                        # print(msg.content, msg.created_at)
+                        msg1 = msg.content.split(" is **running**: ")
+                        msg10 = strip_colourbrackets(msg1[0])
+                        if msg10 not in servers:
+                            servers.add(msg10)
+                            msg2 = msg1[1].split(", **PLAYERS**=")
+                            msg3 = msg2[1].split(", **RAM**=")
+                            maps += [f"✅ `ONLINE`✅ {msg10}\n`            `**Map**: `{strip_colourbrackets(msg2[0])}`  **Players**:`{msg3[0]}`  **RAM**:`{msg3[1]}`\n"]
+                if len(servers) == 0:
+                    strbuilder += "Servers Ded :("
+                else:
+                    strbuilder += "".join(sorted(maps))
+                status_msg: discord.Message = await status_msg_channel.history(limit=1).flatten()
+                if status_msg and status_msg[0].content.startswith("Updated <t"):
+                    await status_msg[0].edit(content=strbuilder)
+                else: # if not found, send as a new msg
+                    await status_msg_channel.send(strbuilder)
+                print(f"update took {time.time()-t0:.3f}seconds")
+                await asyncio.sleep(60*5)
+        except RuntimeError:
+            print("mindus status update closed")
 
 
 bot = bb(command_prefix=prefix, description=description, intents=intents)
@@ -813,6 +840,19 @@ async def on_message(message: discord.Message):
         await bot.process_commands(message)
 
 
+def strip_colourbrackets(inputstr):
+    builder = ""
+    remove = False
+    for char in inputstr:
+        if char == "[":
+            remove = True
+        elif char == "]":
+            remove = False
+        elif not remove:
+            builder += char
+    return builder
+
+
 def runbot():
     with open("watermelon.config", "rb") as f:
         js = json.load(f)
@@ -820,7 +860,13 @@ def runbot():
     # clientdisc = MyClient(intents=discord.Intents().all())
     # bot.load_extension("mastermelon.giveaway_bot2")
     bot.add_cog(giveaway_bot.Giveaway(bot))
-    bot.run(bot_token)
+    try:
+        bot.run(bot_token)
+    except KeyboardInterrupt:
+        print("Exiting")
+        asyncio.run(bot.close())
+    except RuntimeError:
+        print("rte")
 
 #     elif message.content.startswith(prefix + "claimeffect"):
 #         # todo @BOUNTY # check for role precondition then give effect

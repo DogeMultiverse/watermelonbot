@@ -19,6 +19,8 @@ from mastermelon import melon
 if __name__ == '__main__':
     print_hi('PyCharm')
     #guessing_game.runbot()
-    melon.runbot()
-
+    try:
+        melon.runbot()
+    except RuntimeError or KeyboardInterrupt:
+        print("exiting here")
 
