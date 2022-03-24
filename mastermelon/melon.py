@@ -369,6 +369,21 @@ async def getserver(ctx):
     await console_commands.getserver(ctx)
 
 
+@bot.command(description="assigns the user's role in mindustry, role can be Admin|Mod|Player",
+             help="<@user> <role>",
+             brief="Admin Utility")
+@commands.has_any_role("Admin (Discord)", "Admin (Mindustry)")
+async def changemindusrole(ctx, user: discord.Member, role: str):
+    if role in ["Admin", "Mod", "Player"]:
+        result = duuid1.update_many({"duuid": user.id}, {"$set": {"role": role}})
+        if result.modified_count > 0:
+            await ctx.send(f"Congrats, {user.mention} is now a {role} in Mindustry")
+        else:
+            await ctx.send(f"Nothing changed.")
+    else:
+        await ctx.send(f"Error, role not found. Please choose Admin|Mod|Player.")
+
+
 @bot.command(description="adds <:EMOJI:> to the desired <message_id> in [channel]. max 20 emojis per message",
              help="adds <:emoji:> to <message_id> in [channel]",
              brief="Hype")
