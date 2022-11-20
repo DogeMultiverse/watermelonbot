@@ -43,6 +43,9 @@ class Server:
 
 
 server_data = [  # ("HUB", "alexmindustryhub.ddns.net", 6568, "ALEXHOST"),
+    ("PVP V7", "alexmindustryattac.ddns.net", 6767, "LINODESG"),
+    ("SURVIVAL V7", "alexmindustryattac.ddns.net", 6768, "LINODESG"),
+    ("HUB V7", "alexmindustryhub.ddns.net", 6565, "ALEXHOST"),
     ("SANDBOX", "alexmindustrysandbox.ddns.net", 25580, "HOSTMC"),
     ("TURBO PVP", "alexmindustryturbo.ddns.net", 25581, "HOSTMC"),
     ("PVP USA WEST", "dogemindustry.ddns.net", 25586, "LINODEUSWEST"),
