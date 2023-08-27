@@ -567,13 +567,12 @@ async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
 
 @bot.command(description=f"Check user's ranking in {ej.ax_emoji}", brief="Utility")
 async def axleaderboard(ctx: discord.ext.commands.Context):
-    ranks = []
     cursor = ax.find({"ax": {"$gte": 0}})
     string = f"{ej.ax_emoji} Leaderboard\n" + f"Rank, Amount, User\n"
     ranks = dict()
     found = False
     for i, cur in enumerate(cursor):
-        if getUsernameFromDUUID(duuid) != "invalid user":
+        if getUsernameFromDUUID(cur["duuid"]) != "invalid user":
             ranks[cur["duuid"]] = cur["ax"]
     ranks = sorted(list(ranks.items()), key=lambda x: x[1], reverse=True)
     for rank, (duuid, axx) in enumerate(ranks):
