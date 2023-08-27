@@ -538,7 +538,7 @@ async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
                     200: ["rainbowPixel", "rainbowBubble"]}
     effects = [ee for c, e in effects_cost.items() for ee in e]
     owned_effects_collection = ingamecosmetics.find_one({"duuid": ctx.author.id})
-    if owned_effects_collection is None:
+    if owned_effects_collection is Nfvone:
         await ctx.channel.send("You need to have a **REGISTERED** mindustry account.")
         return
     owned_effects = owned_effects_collection["effects"]
@@ -567,17 +567,15 @@ async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
 
 @bot.command(description=f"Check user's ranking in {ej.ax_emoji}", brief="Utility")
 async def axleaderboard(ctx: discord.ext.commands.Context):
-    cursor = ax.find({"ax": {"$gte": 0}})
-    res = dict()
-    for i, cur in enumerate(cursor):
-        res[cur["duuid"]] = cur["ax"]
-    ranks_temp = sorted(list(res.items()), key=lambda x: x[1], reverse=True)
-    string = f"{ej.ax_emoji} Leaderboard\n" + f"Rank, Amount, User\n"
-    found = False
     ranks = []
-    for rank, (duuid, axx) in enumerate(ranks_temp):
+    cursor = ax.find({"ax": {"$gte": 0}})
+    string = f"{ej.ax_emoji} Leaderboard\n" + f"Rank, Amount, User\n"
+    ranks = dict()
+    found = False
+    for i, cur in enumerate(cursor):
         if getUsernameFromDUUID(duuid) != "invalid user":
-            ranks.append((duuid, axx))
+            ranks[cur["duuid"]] = cur["ax"]
+    ranks = sorted(list(ranks.items()), key=lambda x: x[1], reverse=True)
     for rank, (duuid, axx) in enumerate(ranks):
         if rank < 10:
             username = getUsernameFromDUUID(duuid)
