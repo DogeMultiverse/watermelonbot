@@ -680,27 +680,19 @@ async def register(ctx: discord.ext.commands.Context, pin: str):
             found_objects.append(val["_id"])
         if found:
             role = "Player"
-            isAdmin = False
-            isMod = False
             for role_temp in ctx.author.roles:
                 if role_temp.name.lower() in ["admin (mindustry)", "admin (discord)", "co-owner"]:
-                    isAdmin = True
+                    role = "Admin"
                 if role_temp.name.lower() in ["mod (mindustry)", "mod (discord)"]:
-                    isMod = True
-            if isAdmin:
-                role = "Admin"
-            elif isMod:
-                role = "Mod"
+                    role = "Mod"
             duuid1.insert_one({"duuid": ctx.author.id, "musername": userdata["musername"],
                                "muuid": userdata["muuid"], "role": role, "color": "0000ffff",
                                "date": datetime.utcnow()})
             for found_object in found_objects:  # delete all the pins from database
                 registerpin.find_one_and_delete({"_id": found_object})
-            await ctx.channel.send(f'Successfully registered <@!{ctx.author.id}>. Welcome to Alex Multiverse. Enjoy '
-                                   f'your in game skins/effects.')
+            await ctx.channel.send(f'Successfully registered <@!{ctx.author.id}>. Welcome to Alex Multiverse. Enjoy your in game skins/effects.')
         else:
-            await ctx.channel.send(f'Pin not found. Make sure you did `/register` in Mindustry'
-                                   f'within the last 10 mins.')
+            await ctx.channel.send(f"Pin not found. Make sure you did `/register` in Mindustry within the last 10 mins.")
 
 
 @bot.command(description=f"get image with user's pfp", brief="Utility")
