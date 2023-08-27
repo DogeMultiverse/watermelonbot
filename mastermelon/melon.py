@@ -538,7 +538,7 @@ async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
                     200: ["rainbowPixel", "rainbowBubble"]}
     effects = [ee for c, e in effects_cost.items() for ee in e]
     owned_effects_collection = ingamecosmetics.find_one({"duuid": ctx.author.id})
-    if owned_effects_collection is Nfvone:
+    if owned_effects_collection is None:
         await ctx.channel.send("You need to have a **REGISTERED** mindustry account.")
         return
     owned_effects = owned_effects_collection["effects"]
@@ -568,13 +568,16 @@ async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
 @bot.command(description=f"Check user's ranking in {ej.ax_emoji}", brief="Utility")
 async def axleaderboard(ctx: discord.ext.commands.Context):
     cursor = ax.find({"ax": {"$gte": 0}})
-    string = f"{ej.ax_emoji} Leaderboard\nRank, Amount, User\n"
-    ranks = dict()
-    found = False
+    res = dict()
     for i, cur in enumerate(cursor):
-        if getUsernameFromDUUID(cur["duuid"]) != "invalid user":
-            ranks[cur["duuid"]] = cur["ax"]
-    ranks = sorted(list(ranks.items()), key=lambda x: x[1], reverse=True)
+        res[cur["duuid"]] = cur["ax"]
+    ranks_temp = sorted(list(res.items()), key=lambda x: x[1], reverse=True)
+    string = f"{ej.ax_emoji} Leaderboard\n" + f"Rank, Amount, User\n"
+    found = False
+    ranks = []
+    for rank, (duuid, axx) in enumerate(ranks_temp):
+        if getUsernameFromDUUID(duuid) != "invalid user":
+            ranks.append((duuid, axx))
     for rank, (duuid, axx) in enumerate(ranks):
         if rank < 10:
             username = getUsernameFromDUUID(duuid)
@@ -677,27 +680,19 @@ async def register(ctx: discord.ext.commands.Context, pin: str):
             found_objects.append(val["_id"])
         if found:
             role = "Player"
-            isAdmin = False
-            isMod = False
             for role_temp in ctx.author.roles:
                 if role_temp.name.lower() in ["admin (mindustry)", "admin (discord)", "co-owner"]:
-                    isAdmin = True
+                    role = "Admin"
                 if role_temp.name.lower() in ["mod (mindustry)", "mod (discord)"]:
-                    isMod = True
-            if isAdmin:
-                role = "Admin"
-            elif isMod:
-                role = "Mod"
+                    role = "Mod"
             duuid1.insert_one({"duuid": ctx.author.id, "musername": userdata["musername"],
                                "muuid": userdata["muuid"], "role": role, "color": "0000ffff",
                                "date": datetime.utcnow()})
             for found_object in found_objects:  # delete all the pins from database
                 registerpin.find_one_and_delete({"_id": found_object})
-            await ctx.channel.send(f'Successfully registered <@!{ctx.author.id}>. Welcome to Alex Multiverse. Enjoy '
-                                   f'your in game skins/effects.')
+            await ctx.channel.send(f'Successfully registered <@!{ctx.author.id}>. Welcome to Alex Multiverse. Enjoy your in game skins/effects.')
         else:
-            await ctx.channel.send(f'Pin not found. Make sure you did `/register` in Mindustry'
-                                   f'within the last 10 mins.')
+            await ctx.channel.send(f"Pin not found. Make sure you did `/register` in Mindustry within the last 10 mins.")
 
 
 @bot.command(description=f"get image with user's pfp", brief="Utility")
