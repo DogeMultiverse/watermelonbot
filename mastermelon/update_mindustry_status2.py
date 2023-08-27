@@ -11,7 +11,7 @@ import discord
 from multiprocessing import Pool
 
 
-class Server:
+class Server: #TODO fix this
     def __init__(self, host, server_port=6567, socketinput_port=6859):
         self.host = host
         self.server = (host, server_port)

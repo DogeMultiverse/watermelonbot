@@ -49,7 +49,7 @@ def get_latest_exp(res, convertedexp_doc):
         for server, exp in sorted(list(exps.items()),
                                   key=lambda x: 0 if isinstance(x[1], type(None)) else x[1], reverse=True):
             if server in ["ALEX | ATTACK SERVER", "ALEX | PVP SERVER", "ALEX | SURVIVAL SERVER",
-                          "ALEX | PVP2 SERVER (USA)",
+                          "ALEX | PVP2 SERVER (USA)","ALEX PVP V7 (ASIA)","ALEX SURVIVAL V7",
                           'ALEX | TURBO PVP SERVER', "ALEX | PVP SERVER (ASIA)", "ALEX | HEX SERVER"]:
                 try:
                     exp = 0 if exp is None else exp
@@ -105,9 +105,9 @@ if prefix in ["w?", "t?"]:  # only access mongodb for w? and t?
     registerpin: pymongo.collection = db["registerpin"]
     duuid1: pymongo.collection = db["duuid1"]
 
-invitecode_mapping = {"KPVVsj2MGW": "Doge Mindustry Invite", "BnBf2STAAd": "Doge Youtube Invite",
+invitecode_mapping = {"KPVVsj2MGW": "Alex Mindustry Invite", "BnBf2STAAd": "Doge Youtube Invite",
                       "GSdkpZZuxN": "Doge Youtube Premium Invite", "BmCssqnhX6": "Alex TOP MC Invite",
-                      "FpKnzzQFne": "Alex TOP MC SERVERS Invite", "EhzVgNGxPD": "Doge Annoucement Invite",
+                      "FpKnzzQFne": "Alex TOP MC SERVERS Invite", "EhzVgNGxPD": "Alex Annoucement Invite",
                       "nVwZjfNJHJ": "Doge Youtube Invite", "WjKUdKNhdR": "Mintable Invite",
                       "A33dUt6r7n": "Alex Factorio Invite", "sHBFkzDJhv": "Youtube Invite"}
 
@@ -696,7 +696,7 @@ async def register(ctx: discord.ext.commands.Context, pin: str):
                                "date": datetime.utcnow()})
             for found_object in found_objects:  # delete all the pins from database
                 registerpin.find_one_and_delete({"_id": found_object})
-            await ctx.channel.send(f'Successfully registered <@!{ctx.author.id}>. Welcome to Doge Multiverse. Enjoy '
+            await ctx.channel.send(f'Successfully registered <@!{ctx.author.id}>. Welcome to Alex Multiverse. Enjoy '
                                    f'your in game skins/effects.')
         else:
             await ctx.channel.send(f'Pin not found. Make sure you did `/register` in Mindustry'
