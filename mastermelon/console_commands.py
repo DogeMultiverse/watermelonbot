@@ -42,5 +42,5 @@ def queueforrestart():
 
 async def getserver(ctx: commands.Context):
     servers = getservers()
-    strr = [f"`{s1:>3}  {s2:<30}  , id= {s3:<10} , owner:{s4}`" for s1, s2, s3, s4 in servers]
+    strr = [f"`ID:{s1:>3}, {s2:<30}, screen={s3:<10}, port= {s4:<5} , owner:{s5}`" for s1, s2, s3, s4, s5 in servers]
     await ctx.channel.send("\n".join(strr))
