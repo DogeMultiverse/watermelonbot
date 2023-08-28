@@ -366,8 +366,8 @@ async def gettest(ctx: commands.Context):
 
 @bot.command(description="restart servers (admin only)", brief="Admin Utility")
 @commands.has_role("Admin (Discord)")
-async def restartserver(ctx: commands.Context, serverid: int, servercommand: str = "hubkick"):
-    await console_commands.restartserver(ctx, serverid, servercommand)
+async def restartserver(ctx: commands.Context, serverid: int): # todo add servercommand: str = "hubkick"
+    await console_commands.restartserver(ctx, serverid)
 
 
 @bot.command(description="get available servers (admin only)", brief="Admin Utility")
