@@ -7,7 +7,7 @@ import pymongo
 import asyncio
 import random
 from discord.ext import commands
-from mastermelon import counting_bot, show_countries, console_commands
+from mastermelon import counting_bot, console_commands
 from mastermelon import highlow_game
 from mastermelon import homework_game
 from mastermelon import giveaway_bot
@@ -15,7 +15,7 @@ from mastermelon import effects_display
 from mastermelon import emojis as ej
 from mastermelon import cookiegame
 from mastermelon import gen_image
-from mastermelon import update_mindustry_status2
+#from mastermelon.not_used import update_mindustry_status2
 
 
 def get_latest_exp(res, convertedexp_doc):
