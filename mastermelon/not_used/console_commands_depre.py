@@ -1,7 +1,10 @@
+import discord
 import requests
 import json
 import asyncio
 import requests
+from discord.ext import commands
+
 
 def getserver_token():
     with open("watermelon.config", "rb") as f:
