@@ -7,7 +7,7 @@ import pymongo
 import asyncio
 import random
 from discord.ext import commands
-from mastermelon import counting_bot, show_countries, console_commands
+from mastermelon import counting_bot, console_commands
 from mastermelon import highlow_game
 from mastermelon import homework_game
 from mastermelon import giveaway_bot
@@ -15,7 +15,7 @@ from mastermelon import effects_display
 from mastermelon import emojis as ej
 from mastermelon import cookiegame
 from mastermelon import gen_image
-from mastermelon import update_mindustry_status2
+#from mastermelon.not_used import update_mindustry_status2
 
 
 def get_latest_exp(res, convertedexp_doc):
@@ -364,7 +364,7 @@ async def restartserver(ctx: commands.Context, serverid: int, servercommand: str
     await console_commands.restartserver(ctx, serverid, servercommand)
 
 
-@bot.command(description="get servers (admin only)", brief="Admin Utility")
+@bot.command(description="get available servers (admin only)", brief="Admin Utility")
 @commands.has_role("Admin (Discord)")
 async def getserver(ctx):
     await console_commands.getserver(ctx)
