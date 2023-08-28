@@ -1,5 +1,6 @@
 import asyncio
 import subprocess 
+from discord.ext import commands
 
 def send_consolecommand(host: str, cmd: str):
     subprocess.Popen(f"ssh {host} {cmd}", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
