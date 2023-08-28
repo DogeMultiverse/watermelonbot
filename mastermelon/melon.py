@@ -17,7 +17,8 @@ from mastermelon import cookiegame
 from mastermelon import gen_image
 #from mastermelon.not_used import update_mindustry_status2
 
-
+def get_date_str():
+    return str(datetime.now())[:-4]
 def get_latest_exp(res, convertedexp_doc):
     muuid = {}
     muuid_name = {}
@@ -210,6 +211,10 @@ class bb(commands.Bot):
             for invite in self.invites[guild.id]:
                 await self.update_self_invite_dict(guild, invite)
         self.bg_task.append(self.loop.create_task(self.update_mind_status_task()))
+        git_update_channel: discord.TextChannel = self.get_channel(788228956372992020)
+        await git_update_channel.send(f"melon bot started at {get_date_str()}")
+
+
 
     async def update_self_invite_dict(self, guild, invite):
         if invite.inviter.id not in self.inviter_dict[guild.id]:
@@ -249,7 +254,8 @@ class bb(commands.Bot):
                             servers.add(msg10)
                             msg2 = msg1[1].split(", **PLAYERS**=")
                             msg3 = msg2[1].split(", **RAM**=")
-                            maps += [f"✅ `ONLINE`✅ {msg10}\n`            `**Map**: `{strip_colourbrackets(msg2[0])}`  **Players**:`{msg3[0]}`  **RAM**:`{msg3[1]}`\n"]
+                            ss=strip_colourbrackets(msg2[0])
+                            maps += [f"✅ `ONLINE`✅ {msg10}\n`            `**Map**: `{ss}`  **Players**:`{msg3[0]}`  **RAM**:`{msg3[1]}`\n"]
                 if len(servers) == 0:
                     strbuilder += "Servers Ded :("
                 else:
@@ -259,7 +265,7 @@ class bb(commands.Bot):
                     await status_msg[0].edit(content=strbuilder)
                 else: # if not found, send as a new msg
                     await status_msg_channel.send(strbuilder)
-                print(f"update took {time.time()-t0:.3f}seconds")
+                print(f"update took {time.time()-t0:.3f}seconds {get_date_str()}")
                 await asyncio.sleep(60*5)
         except RuntimeError:
             print("mindus status update closed")
