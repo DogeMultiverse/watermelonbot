@@ -364,7 +364,7 @@ async def restartserver(ctx: commands.Context, serverid: int, servercommand: str
     await console_commands.restartserver(ctx, serverid, servercommand)
 
 
-@bot.command(description="get servers (admin only)", brief="Admin Utility")
+@bot.command(description="get available servers (admin only)", brief="Admin Utility")
 @commands.has_role("Admin (Discord)")
 async def getserver(ctx):
     await console_commands.getserver(ctx)
