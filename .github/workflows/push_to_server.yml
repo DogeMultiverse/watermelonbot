@@ -10,7 +10,7 @@ jobs:
       - name: run name is ls -a vi1231
         uses: garygrossgarten/github-action-ssh@0.7.0
         with:
-          command: /Documents/watermelonbot/watermelonbot/gitpull_restartscreen.sh; echo doneee
+          command: /home/alexmindustry/Documents/watermelonbot/watermelonbot/gitpull_restartscreen.sh; echo doneee
           host: ${{ secrets.HOST }}
           username: alexmindustry
           password: ${{ secrets.PASSWORD }}
