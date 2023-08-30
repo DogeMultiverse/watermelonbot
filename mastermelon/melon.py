@@ -396,14 +396,14 @@ async def sendcmd(ctx: commands.Context, serverid: int, consolecommand: str):
 async def changemindusrole(ctx, user: discord.user.User, role: str):
     userid :int
     usermention=None
-    if isinstance(user,type(discord.user.User)):
+    if isinstance(user,discord.user.User):
         userid=user.id
         usermention=user.mention
     elif isinstance(user,int):
         userid=user
         usermention=str(user)
     else:
-        await ctx.send(f"Error, input invalid, u gave {user}type{type(user)}, {role}type{type(role)}, type{type(discord.User)}type{type(discord.Member)}")
+        await ctx.send(f"Error, input invalid, u gave {user}type{type(user)}, {role}type{type(role)}, type{type(discord.user.User)}type{type(discord.Member)}")
         return
     if role in ["Admin", "Mod", "Player"]:
         result = duuid1.update_many({"duuid": userid}, {"$set": {"role": role}})
