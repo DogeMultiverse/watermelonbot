@@ -375,6 +375,11 @@ async def restartserver(ctx: commands.Context, serverid: int): # todo add server
 async def getserver(ctx):
     await console_commands.getserver(ctx)
 
+@bot.command(description="see server console (admin only)", brief="Admin Utility")
+@commands.has_role("Admin (Discord)")
+async def getserver(ctx: commands.Context, serverid: int):
+    await console_commands.readserver(ctx, serverid)
+
 
 @bot.command(description="assigns the user's role in mindustry, role can be Admin|Mod|Player",
              help="<@user or duuid> <role>",

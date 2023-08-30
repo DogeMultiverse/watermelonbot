@@ -1,10 +1,16 @@
 import asyncio
-import subprocess 
+import subprocess
+import traceback 
 from discord.ext import commands
 
 def send_consolecommand(host: str, cmd: str):
     subprocess.Popen(f"ssh {host} {cmd}", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
     return 
+
+def read_consoleoutput(host: str, cmd: str):
+    procc = subprocess.Popen(f"ssh {host} {cmd}", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out,err = procc.communicate()
+    return out,err
 
 def getservers(): # host screen port
     servers = [("root@alexmindustryv7.servegame.com", "pvp_v7_2023"       , "25588", "LD USA"),
@@ -13,24 +19,50 @@ def getservers(): # host screen port
                ("root@alexmindustrypvp.ddns.net"    , "surv_v7"           , "6768" , "LD ASI")]
     return [(i,host,screen,port,loc) for i,(host,screen,port,loc) in enumerate(servers)]
 
+def servfolders():
+    return [
+        "/root/Documents/pvp_v7_2023",
+        "/root/Documents/attack_usw_v7_2023",
+        "/root/Documents/pvp_v7_asia",
+        "/root/Documents/surv_v7"
+    ]
+
 async def restartserver(ctx: commands.Context, serverid: int):
     servers = getservers()
     try:
         i,host,screen,port,loc = servers[serverid]
-        await ctx.channel.send(f"sending gameover command to {i} {host}{port} with screen {screen}, waiting 2 seconds")
+        await ctx.channel.send(f"sending gameover command to `{i}` `{host}{port}` with screen `{screen}`, waiting 2 seconds")
         cmd =f'screen -S {screen} -p 0 -X stuff "gameover^M"'
         send_consolecommand(host, cmd)
         await asyncio.sleep(2)
-        await ctx.channel.send(f"sending exit command to {i} {host}{port} with screen {screen}")
+        await ctx.channel.send(f"sending exit command to `{i}` `{host}{port}` with screen `{screen}`")
         cmd =f'screen -S {screen} -p 0 -X stuff "exit^M"'
         send_consolecommand(host, cmd)
         await asyncio.sleep(2)
-        await ctx.channel.send(f"Completed restart for {i} {host}{port} {screen}")
+        await ctx.channel.send(f"Completed restart for `{i}` `{host}{port}` `{screen}`")
     except Exception as e:
-        await ctx.channel.send("error occurred:" + str(e))
-    else:
-        # todo delete those msgs if passed
-        pass
+        strr=traceback.format_exc()
+        await ctx.channel.send("error occurred 32:" + str(e)+"tb:"+strr)
+    else: 
+        pass # todo delete those msgs if passed
+
+async def readserver(ctx: commands.Context, serverid: int):
+    servers = getservers()
+    try:
+        i,host,screen,port,loc = servers[serverid]
+        await ctx.channel.send(f"reading console on `{i}` `{host}{port}` with screen `{screen}`", delete_after=3)
+        cmd =f'screen -S {screen} -p 0 -X hardcopy -h "screen_log.log"'
+        send_consolecommand(host, cmd)
+        await asyncio.sleep(1)
+        fld=servfolders()[i]
+        cmd =f'cat {fld}/screen_log.log'
+        read_consoleoutput(host, cmd)
+        await ctx.channel.send(f"Completed reading for `{i}` `{host}{port}` `{screen}`")
+    except Exception as e:
+        strr=traceback.format_exc()
+        await ctx.channel.send("error occurred 45:" + str(e)+"tb:"+strr)
+    else: 
+        pass # todo delete those msgs if passed
 
 def getgame_status():
     # todo, gets the game status, and if it is available for restart
