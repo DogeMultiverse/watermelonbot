@@ -367,12 +367,11 @@ async def gettest(ctx: commands.Context):
     # await show_countries.getcountries(serverplayerupdates, ipaddress_access_key)
     await ctx.channel.send(len([m for m in ctx.guild.members if not m.bot]))
 
-
+# commands related to mindustry servers
 @bot.command(description="restart servers (admin only)", brief="Admin Utility")
 @commands.has_role("Admin (Discord)")
 async def restartserver(ctx: commands.Context, serverid: int): # todo add servercommand: str = "hubkick"
     await console_commands.restartserver(ctx, serverid)
-
 
 @bot.command(description="get available servers (admin only)", brief="Admin Utility")
 @commands.has_role("Admin (Discord)")
@@ -383,6 +382,11 @@ async def getserver(ctx):
 @commands.has_role("Admin (Discord)")
 async def readserver(ctx: commands.Context, serverid: int):
     await console_commands.readserver(ctx, serverid)
+
+@bot.command(description="send command to mindustry server and read the console (admin only)", brief="Admin Utility")
+@commands.has_role("Admin (Discord)")
+async def sendcmd(ctx: commands.Context, serverid: int, consolecommand: str):
+    await console_commands.sendcommandtoserver(ctx, serverid,consolecommand)
 
 
 @bot.command(description="assigns the user's role in mindustry, role can be Admin|Mod|Player",
@@ -467,8 +471,9 @@ async def addhype(ctx, messageid: int, channel: discord.TextChannel = None, coun
 @bot.event
 async def on_command_error(ctx: discord.ext.commands.Context, error: Exception, *args, **kwargs):
     print(ctx, str(error))
+    strr=traceback.format_exc()
     if isinstance(type(error), discord.ext.commands.UserInputError):
-        await ctx.message.channel.send("Wrong arguments: " + str(error))
+        await ctx.message.channel.send("Wrong arguments: " + str(error) +strr)
     elif isinstance(error, discord.ext.commands.errors.BadArgument):
         await ctx.message.channel.send("Bad arguments: " + str(error))
     elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
@@ -478,7 +483,7 @@ async def on_command_error(ctx: discord.ext.commands.Context, error: Exception, 
     elif isinstance(error, discord.ext.commands.MissingRole):
         await ctx.channel.send("You dont have the permission to run this command.")
     else:
-        await ctx.message.channel.send("Unknown error:" + str(type(error)) + str(error))
+        await ctx.message.channel.send("Unknown error:" + str(type(error)) + str(error)+"tb:"+strr)
 
 
 @bot.command(description="Play the guessing number game.", brief="Game")
