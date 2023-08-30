@@ -6,6 +6,7 @@ import traceback
 import requests
 import discord
 import json
+from mastermelon.disc_constants import DUUID_ALEX
 import pymongo
 import asyncio
 import random
@@ -360,7 +361,7 @@ async def getemojis(ctx):
 
 @bot.command(description="get countries played", brief="Admin Utility")
 async def gettest(ctx: commands.Context):
-    if ctx.author.id != 612861256189083669:
+    if ctx.author.id != DUUID_ALEX:
         await ctx.channel.send("no testing for u")
         return
     # await show_countries.getcountries(serverplayerupdates, ipaddress_access_key)
@@ -496,7 +497,7 @@ async def guess(ctx: discord.ext.commands.Context):
     if int(guess1.content) > 1000000:
         await ctx.channel.send('Number too large, should be <1000000. Game ends.')
         return
-    if int(guess1.content) == answer or False and ((ctx.author.id in [500744743660158987, 612861256189083669])
+    if int(guess1.content) == answer or False and ((ctx.author.id in [500744743660158987, DUUID_ALEX])
                                                    and random.randint(1, 10) > 5):
         await ctx.channel.send('You are right!!!!')
     else:
@@ -505,7 +506,7 @@ async def guess(ctx: discord.ext.commands.Context):
 
 @bot.command(description="Check user's registered account's EXP", brief="Utility")
 async def checkexp(ctx: discord.ext.commands.Context, user: discord.User = None):
-    if prefix == "t?" and ctx.author.id != 612861256189083669:
+    if prefix == "t?" and ctx.author.id != DUUID_ALEX:
         await ctx.channel.send("no testing for u")
         return
     if isinstance(user, type(None)):
@@ -557,7 +558,7 @@ async def checkexp(ctx: discord.ext.commands.Context, user: discord.User = None)
 
 @bot.command(description="Displays buyeffect menu.", brief="Utility")
 async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
-    if prefix == "t?" and ctx.author.id != 612861256189083669:
+    if prefix == "t?" and ctx.author.id != DUUID_ALEX:
         await ctx.channel.send("t? is only for alex to test")
         return
     await ctx.channel.send("Fetching effects...", delete_after=2)
@@ -587,7 +588,7 @@ async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
 # todo show all effects?
 #  @bot.command(description=f"Shows effects", brief="Utility")
 # async def showeffects(ctx: discord.ext.commands.Context):
-#     if prefix == "t?" and ctx.author.id != 612861256189083669:
+#     if prefix == "t?" and ctx.author.id != DUUID_ALEX:
 #         msg: discord.Message = await ctx.channel.send("t? is only for alex to test")
 #         await msg.add_reaction(ej.pog_emoji)
 #         return
@@ -779,7 +780,7 @@ async def giveaway(ctx: discord.ext.commands.Context, what: str, channel: discor
 
 @bot.command(description=f"Convert user's exp into {ej.ax_emoji}.", brief="Utility")
 async def convertexp(ctx: discord.ext.commands.Context):
-    if prefix == "t?" and ctx.author.id != 612861256189083669:
+    if prefix == "t?" and ctx.author.id != DUUID_ALEX:
         await ctx.channel.send("t? is only for alex to test")
         return
     await ctx.channel.send(f'Conversion rate: 1000 EXP -> 1 {ej.ax_emoji}. '

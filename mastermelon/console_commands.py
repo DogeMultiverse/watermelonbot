@@ -2,6 +2,7 @@ import asyncio
 import subprocess
 import traceback 
 from discord.ext import commands
+from mastermelon.disc_constants import DUUID_ALEX
 
 def send_consolecommand(host: str, cmd: str):
     subprocess.Popen(f"ssh {host} {cmd}", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
@@ -50,21 +51,42 @@ async def readserver(ctx: commands.Context, serverid: int):
     servers = getservers()
     try:
         i,host,screen,port,loc = servers[serverid]
-        await ctx.channel.send(f"reading console on `{i}` `{host}{port}` with screen `{screen}`", delete_after=3)
-        cmd =f'screen -S {screen} -p 0 -X hardcopy -h "screen_log.log"'
-        send_consolecommand(host, cmd)
-        await asyncio.sleep(1)
-        fld=servfolders()[i]
-        cmd =f'cat {fld}/screen_log.log'
-        out,err = read_consoleoutput(host, cmd)
-        output = str(out[-1500:])[2:-1].split("\\n") 
-        await ctx.channel.send( f"`{host}{port}` `{screen}`:\n"+ "\n".join(output))
-        await ctx.channel.send(f"Completed reading for `{i}` `{host}{port}` `{screen}`")
+        await showconsole(ctx, i, host, screen, port)
     except Exception as e:
         strr=traceback.format_exc()
         await ctx.channel.send("error occurred 67:" + str(e)+"tb:"+strr)
     else: 
-        pass # todo delete those msgs if passed
+        pass 
+
+async def sendcommandtoserver(ctx: commands.Context, serverid: int, consolecommand: str):
+    # this sends command to server with "enter" at the end
+    # will print the output after the command is ran
+    # also, no js is allowed, unless by alex......
+    if ctx.author.id != DUUID_ALEX:
+        consolecommand = consolecommand.replace("js","")
+    servers = getservers()
+    try:
+        i,host,screen,port,loc = servers[serverid]
+        send_consolecommand(host, f'screen -S {screen} -p 0 -X stuff "{consolecommand}^M"')
+        await asyncio.sleep(1)
+        await showconsole(ctx, i, host, screen, port)
+    except Exception as e:
+        strr=traceback.format_exc()
+        await ctx.channel.send("error occurred 67:" + str(e)+"tb:"+strr)
+    else: 
+        pass 
+
+async def showconsole(ctx, i, host, screen, port):
+    await ctx.channel.send(f"reading console on `{i}` `{host}{port}` with screen `{screen}`", delete_after=3)
+    cmd =f'screen -S {screen} -p 0 -X hardcopy -h "screen_log.log"'
+    send_consolecommand(host, cmd)
+    await asyncio.sleep(1)
+    fld=servfolders()[i]
+    cmd =f'cat {fld}/screen_log.log'
+    out,err = read_consoleoutput(host, cmd)
+    output = str(out[-1500:])[2:-1].split("\\n") 
+    await ctx.channel.send( f"`{host}{port}` `{screen}`:\n"+ "\n".join(output))
+    await ctx.channel.send(f"Completed reading for `{i}` `{host}{port}` `{screen}`")# todo delete those msgs if passed
 
 def getgame_status():
     # todo, gets the game status, and if it is available for restart
