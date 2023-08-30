@@ -64,6 +64,7 @@ async def sendcommandtoserver(ctx: commands.Context, serverid: int, consolecomma
     # also, no js is allowed, unless by alex......
     if ctx.author.id != DUUID_ALEX:
         consolecommand = consolecommand.replace("js","")
+    consolecommand = consolecommand.replace(" ","\ ")
     servers = getservers()
     try:
         i,host,screen,port,loc = servers[serverid]
