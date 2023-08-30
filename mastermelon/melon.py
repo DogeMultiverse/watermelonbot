@@ -396,7 +396,7 @@ async def sendcmd(ctx: commands.Context, serverid: int, consolecommand: str):
 async def changemindusrole(ctx, user, role: str):
     userid :int
     usermention=None
-    if isinstance(user,discord.User):
+    if isinstance(user,discord.Member):
         userid=user.id
         usermention=user.mention
     elif isinstance(user,int):
