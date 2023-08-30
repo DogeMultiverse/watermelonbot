@@ -403,7 +403,7 @@ async def changemindusrole(ctx, user, role: str):
         userid=user
         usermention=str(user)
     else:
-        await ctx.send(f"Error, input invalid, u gave {user} {role}")
+        await ctx.send(f"Error, input invalid, u gave {user}type{type(user)}, {role}type{type(role)}, type{type(discord.User)}type{type(discord.Member)}")
         return
     if role in ["Admin", "Mod", "Player"]:
         result = duuid1.update_many({"duuid": userid}, {"$set": {"role": role}})
