@@ -6,7 +6,7 @@ import traceback
 import requests
 import discord
 import json
-from mastermelon.disc_constants import DUUID_ALEX
+from mastermelon.disc_constants import DUUID_ALEX,DUUID_WATERMELON
 import pymongo
 import asyncio
 import random
@@ -498,7 +498,7 @@ async def guess(ctx: discord.ext.commands.Context):
     if int(guess1.content) > 1000000:
         await ctx.channel.send('Number too large, should be <1000000. Game ends.')
         return
-    if int(guess1.content) == answer or False and ((ctx.author.id in [500744743660158987, DUUID_ALEX])
+    if int(guess1.content) == answer or False and ((ctx.author.id in [DUUID_WATERMELON, DUUID_ALEX])
                                                    and random.randint(1, 10) > 5):
         await ctx.channel.send('You are right!!!!')
     else:
@@ -832,7 +832,7 @@ async def convertexp(ctx: discord.ext.commands.Context):
                 ax.find_one_and_update({"duuid": ctx.author.id}, {"$inc": {"ax": new_Ax}})
             await ctx.channel.send(
                 f"You have converted {new_Ax * 1000} EXP into {new_Ax} {ej.ax_emoji}.\nCongrats!. Type "
-                f"`a?checkax @user` to check your current {ej.ax_emoji}.")
+                f"`w?checkax @user` to check your current {ej.ax_emoji}.")
         else:
             await ctx.channel.send("You have no exp. ;-; Can't convert emptiness.")
 

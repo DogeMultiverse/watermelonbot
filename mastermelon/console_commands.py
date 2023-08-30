@@ -67,6 +67,7 @@ async def sendcommandtoserver(ctx: commands.Context, serverid: int, consolecomma
     servers = getservers()
     try:
         i,host,screen,port,loc = servers[serverid]
+        await ctx.channel.send(f"sending {consolecommand} to `{i}` `{host}{port}` with screen `{screen}`, waiting 2 seconds")
         send_consolecommand(host, f'screen -S {screen} -p 0 -X stuff "{consolecommand}^M"')
         await asyncio.sleep(1)
         await showconsole(ctx, i, host, screen, port)
