@@ -907,7 +907,7 @@ def runbot():
         with open("watermelon.config", "rb") as f:
             js = json.load(f)
             error_ping = js["error_ping"]
-        requests.post(error_ping,data={"content":strr})
+        requests.post(error_ping,data={"content":"melon bot error 910"+strr})
         raise
 
 #     elif message.content.startswith(prefix + "claimeffect"):

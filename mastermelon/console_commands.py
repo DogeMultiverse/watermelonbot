@@ -56,7 +56,8 @@ async def readserver(ctx: commands.Context, serverid: int):
         await asyncio.sleep(1)
         fld=servfolders()[i]
         cmd =f'cat {fld}/screen_log.log'
-        read_consoleoutput(host, cmd)
+        out,err = read_consoleoutput(host, cmd)
+        await ctx.channel.send(out[-20:])
         await ctx.channel.send(f"Completed reading for `{i}` `{host}{port}` `{screen}`")
     except Exception as e:
         strr=traceback.format_exc()
