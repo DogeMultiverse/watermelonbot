@@ -393,10 +393,10 @@ async def sendcmd(ctx: commands.Context, serverid: int, consolecommand: str):
              help="<@user or duuid> <role>",
              brief="Admin Utility")
 @commands.has_any_role("Admin (Discord)", "Admin (Mindustry)")
-async def changemindusrole(ctx, user: discord.User, role: str):
+async def changemindusrole(ctx, user: discord.user.User, role: str):
     userid :int
     usermention=None
-    if isinstance(user,type(discord.User)):
+    if isinstance(user,type(discord.user.User)):
         userid=user.id
         usermention=user.mention
     elif isinstance(user,int):
