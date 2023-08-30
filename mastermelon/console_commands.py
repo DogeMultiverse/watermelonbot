@@ -57,7 +57,7 @@ async def readserver(ctx: commands.Context, serverid: int):
         fld=servfolders()[i]
         cmd =f'cat {fld}/screen_log.log'
         read_consoleoutput(host, cmd)
-        await ctx.channel.send(f"Completed reading for `{i}` `{host}{port}` `{screen}`")
+        await ctx.channel.send(f"Completed  reading for `{i}` `{host}{port}` `{screen}`")
     except Exception as e:
         strr=traceback.format_exc()
         await ctx.channel.send("error occurred 45:" + str(e)+"tb:"+strr)
