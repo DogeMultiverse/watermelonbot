@@ -380,11 +380,22 @@ async def getserver(ctx):
              help="<@user> <role>",
              brief="Admin Utility")
 @commands.has_any_role("Admin (Discord)", "Admin (Mindustry)")
-async def changemindusrole(ctx, user: discord.Member, role: str):
+async def changemindusrole(ctx, user: discord.User | int, role: str):
+    userid :int
+    usermention=None
+    if isinstance(user,type(int)):
+        userid=user
+        usermention=user
+    elif isinstance(user,type(discord.User)):
+        userid=user.id
+        usermention=user.mention
     if role in ["Admin", "Mod", "Player"]:
-        result = duuid1.update_many({"duuid": user.id}, {"$set": {"role": role}})
+        result = duuid1.update_many({"duuid": userid}, {"$set": {"role": role}})
         if result.modified_count > 0:
-            await ctx.send(f"Congrats, {user.mention} is now a {role} in Mindustry")
+            if usermention:
+                await ctx.send(f"Congrats, {usermention} is now a {role} in Mindustry")
+            else:
+                await ctx.send(f"Congrats, {usermention} is now a {role} in Mindustry")
         else:
             await ctx.send(f"Nothing changed.")
     else:
