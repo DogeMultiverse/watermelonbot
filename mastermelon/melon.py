@@ -392,10 +392,7 @@ async def changemindusrole(ctx, user: discord.User | int, role: str):
     if role in ["Admin", "Mod", "Player"]:
         result = duuid1.update_many({"duuid": userid}, {"$set": {"role": role}})
         if result.modified_count > 0:
-            if usermention:
-                await ctx.send(f"Congrats, {usermention} is now a {role} in Mindustry")
-            else:
-                await ctx.send(f"Congrats, {usermention} is now a {role} in Mindustry")
+            await ctx.send(f"Congrats, {usermention} is now a {role} in Mindustry")
         else:
             await ctx.send(f"Nothing changed.")
     else:
