@@ -381,15 +381,15 @@ async def getserver(ctx):
              brief="Admin Utility")
 @commands.has_any_role("Admin (Discord)", "Admin (Mindustry)")
 async def changemindusrole(ctx, user, role: str):
-    userid :str
+    userid :int
     usermention=None
-    if isinstance(user,type(int)):
-        userid=str(user)
-        usermention=str(user)
-    elif isinstance(user,type(str)):
+    if isinstance(user,int):
         userid=user
+        usermention=str(user)
+    elif isinstance(user,str):
+        userid=int(user)
         usermention=user
-    elif isinstance(user,type(discord.User)):
+    elif isinstance(user,discord.User):
         userid=user.id
         usermention=user.mention
     else:
