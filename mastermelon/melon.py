@@ -377,7 +377,7 @@ async def getserver(ctx):
 
 @bot.command(description="see server console (admin only)", brief="Admin Utility")
 @commands.has_role("Admin (Discord)")
-async def getserver(ctx: commands.Context, serverid: int):
+async def readserver(ctx: commands.Context, serverid: int):
     await console_commands.readserver(ctx, serverid)
 
 
