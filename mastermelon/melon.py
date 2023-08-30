@@ -396,15 +396,12 @@ async def sendcmd(ctx: commands.Context, serverid: int, consolecommand: str):
 async def changemindusrole(ctx, user, role: str):
     userid :int
     usermention=None
-    if isinstance(user,int):
-        userid=user
-        usermention=str(user)
-    elif isinstance(user,str):
-        userid=int(user)
-        usermention=user
-    elif isinstance(user,discord.User):
+    if isinstance(user,discord.User):
         userid=user.id
         usermention=user.mention
+    elif isinstance(user,int):
+        userid=user
+        usermention=str(user)
     else:
         await ctx.send(f"Error, input invalid, u gave {user} {role}")
         return
@@ -471,9 +468,8 @@ async def addhype(ctx, messageid: int, channel: discord.TextChannel = None, coun
 @bot.event
 async def on_command_error(ctx: discord.ext.commands.Context, error: Exception, *args, **kwargs):
     print(ctx, str(error))
-    strr=traceback.format_exc()
     if isinstance(type(error), discord.ext.commands.UserInputError):
-        await ctx.message.channel.send("Wrong arguments: " + str(error) +strr)
+        await ctx.message.channel.send("Wrong arguments: " + str(error))
     elif isinstance(error, discord.ext.commands.errors.BadArgument):
         await ctx.message.channel.send("Bad arguments: " + str(error))
     elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
@@ -483,7 +479,7 @@ async def on_command_error(ctx: discord.ext.commands.Context, error: Exception, 
     elif isinstance(error, discord.ext.commands.MissingRole):
         await ctx.channel.send("You dont have the permission to run this command.")
     else:
-        await ctx.message.channel.send("Unknown error:" + str(type(error)) + str(error)+"tb:"+strr)
+        await ctx.message.channel.send("Unknown error:" + str(type(error)) + str(error) )
 
 
 @bot.command(description="Play the guessing number game.", brief="Game")
