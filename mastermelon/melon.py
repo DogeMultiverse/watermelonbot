@@ -1,6 +1,9 @@
 import time
 from datetime import timedelta
 from datetime import datetime
+import traceback
+
+import requests
 import discord
 import json
 import pymongo
@@ -898,8 +901,14 @@ def runbot():
     except KeyboardInterrupt:
         print("Exiting")
         asyncio.run(bot.close())
-    except RuntimeError:
-        print("rte")
+    except Exception as e:
+        strr=traceback.format_exc()
+        # melon bot ping
+        with open("watermelon.config", "rb") as f:
+            js = json.load(f)
+            error_ping = js["error_ping"]
+        requests.post(error_ping,data={"content":strr})
+        raise
 
 #     elif message.content.startswith(prefix + "claimeffect"):
 #         # todo @BOUNTY # check for role precondition then give effect
