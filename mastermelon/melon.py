@@ -381,14 +381,20 @@ async def getserver(ctx):
              brief="Admin Utility")
 @commands.has_any_role("Admin (Discord)", "Admin (Mindustry)")
 async def changemindusrole(ctx, user, role: str):
-    userid :int
+    userid :str
     usermention=None
     if isinstance(user,type(int)):
+        userid=str(user)
+        usermention=str(user)
+    elif isinstance(user,type(str)):
         userid=user
         usermention=user
     elif isinstance(user,type(discord.User)):
         userid=user.id
         usermention=user.mention
+    else:
+        await ctx.send(f"Error, input invalid, u gave {user} {role}")
+        return
     if role in ["Admin", "Mod", "Player"]:
         result = duuid1.update_many({"duuid": userid}, {"$set": {"role": role}})
         if result.modified_count > 0:
