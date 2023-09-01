@@ -19,6 +19,7 @@ from mastermelon import effects_display
 from mastermelon import emojis as ej
 from mastermelon import cookiegame
 from mastermelon import gen_image
+from mastermelon import translator
 #from mastermelon.not_used import update_mindustry_status2
 
 def get_date_str():
@@ -856,6 +857,9 @@ async def appeal(ctx: discord.ext.commands.Context, punishment: str, idoruuid: s
     embed.add_field(name="Reason:", value=str(reason), inline=False)
     await channel.send(embed=embed)
 
+@bot.command(description="Translate to english")
+async def translate(ctx, arg):
+    await ctx.send(translator.translating(arg))
 
 @bot.event
 async def on_message(message: discord.Message):
