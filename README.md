@@ -1,6 +1,6 @@
 # 🍉 WaterMelonBot 🍉
 
-watermelon bot for managing discord and servers. written in python
+wwatermelon bot for managing discord and servers. written in python
 
 - [🍉 WaterMelonBot 🍉](#-watermelonbot-)
   - [how to contribute](#how-to-contribute)
