@@ -269,7 +269,7 @@ class bb(commands.Bot):
                     await status_msg[0].edit(content=strbuilder)
                 else: # if not found, send as a new msg
                     await status_msg_channel.send(strbuilder)
-                print(f"update took {time.time()-t0:.3f}seconds {get_date_str()}")
+                print(f"update mindus servers took {time.time()-t0:.3f}seconds {get_date_str()}")
                 await asyncio.sleep(60*5)
         except RuntimeError:
             print("mindus status update closed")
@@ -368,10 +368,15 @@ async def gettest(ctx: commands.Context):
     await ctx.channel.send(len([m for m in ctx.guild.members if not m.bot]))
 
 # commands related to mindustry servers
-@bot.command(description="restart servers (admin only)", brief="Admin Mindustry Utility")
+@bot.command(description="restart servers (admin only)", brief="Admin Mindustry Utility",
+             help="<serverid, -1 for allservers>")
 @commands.has_role("Admin (Discord)")
-async def restartserver(ctx: commands.Context, serverid: int): # todo add servercommand: str = "hubkick"
-    await console_commands.restartserver(ctx, serverid)
+async def restartserver(ctx: commands.Context, serverid: int=-1): # todo add servercommand: str = "hubkick"
+    if serverid==-1: #update all servers
+        for serverid in range(len(console_commands.getservers())):
+            await console_commands.restartserver(ctx, serverid)
+    else:
+        await console_commands.restartserver(ctx, serverid)
 
 @bot.command(description="get available servers (admin only)", brief="Admin Mindustry Utility")
 @commands.has_role("Admin (Discord)")
