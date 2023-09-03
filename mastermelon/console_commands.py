@@ -13,6 +13,11 @@ def read_consoleoutput(host: str, cmd: str):
     out,err = procc.communicate()
     return out,err
 
+def scp_cmd(host:str, src: str, dst: str):
+    procc = subprocess.Popen(f"scp {src} {host}{dst}", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out,err = procc.communicate()
+    return out,err
+
 def getservers(): # host screen port
     servers = [("root@alexmindustryv7.servegame.com", "pvp_v7_2023"       , "25588", "LD USA"),
                ("root@alexmindustryv7.servegame.com", "attack_usw_v7_2023", "41962", "LD USA"),
@@ -95,7 +100,11 @@ async def servupload(ctx,serverid):
     try:
         i,host,screen,port,loc = servers[serverid]
         # add logic here to upload the files to the servers
-        await ctx.channel.send(f"TODOOOO: `{i}` `{host}{port}` with screen `{screen}`")
+        # use subprocess to scp the files
+        #scp run_scp.py root@alexmindustryv7.servegame.com:/root/Documents/pvp_v7_2023/config/mods
+        out,err = scp_cmd(host,src="/home/alexmindustry/Documents/watermelonbot/watermelonbot/data/mindustry/mods/common/*",
+                dst=f"/root/Documents/{screen}/config/mods")
+        await ctx.channel.send(f"done upload: `{i}` `{host}{port}` with screen `{screen}`, output:{str(out)[-1000:]}")
     except Exception as e:
         strr=traceback.format_exc()
         await ctx.channel.send("error occurred 99:" + str(e)+"tb:"+strr)
