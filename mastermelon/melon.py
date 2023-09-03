@@ -368,17 +368,17 @@ async def gettest(ctx: commands.Context):
     await ctx.channel.send(len([m for m in ctx.guild.members if not m.bot]))
 
 # commands related to mindustry servers
-@bot.command(description="restart servers (admin only)", brief="Admin Utility")
+@bot.command(description="restart servers (admin only)", brief="Admin Mindustry Utility")
 @commands.has_role("Admin (Discord)")
 async def restartserver(ctx: commands.Context, serverid: int): # todo add servercommand: str = "hubkick"
     await console_commands.restartserver(ctx, serverid)
 
-@bot.command(description="get available servers (admin only)", brief="Admin Utility")
+@bot.command(description="get available servers (admin only)", brief="Admin Mindustry Utility")
 @commands.has_role("Admin (Discord)")
 async def getserver(ctx):
     await console_commands.getserver(ctx)
 
-@bot.command(description="see server console (admin only)", brief="Admin Utility")
+@bot.command(description="see server console (admin only)", brief="Admin Mindustry Utility")
 @commands.has_role("Admin (Discord)")
 async def readserver(ctx: commands.Context, serverid: int):
     await console_commands.readserver(ctx, serverid)
@@ -388,10 +388,9 @@ async def readserver(ctx: commands.Context, serverid: int):
 async def sendcmd(ctx: commands.Context, serverid: int, consolecommand: str):
     await console_commands.sendcommandtoserver(ctx, serverid,consolecommand)
 
-
 @bot.command(description="assigns the user's role in mindustry, role can be Admin|Mod|Player",
              help="<@user or duuid> <role>",
-             brief="Admin Utility")
+             brief="Admin Mindustry Utility")
 @commands.has_any_role("Admin (Discord)", "Admin (Mindustry)")
 async def changemindusrole(ctx, user: discord.user.User, role: str):
     userid :int
