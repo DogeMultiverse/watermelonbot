@@ -383,7 +383,7 @@ async def getserver(ctx):
 async def readserver(ctx: commands.Context, serverid: int):
     await console_commands.readserver(ctx, serverid)
 
-@bot.command(description="send command to mindustry server and read the console (admin only)", brief="Admin Utility")
+@bot.command(description="send command to mindustry server and read the console (admin only)", brief="Admin Mindustry Utility")
 @commands.has_role("Admin (Discord)")
 async def sendcmd(ctx: commands.Context, serverid: int, consolecommand: str):
     await console_commands.sendcommandtoserver(ctx, serverid,consolecommand)
