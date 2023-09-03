@@ -388,6 +388,16 @@ async def readserver(ctx: commands.Context, serverid: int):
 async def sendcmd(ctx: commands.Context, serverid: int, consolecommand: str):
     await console_commands.sendcommandtoserver(ctx, serverid,consolecommand)
 
+@bot.command(description="upload alexplugin to servers.", brief="Admin Mindustry Utility",
+             help="<serverid, -1 for allservers>")
+@commands.has_role("Admin (Discord)")
+async def servupdate(ctx: commands.Context, serverid: int=-1):
+    if serverid==-1: #update all servers
+        for serverid in range(len(console_commands.getservers())):
+            await console_commands.servupload(ctx, serverid)
+    else:
+        await console_commands.servupload(ctx, serverid)
+
 @bot.command(description="assigns the user's role in mindustry, role can be Admin|Mod|Player",
              help="<@user or duuid> <role>",
              brief="Admin Mindustry Utility")

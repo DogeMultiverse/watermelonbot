@@ -90,6 +90,16 @@ async def showconsole(ctx, i, host, screen, port):
     await ctx.channel.send( f"`{host}{port}` `{screen}`:\n"+ "\n".join(output))
     await ctx.channel.send(f"Completed reading for `{i}` `{host}{port}` `{screen}`")# todo delete those msgs if passed
 
+async def servupload(ctx,serverid):
+    servers = getservers()
+    try:
+        i,host,screen,port,loc = servers[serverid]
+        # add logic here to upload the files to the servers
+        await ctx.channel.send(f"TODOOOO: `{i}` `{host}{port}` with screen `{screen}`")
+    except Exception as e:
+        strr=traceback.format_exc()
+        await ctx.channel.send("error occurred 99:" + str(e)+"tb:"+strr)
+
 def getgame_status():
     # todo, gets the game status, and if it is available for restart
     return
