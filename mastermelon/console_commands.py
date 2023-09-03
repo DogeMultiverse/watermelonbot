@@ -14,7 +14,7 @@ def read_consoleoutput(host: str, cmd: str):
     return out,err
 
 def scp_cmd(host:str, src: str, dst: str):
-    procc = subprocess.Popen(f"scp {src} {host}{dst}", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    procc = subprocess.Popen(f"scp {src} {host}:{dst}", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out,err = procc.communicate()
     return out,err
 
