@@ -371,8 +371,11 @@ async def gettest(ctx: commands.Context):
 @bot.command(description="restart servers (admin only)", brief="Admin Mindustry Utility",
              help="<serverid, -1 for allservers>")
 @commands.has_role("Admin (Discord)")
-async def restartserver(ctx: commands.Context, serverid: int=-1): # todo add servercommand: str = "hubkick"
-    if serverid==-1: #update all servers
+async def restartserver(ctx: commands.Context, serverid: int=None): # todo add servercommand: str = "hubkick"
+    if serverid is None:
+        await console_commands.getserver(ctx)
+        await ctx.send(f"use <serverid, -1 for allservers>")
+    elif serverid==-1: #update all servers
         for serverid in range(len(console_commands.getservers())):
             await console_commands.restartserver(ctx, serverid)
     else:
@@ -396,8 +399,11 @@ async def sendcmd(ctx: commands.Context, serverid: int, consolecommand: str):
 @bot.command(description="upload alexplugin to servers.", brief="Admin Mindustry Utility",
              help="<serverid, -1 for allservers>")
 @commands.has_role("Admin (Discord)")
-async def servupdate(ctx: commands.Context, serverid: int=-1):
-    if serverid==-1: #update all servers
+async def servupdate(ctx: commands.Context, serverid: int=None):
+    if serverid is None:
+        await console_commands.getserver(ctx)
+        await ctx.send(f"use <serverid, -1 for allservers>")
+    elif serverid==-1: #update all servers
         for serverid in range(len(console_commands.getservers())):
             await console_commands.servupload(ctx, serverid)
     else:
