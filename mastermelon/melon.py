@@ -19,6 +19,7 @@ from mastermelon import effects_display
 from mastermelon import emojis as ej
 from mastermelon import cookiegame
 from mastermelon import gen_image
+from mastermelon import translator
 #from mastermelon.not_used import update_mindustry_status2
 
 def get_date_str():
@@ -269,7 +270,7 @@ class bb(commands.Bot):
                     await status_msg[0].edit(content=strbuilder)
                 else: # if not found, send as a new msg
                     await status_msg_channel.send(strbuilder)
-                print(f"update took {time.time()-t0:.3f}seconds {get_date_str()}")
+                print(f"update mindus servers took {time.time()-t0:.3f}seconds {get_date_str()}")
                 await asyncio.sleep(60*5)
         except RuntimeError:
             print("mindus status update closed")
@@ -368,30 +369,50 @@ async def gettest(ctx: commands.Context):
     await ctx.channel.send(len([m for m in ctx.guild.members if not m.bot]))
 
 # commands related to mindustry servers
-@bot.command(description="restart servers (admin only)", brief="Admin Utility")
+@bot.command(description="restart servers (admin only)", brief="Admin Mindustry Utility",
+             help="<serverid, -1 for allservers>")
 @commands.has_role("Admin (Discord)")
-async def restartserver(ctx: commands.Context, serverid: int): # todo add servercommand: str = "hubkick"
-    await console_commands.restartserver(ctx, serverid)
+async def restartserver(ctx: commands.Context, serverid: int=None): # todo add servercommand: str = "hubkick"
+    if serverid is None:
+        await console_commands.getserver(ctx)
+        await ctx.send(f"use <serverid, -1 for allservers>")
+    elif serverid==-1: #update all servers
+        for serverid in range(len(console_commands.getservers())):
+            await console_commands.restartserver(ctx, serverid)
+    else:
+        await console_commands.restartserver(ctx, serverid)
 
-@bot.command(description="get available servers (admin only)", brief="Admin Utility")
+@bot.command(description="get available servers (admin only)", brief="Admin Mindustry Utility")
 @commands.has_role("Admin (Discord)")
 async def getserver(ctx):
     await console_commands.getserver(ctx)
 
-@bot.command(description="see server console (admin only)", brief="Admin Utility")
+@bot.command(description="see server console (admin only)", brief="Admin Mindustry Utility")
 @commands.has_role("Admin (Discord)")
 async def readserver(ctx: commands.Context, serverid: int):
     await console_commands.readserver(ctx, serverid)
 
-@bot.command(description="send command to mindustry server and read the console (admin only)", brief="Admin Utility")
+@bot.command(description="send command to mindustry server and read the console (admin only)", brief="Admin Mindustry Utility")
 @commands.has_role("Admin (Discord)")
 async def sendcmd(ctx: commands.Context, serverid: int, consolecommand: str):
     await console_commands.sendcommandtoserver(ctx, serverid,consolecommand)
 
+@bot.command(description="upload alexplugin to servers.", brief="Admin Mindustry Utility",
+             help="<serverid, -1 for allservers>")
+@commands.has_role("Admin (Discord)")
+async def servupdate(ctx: commands.Context, serverid: int=None):
+    if serverid is None:
+        await console_commands.getserver(ctx)
+        await ctx.send(f"use <serverid, -1 for allservers>")
+    elif serverid==-1: #update all servers
+        for serverid in range(len(console_commands.getservers())):
+            await console_commands.servupload(ctx, serverid)
+    else:
+        await console_commands.servupload(ctx, serverid)
 
 @bot.command(description="assigns the user's role in mindustry, role can be Admin|Mod|Player",
              help="<@user or duuid> <role>",
-             brief="Admin Utility")
+             brief="Admin Mindustry Utility")
 @commands.has_any_role("Admin (Discord)", "Admin (Mindustry)")
 async def changemindusrole(ctx, user: discord.user.User, role: str):
     userid :int
@@ -438,6 +459,9 @@ async def addemoji(ctx, emoji: str, messageid: int, channel: discord.TextChannel
     except discord.NotFound:
         await ctx.send("Message id not found. Maybe message was deleted?", delete_after=3)
 
+@bot.command(description="Translate to english")
+async def translate(ctx, *argd):
+    await ctx.send(translator.translatr(" ".join(args)))
 
 @bot.command(description="adds hype emojis",
              help="<message_id> <channel> <counts> (duration will be ~ counts*10 secs)", brief="Hype")
