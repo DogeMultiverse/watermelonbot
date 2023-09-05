@@ -6,7 +6,7 @@ Bot for managing discord and servers, written in python.
   - [How to contribute](#how-to-contribute)
     - [If you wanted to fix or add new features](#if-you-wanted-to-fix-or-add-new-features)
     - [If you found a bug](#if-you-found-a-bug)
-  - [How to operate the bot (you must have admin rights)](#how-to-operate-the-bot (you-must-have-admin-rights))
+  - [How to operate the bot (you must have admin rights)](#how-to-operate-the-bot-you-must-have-admin-rights)
   - [Config file](#config-file)
     - [With config file](#with-config-file)
     - [With .env file](#with-env-file)
