@@ -30,7 +30,7 @@ Bot for managing discord and servers, written in python.
 - Go to [discord developer portal](https://discord.com/developers) and create an application, create a bot.
 - Invite your bot to your server via Oauth bot url.
 - Clone this repo.
-- Add the bot token to "watermelon.config" file.
+- Replace `<BOT_TOKEN>` with your bot token in the "watermelon.config" file.
 - In this directory, execute `pip3 install -r requirements.txt` on terminal.
 - Run `python3 main.py`.
 
