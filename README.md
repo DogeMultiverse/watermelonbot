@@ -4,7 +4,7 @@ Bot for managing discord and servers, written in python.
 
 - [🍉 WaterMelonBot 🍉](#-watermelonbot-)
   - [How to contribute](#how-to-contribute)
-    - [If you wanted to fix/add new features](#if-you-wanted-to-fix,add-new-features)
+    - [If you wanted to fix or add new features](#if-you-wanted-to-fix-or-add-new-features)
     - [If you found a bug](#if-you-found-a-bug)
   - [How to operate the bot (you must have admin rights)](#how-to-operate-the-bot (you-must-have-admin-rights))
   - [Config file](#config-file)
@@ -16,7 +16,7 @@ Bot for managing discord and servers, written in python.
 
 # How to contribute
 
-## If you wanted to fix,add new features
+## If you wanted to fix or add new features
 - Fork this repo.
 - Commits on the fork.
 - Make a pull request and wait so that a contributor/repo owner merge the pull request.
