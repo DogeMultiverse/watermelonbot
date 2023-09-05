@@ -1,10 +1,10 @@
 # 🍉 WaterMelonBot 🍉
 
-watermelon bot for managing discord and servers. written in python 
+Bot for managing discord and servers, written in python.
 
 - [🍉 WaterMelonBot 🍉](#-watermelonbot-)
-  - [how to contribute](#how-to-contribute)
-  - [how to run the bot for your server (you must have admin rights)](#how-to-run-the-bot-for-your-server-you-must-have-admin-rights)
+  - [How to contribute](#how-to-contribute)
+  - [How to operate the bot (you must have admin rights)](#how-to-run-the-bot-for-your-server-you-must-have-admin-rights)
   - [watermelon configuration file](#watermelon-configuration-file)
     - [With Config File](#with-config-file)
     - [With .env File](#with-env-file)
