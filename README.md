@@ -18,7 +18,7 @@ Bot for managing discord and servers, written in python.
 
 ## If you wanted to fix or add new features
 - Fork this repo.
-- Commits on the fork.
+- Commit your changes on the fork.
 - Make a pull request and wait so that a contributor/repo owner merge the pull request.
 
 ## If you found a bug
