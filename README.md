@@ -12,13 +12,13 @@ Bot for managing discord and servers, written in python.
   
 
 
-# how to contribute
+# How to contribute
 - Fork this repo
 - Create a Commit
 - Make a pull request until a repo owner/contributors merge a pull request
 
 
-# how to run the bot for your server (you must have admin rights)
+# How to operate the bot (you must have admin rights)
 - go to [discord developer portal](https://discord.com/developers) and create an application, create a bot
 - invite your bot to your server via Oauth bot url
 - clone this repo and
