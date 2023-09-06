@@ -103,7 +103,7 @@ async def servupload(ctx,serverid):
         # use subprocess to scp the files
         #scp run_scp.py root@alexmindustryv7.servegame.com:/root/Documents/pvp_v7_2023/config/mods
         out,err = scp_cmd(host,src="/home/alexmindustry/Documents/watermelonbot/watermelonbot/data/mindustry/mods/common/*",
-                dst=f"/root/Documents/{screen}/config/mods")
+                dst=f"{servfolders()[i]}/config/mods")
         await ctx.channel.send(f"done upload: `{i}` `{host}{port}` with screen `{screen}`, output:{str(out)[-1000:]}")
     except Exception as e:
         strr=traceback.format_exc()
