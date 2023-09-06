@@ -112,6 +112,7 @@ async def servupload(ctx,serverid):
 async def get_version_of_plugin_from_all_servers(ctx: commands.Context):
     servers = getservers()
     try:
+        await ctx.channel.send("Getting plugin versions...", delete_after=3)
         stringg=[]
         for i,host,screen,port,loc in servers:
             cmd = f'cat {servfolders()[i]}/config/mods/ASP_version.txt'
@@ -120,10 +121,10 @@ async def get_version_of_plugin_from_all_servers(ctx: commands.Context):
             stringg.append( f"`{i}` `{out}` `{host}:{port}` `{screen}`" )
         with open("/home/alexmindustry/Documents/watermelonbot/watermelonbot/data/mindustry/mods/common/ASP_version.txt","r") as f:
             ff = f.readlines()[0][17:-1]
-        await ctx.channel.send( f"Plugin versions {ff}:\n"+("\n".join(stringg)))
+        await ctx.channel.send( f"Plugin version on servers (latest: `{ff}`):\n"+("\n".join(stringg)))
     except Exception as e:
         strr=traceback.format_exc()
-        await ctx.channel.send("error occurred 126:" + str(e)+"tb:"+strr)
+        await ctx.channel.send("error occurred 127:" + str(e)+"tb:"+strr)
     else: 
         pass 
 
