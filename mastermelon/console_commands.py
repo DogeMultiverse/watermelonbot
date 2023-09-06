@@ -8,7 +8,7 @@ def send_consolecommand(host: str, cmd: str):
     subprocess.Popen(f"ssh {host} {cmd}", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
     return 
 
-def read_consoleoutput(host: str, cmd: str):
+def ssh_withcmd(host: str, cmd: str):
     procc = subprocess.Popen(f"ssh {host} {cmd}", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out,err = procc.communicate()
     return out,err
@@ -90,7 +90,7 @@ async def showconsole(ctx, i, host, screen, port):
     await asyncio.sleep(1)
     fld=servfolders()[i]
     cmd =f'cat {fld}/screen_log.log'
-    out,err = read_consoleoutput(host, cmd)
+    out,err = ssh_withcmd(host, cmd)
     output = str(out[-1500:])[2:-1].split("\\n") 
     await ctx.channel.send( f"`{host}{port}` `{screen}`:\n"+ "\n".join(output))
     await ctx.channel.send(f"Completed reading for `{i}` `{host}{port}` `{screen}`")# todo delete those msgs if passed
@@ -108,6 +108,24 @@ async def servupload(ctx,serverid):
     except Exception as e:
         strr=traceback.format_exc()
         await ctx.channel.send("error occurred 99:" + str(e)+"tb:"+strr)
+
+async def get_version_of_plugin_from_all_servers(ctx: commands.Context):
+    servers = getservers()
+    try:
+        stringg=[]
+        for i,host,screen,port,loc in servers:
+            cmd = f'cat {servfolders()[i]}/config/mods/ASP_version.txt'
+            out,_ = ssh_withcmd(host, cmd)
+            out = str(out)[2+17:-3]
+            stringg.append( f"`{i}` `{out}` `{host}:{port}` `{screen}`" )
+        with open("/home/alexmindustry/Documents/watermelonbot/watermelonbot/data/mindustry/mods/common/ASP_version.txt","r") as f:
+            ff = f.readlines()[0][17:-1]
+        await ctx.channel.send( f"Plugin versions {ff}:\n"+("\n".join(stringg)))
+    except Exception as e:
+        strr=traceback.format_exc()
+        await ctx.channel.send("error occurred 126:" + str(e)+"tb:"+strr)
+    else: 
+        pass 
 
 def getgame_status():
     # todo, gets the game status, and if it is available for restart

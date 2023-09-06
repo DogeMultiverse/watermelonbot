@@ -386,6 +386,11 @@ async def restartserver(ctx: commands.Context, serverid: int=None): # todo add s
 async def getserver(ctx):
     await console_commands.getserver(ctx)
 
+@bot.command(description="get alexserverplugin versions from all servers (admin only)", brief="Admin Mindustry Utility")
+@commands.has_role("Admin (Discord)")
+async def getver(ctx):
+    await console_commands.get_version_of_plugin_from_all_servers(ctx)
+
 @bot.command(description="see server console (admin only)", brief="Admin Mindustry Utility")
 @commands.has_role("Admin (Discord)")
 async def readserver(ctx: commands.Context, serverid: int):
@@ -434,6 +439,7 @@ async def changemindusrole(ctx, user: discord.user.User, role: str):
     else:
         await ctx.send(f"Error, role not found. Please choose Admin|Mod|Player.")
 
+# end of commands related to mindustry servers
 
 @bot.command(description="adds <:EMOJI:> to the desired <message_id> in [channel]. max 20 emojis per message",
              help="adds <:emoji:> to <message_id> in [channel]",
