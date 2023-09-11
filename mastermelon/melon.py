@@ -857,8 +857,13 @@ async def convertexp(ctx: discord.ext.commands.Context):
             else:
                 ax.find_one_and_update({"duuid": ctx.author.id}, {"$inc": {"ax": new_Ax}})
             await ctx.channel.send(
-                f"You have converted {new_Ax * 1000} EXP into {new_Ax} {ej.ax_emoji}.\nCongrats!. Type "
-                f"`w?checkax @user` to check your current {ej.ax_emoji}.")
+                userduuid = ctx.author.id
+                old_val = ax.find_one({"duuid": userduuid})
+                if isinstance(old_val, type(None)):
+                    old_val = 0
+                else:
+                    old_val = old_val["ax"]
+                f"You have converted {new_Ax * 1000} EXP into {new_Ax} {ej.ax_emoji}.\nCongrats!. You now have {old_val} {ej.ax_emoji}.")
         else:
             await ctx.channel.send("You have no exp. ;-; Can't convert emptiness.")
 
