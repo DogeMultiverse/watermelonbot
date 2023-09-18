@@ -87,16 +87,23 @@ async def sendcommandtoserver(ctx: commands.Context, serverid: int, consolecomma
     consolecommand = consolecommand.replace(" ","\ ")
     servers = getservers()
     try:
-        i,host,screen,port,loc = servers[serverid]
-        await ctx.channel.send(f"sending {consolecommand} to `{i}` `{host}{port}` with screen `{screen}`, waiting 2 seconds")
-        send_consolecommand(host, f'screen -S {screen} -p 0 -X stuff "{consolecommand}^M"')
-        await asyncio.sleep(1)
-        await showconsole(ctx, i, host, screen, port)
+        if serverid==-1: # this sends to all
+            for serverid in range(len( servers )):
+                await send_command_to_1_server(ctx, serverid, consolecommand, servers)
+        else: # just sends to 1
+            await send_command_to_1_server(ctx, serverid, consolecommand, servers)
     except Exception as e:
         strr=traceback.format_exc()
-        await ctx.channel.send("error occurred 67:" + str(e)+"tb:"+strr)
+        await ctx.channel.send("error occurred 82:" + str(e)+"tb:"+strr)
     else: 
         pass 
+
+async def send_command_to_1_server(ctx, serverid, consolecommand, servers):
+    i,host,screen,port,loc = servers[serverid]
+    await ctx.channel.send(f"sending {consolecommand} to `{i}` `{host}{port}` with screen `{screen}`, waiting 2 seconds")
+    send_consolecommand(host, f'screen -S {screen} -p 0 -X stuff "{consolecommand}^M"')
+    await asyncio.sleep(1)
+    await showconsole(ctx, i, host, screen, port)
 
 async def showconsole(ctx, i, host, screen, port):
     await ctx.channel.send(f"reading console on `{i}` `{host}{port}` with screen `{screen}`", delete_after=3)
