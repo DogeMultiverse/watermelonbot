@@ -138,11 +138,12 @@ async def get_version_of_plugin_from_all_servers(ctx: commands.Context):
         for i,host,screen,port,loc in servers:
             cmd = f'cat {servfolders()[i]}/config/mods/ASP_version.txt'
             out,_ = ssh_withcmd(host, cmd)
-            out = str(out)[2+17:-3]
+            out = str(out)[2+17:]
             stringg.append( f"`{i}` `{out}` `{host}:{port}` `{screen}`" )
         with open("/home/alexmindustry/Documents/watermelonbot/watermelonbot/data/mindustry/mods/common/ASP_version.txt","r") as f:
-            ff = f.readlines()[0][17:-1]
-        await ctx.channel.send( f"Plugin version on servers (latest: `{ff}`):\n"+("\n".join(stringg)))
+            ff = f.readlines()[0][17:]
+            ff1=ff.split(":")[0]
+        await ctx.channel.send( f"Plugin version on servers (latest: `{ff1}`):\n"+("\n".join(stringg)))
     except Exception as e:
         strr=traceback.format_exc()
         await ctx.channel.send("error occurred 127:" + str(e)+"tb:"+strr)
