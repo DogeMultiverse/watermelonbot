@@ -56,14 +56,13 @@ async def gameoverserver(ctx: commands.Context, serverid: int):
     servers = getservers()
     try:
         i,host,screen,port,loc = servers[serverid]
-        await ctx.channel.send(f"sending gameover command to `{i}` `{host}{port}` with screen `{screen}`, waiting 2 seconds")
+        await ctx.channel.send(f"sending gameover command to `{i}` `{host}{port}` with screen `{screen}` ")
         cmd =f'screen -S {screen} -p 0 -X stuff "gameover^M"'
-        send_consolecommand(host, cmd)
-        await asyncio.sleep(2) 
+        send_consolecommand(host, cmd) 
         await ctx.channel.send(f"sent gameover command for `{i}` `{host}{port}` `{screen}`")
     except Exception as e:
         strr=traceback.format_exc()
-        await ctx.channel.send("error occurred 45:" + str(e)+"tb:"+strr)
+        await ctx.channel.send("error occurred 66:" + str(e)+"tb:"+strr)
     else: 
         pass # todo delete those msgs if passed
 
