@@ -381,6 +381,19 @@ async def restartserver(ctx: commands.Context, serverid: int=None): # todo add s
     else:
         await console_commands.restartserver(ctx, serverid)
 
+@bot.command(description="send gameover command to servers (admin only)", brief="Admin Mindustry Utility",
+             help="<serverid, -1 for allservers>")
+@commands.has_role("Admin (Discord)")
+async def gameoverserver(ctx: commands.Context, serverid: int=None): # todo add servercommand: str = "hubkick"
+    if serverid is None:
+        await console_commands.getserver(ctx)
+        await ctx.send(f"use <serverid, -1 for allservers>")
+    elif serverid==-1: #update all servers
+        for serverid in range(len(console_commands.getservers())):
+            await console_commands.gameoverserver(ctx, serverid)
+    else:
+        await console_commands.gameoverserver(ctx, serverid)
+
 @bot.command(description="get available servers (admin only)", brief="Admin Mindustry Utility")
 @commands.has_role("Admin (Discord)")
 async def getserver(ctx):
