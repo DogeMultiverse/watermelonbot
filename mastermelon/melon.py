@@ -803,6 +803,25 @@ async def giveaway(ctx: discord.ext.commands.Context, what: str, channel: discor
         await ctx.channel.send("invalid command usage")
 
 
+
+
+#TODO
+@bot.command()
+async def feedback(ctx):
+    button = ui.Button(label="Write", style=discord.ButtonStyle.primary) #create_button
+    view = ui.View() # create view
+    view.add_item(button) # add to view button
+
+    async def button_callback(interaction: discord.Interaction): # on button_click
+        
+        modal = feedback.MyModal(title="FeedBack")
+        await interaction.response.send_modal(modal) # open the modal window
+
+    button.callback = button_callback 
+    embed = discord.Embed(title="What would you like to add to the mindustry or discord server", description="Send a message to the developers", color=discord.Color.red())
+    await ctx.channel.send(embed=embed, view=view)
+
+
 @bot.command(description=f"Convert user's exp into {ej.ax_emoji}.", brief="Utility")
 async def convertexp(ctx: discord.ext.commands.Context):
     if prefix == "t?" and ctx.author.id != DUUID_ALEX:
