@@ -11,6 +11,7 @@ import pymongo
 import asyncio
 import random
 from discord.ext import commands
+from discord import ui
 from mastermelon import counting_bot, console_commands
 from mastermelon import highlow_game
 from mastermelon import homework_game
@@ -19,7 +20,7 @@ from mastermelon import effects_display
 from mastermelon import emojis as ej
 from mastermelon import cookiegame
 from mastermelon import gen_image
-from mastermelon import translator
+from mastermelon import feedback
 #from mastermelon.not_used import update_mindustry_status2
 
 def get_date_str():
@@ -459,9 +460,7 @@ async def addemoji(ctx, emoji: str, messageid: int, channel: discord.TextChannel
     except discord.NotFound:
         await ctx.send("Message id not found. Maybe message was deleted?", delete_after=3)
 
-@bot.command(description="Translate to english")
-async def translate(ctx, *argd):
-    await ctx.send(translator.translatr(" ".join(args)))
+
 
 @bot.command(description="adds hype emojis",
              help="<message_id> <channel> <counts> (duration will be ~ counts*10 secs)", brief="Hype")
@@ -933,7 +932,7 @@ def strip_colourbrackets(inputstr):
             builder += char
     return builder
 
-
+#translate
 def runbot():
     with open("watermelon.config", "rb") as f:
         js = json.load(f)
