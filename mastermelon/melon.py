@@ -11,6 +11,7 @@ import pymongo
 import asyncio
 import random
 from discord.ext import commands
+from discord import ui
 from mastermelon import counting_bot, console_commands
 from mastermelon import highlow_game
 from mastermelon import homework_game
@@ -19,7 +20,7 @@ from mastermelon import effects_display
 from mastermelon import emojis as ej
 from mastermelon import cookiegame
 from mastermelon import gen_image
-#from mastermelon.not_used import update_mindustry_status2
+from mastermelon import feedback
 
 def get_date_str():
     return str(datetime.now())[:-4]
@@ -818,6 +819,21 @@ async def giveaway(ctx: discord.ext.commands.Context, what: str, channel: discor
         await ctx.channel.send("invalid command usage")
 
 
+@bot.command()
+async def feedback(ctx):
+    button = ui.Button(label="Write", style=discord.ButtonStyle.primary) #create_button
+    view = ui.View() # create view
+    view.add_item(button) # add to view button
+
+    async def button_callback(interaction: discord.Interaction): # on button_click
+        modal = feedback.MyModal(title="FeedBack")
+        await interaction.response.send_modal(modal) # open the modal window
+
+    button.callback = button_callback 
+    embed = discord.Embed(title="What would you like to add to the mindustry or discord server", description="Send a message to the developers", color=discord.Color.red())
+    await ctx.channel.send(embed=embed, view=view)
+
+
 @bot.command(description=f"Convert user's exp into {ej.ax_emoji}.", brief="Utility")
 async def convertexp(ctx: discord.ext.commands.Context):
     if prefix == "t?" and ctx.author.id != DUUID_ALEX:
@@ -933,7 +949,6 @@ def strip_colourbrackets(inputstr):
         elif not remove:
             builder += char
     return builder
-
 
 def runbot():
     with open("watermelon.config", "rb") as f:
