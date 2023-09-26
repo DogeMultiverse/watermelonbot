@@ -21,7 +21,7 @@ from mastermelon import emojis as ej
 from mastermelon import cookiegame
 from mastermelon import gen_image
 from mastermelon import feedback
-#from mastermelon.not_used import update_mindustry_status
+
 def get_date_str():
     return str(datetime.now())[:-4]
 def get_latest_exp(res, convertedexp_doc):
@@ -460,7 +460,6 @@ async def addemoji(ctx, emoji: str, messageid: int, channel: discord.TextChannel
         await ctx.send("Message id not found. Maybe message was deleted?", delete_after=3)
 
 
-
 @bot.command(description="adds hype emojis",
              help="<message_id> <channel> <counts> (duration will be ~ counts*10 secs)", brief="Hype")
 @commands.has_any_role("Admin (Discord)", "Mod (Discord)")
@@ -801,9 +800,6 @@ async def giveaway(ctx: discord.ext.commands.Context, what: str, channel: discor
         await ctx.channel.send("invalid command usage")
 
 
-
-
-#TODO
 @bot.command()
 async def feedback(ctx):
     button = ui.Button(label="Write", style=discord.ButtonStyle.primary) #create_button
@@ -811,7 +807,6 @@ async def feedback(ctx):
     view.add_item(button) # add to view button
 
     async def button_callback(interaction: discord.Interaction): # on button_click
-        
         modal = feedback.MyModal(title="FeedBack")
         await interaction.response.send_modal(modal) # open the modal window
 
@@ -931,7 +926,6 @@ def strip_colourbrackets(inputstr):
             builder += char
     return builder
 
-#translate
 def runbot():
     with open("watermelon.config", "rb") as f:
         js = json.load(f)
