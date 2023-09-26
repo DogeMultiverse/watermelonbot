@@ -21,8 +21,7 @@ from mastermelon import emojis as ej
 from mastermelon import cookiegame
 from mastermelon import gen_image
 from mastermelon import feedback
-#from mastermelon.not_used import update_mindustry_status2
-
+#from mastermelon.not_used import update_mindustry_status
 def get_date_str():
     return str(datetime.now())[:-4]
 def get_latest_exp(res, convertedexp_doc):
