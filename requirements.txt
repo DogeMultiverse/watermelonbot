@@ -7,4 +7,3 @@ Pillow~=8.1.1
 requests~=2.25.1
 wrapt_timeout_decorator=1.3.1
 PyNaCl
-translate==3.6.1
