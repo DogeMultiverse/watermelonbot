@@ -11,7 +11,7 @@ import pymongo
 import asyncio
 import random
 from discord.ext import commands
-from discord import ui
+# from discord import ui this dont work in discord 1.7.3
 from mastermelon import counting_bot, console_commands
 from mastermelon import highlow_game
 from mastermelon import homework_game
@@ -821,6 +821,7 @@ async def giveaway(ctx: discord.ext.commands.Context, what: str, channel: discor
 
 @bot.command()
 async def feedback(ctx):
+    if True: return
     button = ui.Button(label="Write", style=discord.ButtonStyle.primary) #create_button
     view = ui.View() # create view
     view.add_item(button) # add to view button
