@@ -741,7 +741,7 @@ async def register(ctx: discord.ext.commands.Context, pin: str):
         await ctx.channel.send(f'Pin has to be digits only. eg, `12345` or `12346`')
     else:
         await ctx.channel.send(f'Pin input is `{pin}`, please wait.')
-        res = registerpin.find({"pin": pin, "date": {"$gte": datetime.utcnow() - timedelta(minutes=10)}})
+        res = registerpin.find({"pin": pin, "date": {"$gte": datetime.utcnow() - timedelta(minutes=5)}})
         found = False
         userdata = None
         found_objects = []
@@ -763,7 +763,7 @@ async def register(ctx: discord.ext.commands.Context, pin: str):
                 registerpin.find_one_and_delete({"_id": found_object})
             await ctx.channel.send(f'Successfully registered <@!{ctx.author.id}>. Welcome to Alex Multiverse. Enjoy your in game skins/effects.')
         else:
-            await ctx.channel.send(f"Pin not found for <@!{ctx.author.id}>. Make sure you did `/register` in Mindustry within the last 10 mins. Don't spam it.")
+            await ctx.channel.send(f"Pin not found for <@!{ctx.author.id}>. Make sure you did `/register` in Mindustry within the last 5 mins. Don't spam it.")
 
 
 @bot.command(description=f"get image with user's pfp", brief="Utility")
