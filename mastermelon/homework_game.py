@@ -15,7 +15,7 @@ with open("watermelon.config", "rb") as f:
 
 client = pymongo.MongoClient(mongo_key)
 db = client.get_database("AlexMindustry")
-homeworkHighScore = db["homeworkHighScore"]
+homework_high_score_collection = db["homeworkHighScore"]
 
 
 def d1(value: int):
@@ -86,18 +86,21 @@ async def run_homeworkgame(ctx, bot):
         await msg.add_reaction(party_emoji if correct else kekw_emoji)
         if correct:
             player_id = str(ctx.author)
-            player_in_high_score = homeworkHighScore.find_one({"_id": player_id})
-            current_score = player_in_high_score['score']
+            player_in_high_score = homework_high_score_collection.find_one({"_id": player_id})
 
             if player_in_high_score is None:
-                homeworkHighScore.insert_one({"_id": player_id, "score": time_taken})
-            elif current_score > time_taken:
-                homeworkHighScore.update_one({"_id": player_id}, {"$set": {"score": time_taken}})
+                homework_high_score_collection.insert_one({"_id": player_id, "score": time_taken})
+            else:
+                current_score = player_in_high_score['score']
+                    
+                if current_score > time_taken:
+                    homework_high_score_collection.update_one({"_id": player_id}, {"$set": {"score": time_taken}})
 
-        # scores = [f"`{rank + 1}`  `{time:.2f}s`  : {name}" for rank, (name, time) in
-        #           enumerate(sorted(highscores.items(), key=lambda x: x[1]))]
+        high_scores = homework_high_score_collection.find()
 
-        scores = []
+        scores = [f"`{i + 1}`  `{high_score['score']:.2f}s`  : {high_score['_id']}" for i, high_score in
+                  enumerate(high_scores)]
+
         await ctx.channel.send("Homework (BETA 2.0) `Leaderboard`\n" + "\n".join(scores))
     except ValueError:
         await ctx.channel.send("Input error. Follow instructions exactly.")
