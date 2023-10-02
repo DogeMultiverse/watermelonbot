@@ -5,11 +5,22 @@ import discord.message
 
 from mastermelon import emojis as ej
 from time import time as t
+import json
+import pymongo
 
-highscores = {}
+with open("watermelon.config", "rb") as f:
+    js = json.load(f)
+    mongo_key: str = js["mongo_key"]
+    # prefix: str = js["prefix"]
+
+client = pymongo.MongoClient(mongo_key)
+db = client.get_database("AlexMindustry")
+homeworkHighScore = db["homeworkHighScore"]
+
 
 def d1(value: int):
-    return "" if value == 1 else str(value)+"*"
+    return "" if value == 1 else str(value) + "*"
+
 
 def generate_find2root():
     x1, x2 = random.randint(-5, 5), random.randint(-5, 5)
@@ -26,6 +37,8 @@ def generate_find2root():
     string = f"Find the roots of \n`x² " + val1 + sign2 + f"{x1 * x2 + c} = {c}`\n"
     string += f"Input your answer with a `,` in between.\n"
     return solution, string
+
+
 def check_find2root():
     sol, string = generate_find2root()
     t0 = t()
@@ -38,16 +51,20 @@ def check_find2root():
         print(f"Correct, you took {time_taken:.2f}s.{vfast}" if correct else f"Wrong, its {sol}.")
     except ValueError:
         print("Input error. Follow instructions exactly.")
+
+
 def generate_findx():
     char = random.choice([x for x in "xyz😃🤢🎉😴🎅🛒🍔🍟🌭🥓"])
     x = random.randint(1, 5)
-    a, b = random.randint(1, 20//x), random.randint(2,6)
+    a, b = random.randint(1, 20 // x), random.randint(2, 6)
     string = f"What is the value of '{char}' in the following statement?\n"
-    string += random.choice([f"{d1(a)}{char} + {b} = {a*x+b}",
-                             f"{b} + {d1(a)}{char} = {a*x+b}",
-                             f"{a*x+b} = {d1(a)}{char} + {b}",
-                             f"{a*x+b} = {b} + {d1(a)}{char}"])
+    string += random.choice([f"{d1(a)}{char} + {b} = {a * x + b}",
+                             f"{b} + {d1(a)}{char} = {a * x + b}",
+                             f"{a * x + b} = {d1(a)}{char} + {b}",
+                             f"{a * x + b} = {b} + {d1(a)}{char}"])
     return x, string
+
+
 async def run_homeworkgame(ctx, bot):
     sol, string = generate_findx()
     t0 = t()
@@ -68,10 +85,19 @@ async def run_homeworkgame(ctx, bot):
         msg = await ctx.channel.send(reply)
         await msg.add_reaction(party_emoji if correct else kekw_emoji)
         if correct:
-            if (str(ctx.author) not in highscores) or highscores[str(ctx.author)] > time_taken:
-                highscores[str(ctx.author)] = time_taken
-        scores = [f"`{rank + 1}`  `{time:.2f}s`  : {name}" for rank, (name, time) in
-                  enumerate(sorted(highscores.items(), key=lambda x:x[1]))]
+            player_id = str(ctx.author)
+            player_in_high_score = homeworkHighScore.find_one({"_id": player_id})
+            current_score = player_in_high_score['score']
+
+            if player_in_high_score is None:
+                homeworkHighScore.insert_one({"_id": player_id, "score": time_taken})
+            elif current_score > time_taken:
+                homeworkHighScore.update_one({"_id": player_id}, {"$set": {"score": time_taken}})
+
+        # scores = [f"`{rank + 1}`  `{time:.2f}s`  : {name}" for rank, (name, time) in
+        #           enumerate(sorted(highscores.items(), key=lambda x: x[1]))]
+
+        scores = []
         await ctx.channel.send("Homework (BETA 2.0) `Leaderboard`\n" + "\n".join(scores))
     except ValueError:
         await ctx.channel.send("Input error. Follow instructions exactly.")
