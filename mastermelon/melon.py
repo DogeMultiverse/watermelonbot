@@ -692,6 +692,39 @@ async def giveax(ctx: discord.ext.commands.Context, amount: int, user: discord.M
                            f"Now {old_val + amount}{ej.ax_emoji}.\nReason: {' '.join(reason)}")
 
 
+@bot.command(description="Allocate Ax to multiple users.", brief="Admin Utility", help="<amount:integer> <@user1>, <@user2>, ... <reason>")
+@commands.has_role("Admin (Discord)")
+async def giveaxmultiple(ctx: discord.ext.commands.Context, amount: int, *args):
+    users = []
+    reason = []
+    flag = False
+    for arg in args:
+        if arg.startswith("<@") and not flag:
+            users.append(arg[:-1])
+        else:
+            flag = True
+            reason.append(arg)
+
+    updates = []  # List to accumulate updates for each user
+    for user in users:
+        member = await commands.MemberConverter().convert(ctx, user)
+        old_val = ax.find_one({"duuid": member.id})
+
+        if isinstance(old_val, type(None)):
+            ax.insert_one({"duuid": member.id, "ax": 0})
+            old_val = 0
+        else:
+            old_val = old_val["ax"]
+
+        ax.find_one_and_update({"duuid": member.id}, {"$inc": {"ax": amount}})
+        
+        # Accumulate the update message for this user
+        updates.append(f"{amount}{ej.ax_emoji} awarded to {member.mention}. Now {old_val + amount}{ej.ax_emoji}.")
+
+    # Join all the update messages into a single message and send it at the end
+    await ctx.channel.send("\n".join(updates) + f"\nReason: {' '.join(reason)}")
+
+
 @bot.command(description="Check user's Ax. If no user is specified, check your own Ax.",
              brief="Utility", help="[@user or discord ID or nothing]")
 async def checkax(ctx: discord.ext.commands.Context, user=None):
