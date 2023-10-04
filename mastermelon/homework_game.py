@@ -86,7 +86,7 @@ async def run_homeworkgame(ctx, bot):
         msg = await ctx.channel.send(reply)
         await msg.add_reaction(party_emoji if correct else kekw_emoji)
         if correct:
-            player_id = str(ctx.author)
+            player_id = ctx.author.id
             player_in_high_score = homework_high_score_collection.find_one({"_id": player_id})
 
             if player_in_high_score is None:
@@ -99,7 +99,10 @@ async def run_homeworkgame(ctx, bot):
 
         high_scores = homework_high_score_collection.find()
 
-        scores = [f"`{i + 1}`  `{high_score['score']:.2f}s`  : {high_score['_id']}" for i, high_score in
+        scores = [f"`{i + 1}`  `{high_score['score']:.2f}s`  : {ctx.message.guild.get_member(high_score['_id']).name}"
+                  for
+                  i, high_score
+                  in
                   enumerate(high_scores)]
 
         await ctx.channel.send("Homework (BETA 2.0) `Leaderboard`\n" + "\n".join(scores))
