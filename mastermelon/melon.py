@@ -981,6 +981,11 @@ async def appeal(ctx: discord.ext.commands.Context, punishment: str, idoruuid: s
 
 @bot.event
 async def on_message(message: discord.Message):
+    if message.guild is None:  # Ignore DMs
+        return
+    if message.guild.id not in GUILD_IDS: 
+        return
+    
     fig = "https://media.discordapp.net/attachments/785543837116399636/806563140116152380/reallyangrymelon.png"
     pepo_clap = "https://media.discordapp.net/attachments/799855760011427880/806869234122358794/792177151448973322.gif"
     if "<@!500744743660158987>" in message.content and prefix == "t?":
