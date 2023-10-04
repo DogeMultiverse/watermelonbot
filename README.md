@@ -32,6 +32,9 @@ Bot for managing discord and servers, written in python.
 - Clone this repo.
 - Duplicate the "watermelon.example.config" file and rename it to "watermelon.config"
 - Replace `<BOT_TOKEN>` with your bot token in the "watermelon.config" file.
+- install python 3.9.1 (use as interpreter for this bot)
+- https://code.visualstudio.com/docs/python/environments (create an env) 
+  - see docs
 - In this directory, execute `pip3 install -r requirements.txt` on terminal.
 - Run `python3 main.py`.
 
