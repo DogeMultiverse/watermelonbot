@@ -11,11 +11,12 @@ import pymongo
 with open("watermelon.config", "rb") as f:
     js = json.load(f)
     mongo_key: str = js["mongo_key"]
-    # prefix: str = js["prefix"]
+    prefix: str = js["prefix"]
 
-client = pymongo.MongoClient(mongo_key)
-db = client.get_database("AlexMindustry")
-homework_high_score_collection = db["homeworkHighScore"]
+if prefix in ["w?", "t?"]:
+    client = pymongo.MongoClient(mongo_key)
+    db = client.get_database("AlexMindustry")
+    homework_high_score_collection = db["homeworkHighScore"]
 
 
 def d1(value: int):
@@ -92,7 +93,7 @@ async def run_homeworkgame(ctx, bot):
                 homework_high_score_collection.insert_one({"_id": player_id, "score": time_taken})
             else:
                 current_score = player_in_high_score['score']
-                    
+
                 if current_score > time_taken:
                     homework_high_score_collection.update_one({"_id": player_id}, {"$set": {"score": time_taken}})
 
