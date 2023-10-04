@@ -97,7 +97,7 @@ async def run_homeworkgame(ctx, bot):
                 if current_score > time_taken:
                     homework_high_score_collection.update_one({"_id": player_id}, {"$set": {"score": time_taken}})
 
-        high_scores = homework_high_score_collection.find().sort("score")
+        high_scores = homework_high_score_collection.find().sort("score").limit(5)
 
         scores = [f"`{i + 1}`  `{high_score['score']:.2f}s`  : {ctx.message.guild.get_member(high_score['_id']).name}"
                   for
