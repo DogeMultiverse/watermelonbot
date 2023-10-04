@@ -94,6 +94,10 @@ module.
 
 There are a number of utility commands being showcased here.'''
 
+GUILD_IDS = [785543836608364556, 729946922810605690]
+def is_valid_guild(ctx):
+    return ctx.guild.id in GUILD_IDS
+
 with open("watermelon.config", "rb") as f:
     js = json.load(f)
     mongo_key: str = js["mongo_key"]
@@ -351,6 +355,7 @@ async def homework(ctx):
 
 
 @bot.command(description="Gets all animated emojis from this discord.", brief="None")
+@commands.check(is_valid_guild) 
 @commands.has_any_role("Admin (Discord)", "Mod (Discord)")
 async def getemojis(ctx):
     emojis = await ctx.guild.fetch_emojis()
@@ -372,6 +377,7 @@ async def gettest(ctx: commands.Context):
 @bot.command(description="restart servers (admin only)", brief="Admin Mindustry Utility",
              help="<serverid, -1 for allservers>")
 @commands.has_role("Admin (Discord)")
+@commands.check(is_valid_guild) 
 async def restartserver(ctx: commands.Context, serverid: int=None): # todo add servercommand: str = "hubkick"
     if serverid is None:
         await console_commands.getserver(ctx)
@@ -385,6 +391,7 @@ async def restartserver(ctx: commands.Context, serverid: int=None): # todo add s
 @bot.command(description="send gameover command to servers (admin only)", brief="Admin Mindustry Utility",
              help="<serverid, -1 for allservers>")
 @commands.has_role("Admin (Discord)")
+@commands.check(is_valid_guild) 
 async def gameoverserver(ctx: commands.Context, serverid: int=None): # todo add servercommand: str = "hubkick"
     if serverid is None:
         await console_commands.getserver(ctx)
@@ -397,27 +404,32 @@ async def gameoverserver(ctx: commands.Context, serverid: int=None): # todo add 
 
 @bot.command(description="get available servers (admin only)", brief="Admin Mindustry Utility")
 @commands.has_role("Admin (Discord)")
+@commands.check(is_valid_guild) 
 async def getserver(ctx):
     await console_commands.getserver(ctx)
 
 @bot.command(description="get alexserverplugin versions from all servers (admin only)", brief="Admin Mindustry Utility")
 @commands.has_role("Admin (Discord)")
+@commands.check(is_valid_guild) 
 async def getver(ctx):
     await console_commands.get_version_of_plugin_from_all_servers(ctx)
 
 @bot.command(description="see server console (admin only)", brief="Admin Mindustry Utility")
 @commands.has_role("Admin (Discord)")
+@commands.check(is_valid_guild) 
 async def readserver(ctx: commands.Context, serverid: int):
     await console_commands.readserver(ctx, serverid)
 
 @bot.command(description="send command to mindustry server and read the console (admin only)", brief="Admin Mindustry Utility")
 @commands.has_role("Admin (Discord)")
+@commands.check(is_valid_guild) 
 async def sendcmd(ctx: commands.Context, serverid: int, consolecommand: str):
     await console_commands.sendcommandtoserver(ctx, serverid,consolecommand)
 
 @bot.command(description="upload alexplugin to servers.", brief="Admin Mindustry Utility",
              help="<serverid, -1 for allservers>")
 @commands.has_role("Admin (Discord)")
+@commands.check(is_valid_guild) 
 async def servupdate(ctx: commands.Context, serverid: int=None):
     if serverid is None:
         await console_commands.getserver(ctx)
@@ -432,6 +444,7 @@ async def servupdate(ctx: commands.Context, serverid: int=None):
              help="<@user or duuid> <role>",
              brief="Admin Mindustry Utility")
 @commands.has_any_role("Admin (Discord)", "Admin (Mindustry)")
+@commands.check(is_valid_guild) 
 async def changemindusrole(ctx, user: discord.user.User, role: str):
     userid :int
     usermention=None
@@ -459,6 +472,7 @@ async def changemindusrole(ctx, user: discord.user.User, role: str):
              help="adds <:emoji:> to <message_id> in [channel]",
              brief="Hype")
 @commands.has_any_role("Admin (Discord)", "Mod (Discord)")
+@commands.check(is_valid_guild) 
 async def addemoji(ctx, emoji: str, messageid: int, channel: discord.TextChannel = None):
     emojis = await ctx.guild.fetch_emojis()
     try:
@@ -482,6 +496,7 @@ async def addemoji(ctx, emoji: str, messageid: int, channel: discord.TextChannel
 @bot.command(description="adds hype emojis",
              help="<message_id> <channel> <counts> (duration will be ~ counts*10 secs)", brief="Hype")
 @commands.has_any_role("Admin (Discord)", "Mod (Discord)")
+@commands.check(is_valid_guild) 
 async def addhype(ctx, messageid: int, channel: discord.TextChannel = None, counts: int = 5):
     emojis = await ctx.guild.fetch_emojis()
     try:
@@ -523,6 +538,7 @@ async def on_command_error(ctx: discord.ext.commands.Context, error: Exception, 
 
 
 @bot.command(description="Play the guessing number game.", brief="Game")
+@commands.check(is_valid_guild) 
 async def guess(ctx: discord.ext.commands.Context):
     await ctx.channel.send('Guess a number between 1 and 1000000. Its one in a million')
 
@@ -546,6 +562,7 @@ async def guess(ctx: discord.ext.commands.Context):
 
 
 @bot.command(description="Check user's registered account's EXP", brief="Utility")
+@commands.check(is_valid_guild) 
 async def checkexp(ctx: discord.ext.commands.Context, user: discord.User = None):
     if prefix == "t?" and ctx.author.id != DUUID_ALEX:
         await ctx.channel.send("no testing for u")
@@ -598,6 +615,7 @@ async def checkexp(ctx: discord.ext.commands.Context, user: discord.User = None)
 
 
 @bot.command(description="Displays buyeffect menu.", brief="Utility")
+@commands.check(is_valid_guild) 
 async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
     if prefix == "t?" and ctx.author.id != DUUID_ALEX:
         await ctx.channel.send("t? is only for alex to test")
@@ -637,6 +655,7 @@ async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
 
 
 @bot.command(description=f"Check user's ranking in {ej.ax_emoji}", brief="Utility")
+@commands.check(is_valid_guild) 
 async def axleaderboard(ctx: discord.ext.commands.Context):
     cursor = ax.find({"ax": {"$gte": 0}})
     res = dict()
@@ -680,6 +699,7 @@ async def axleaderboard(ctx: discord.ext.commands.Context):
 
 @bot.command(description="Allocate Ax.", brief="Admin Utility", help="<amount:integer> <@user> <reason>")
 @commands.has_role("Admin (Discord)")
+@commands.check(is_valid_guild) 
 async def giveax(ctx: discord.ext.commands.Context, amount: int, user: discord.Member, *reason):
     old_val = ax.find_one({"duuid": user.id})
     if isinstance(old_val, type(None)):
@@ -694,6 +714,7 @@ async def giveax(ctx: discord.ext.commands.Context, amount: int, user: discord.M
 
 @bot.command(description="Allocate Ax to multiple users.", brief="Admin Utility", help="<amount:integer> <@user1>, <@user2>, ... <reason>")
 @commands.has_role("Admin (Discord)")
+@commands.check(is_valid_guild) 
 async def giveaxmultiple(ctx: discord.ext.commands.Context, amount: int, *args):
     users = []
     reason = []
@@ -727,6 +748,7 @@ async def giveaxmultiple(ctx: discord.ext.commands.Context, amount: int, *args):
 
 @bot.command(description="Check user's Ax. If no user is specified, check your own Ax.",
              brief="Utility", help="[@user or discord ID or nothing]")
+@commands.check(is_valid_guild) 
 async def checkax(ctx: discord.ext.commands.Context, user=None):
     try:
         userduuid = await getDUUIDFromMentionIDElseAuthor(ctx, user)
@@ -767,6 +789,7 @@ def getUsernameFromDUUID(duuid: int):
 
 
 @bot.command(description=f"Register your mindustry account with your discord account.", brief="Utility")
+@commands.check(is_valid_guild) 
 async def register(ctx: discord.ext.commands.Context, pin: str):
     try:
         int(pin)
@@ -800,6 +823,7 @@ async def register(ctx: discord.ext.commands.Context, pin: str):
 
 
 @bot.command(description=f"get image with user's pfp", brief="Utility")
+@commands.check(is_valid_guild) 
 async def getimage(ctx: discord.ext.commands.Context, user: discord.User):
     avatar = user.avatar_url_as(format="png", static_format="png", size=64)
     name = f"{user.name}#{user.discriminator}"
@@ -830,6 +854,7 @@ async def donate(ctx: discord.ext.commands.Context):
 @bot.command(description="Create giveaway.", brief="Admin Utility",
              help="<add/remove> <giveawaychannel> <anncchannel> <amount> <winners> <days> <hours> <'msg'>")
 @commands.has_any_role("Admin (Discord)", "Mod (Giveaway)")
+@commands.check(is_valid_guild) 
 async def giveaway(ctx: discord.ext.commands.Context, what: str, channel: discord.TextChannel,
                    channelannc: discord.TextChannel, amount: int = 1,
                    winners: int = 0, days: int = 0, hours: int = 0, message: str = ""):
@@ -853,6 +878,7 @@ async def giveaway(ctx: discord.ext.commands.Context, what: str, channel: discor
 
 
 @bot.command()
+@commands.check(is_valid_guild) 
 async def feedback(ctx):
     if True: return
     button = ui.Button(label="Write", style=discord.ButtonStyle.primary) #create_button
@@ -869,6 +895,7 @@ async def feedback(ctx):
 
 
 @bot.command(description=f"Convert user's exp into {ej.ax_emoji}.", brief="Utility")
+@commands.check(is_valid_guild) 
 async def convertexp(ctx: discord.ext.commands.Context):
     if prefix == "t?" and ctx.author.id != DUUID_ALEX:
         await ctx.channel.send("t? is only for alex to test")
@@ -933,6 +960,7 @@ async def convertexp(ctx: discord.ext.commands.Context):
 
 @bot.command(description="For Appealing a member", brief="Utility",
              help="<minecraftBan|terrariaBan|mindustryKick|mindustryBan> <in_game_name> <reason>")
+@commands.check(is_valid_guild) 
 async def appeal(ctx: discord.ext.commands.Context, punishment: str, idoruuid: str, *, reason: str):
     if not punishment.startswith(("minecraftBan", "terrariaBan", "mindustryKick", "mindustryBan")):
         await ctx.channel.send("you must fill a punishment type:"
