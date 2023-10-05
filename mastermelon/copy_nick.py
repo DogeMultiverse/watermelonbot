@@ -54,7 +54,7 @@ class CopyNick(commands.Cog):
 
                 try:
                     await member.edit(nick=new_nick)
-                except discord.errors.Forbidden as error:
+                except discord.errors.Forbidden:
                     await ctx.reply("Can't rename " + member.name + " no permission")
 
         await ctx.reply('Nick copied')
