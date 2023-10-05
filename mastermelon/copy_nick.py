@@ -52,7 +52,10 @@ class CopyNick(commands.Cog):
                 new_nick = re.sub(character_to_replace_with_number, lambda match: str(random.randint(0, 9)),
                                   target_user.display_name)
 
-                await member.edit(nick=new_nick)
+                try:
+                    await member.edit(nick=new_nick)
+                except discord.errors.Forbidden as error:
+                    await ctx.reply("Can't rename " + member.name + " no permission")
 
         await ctx.reply('Nick copied')
 
@@ -75,7 +78,7 @@ class CopyNick(commands.Cog):
 
             try:
                 await member.edit(nick=member_nickname if member_nickname is not None else '')
-            except discord.Forbidden:
+            except discord.errors.Forbidden:
                 await ctx.reply("Can't rename " + member.name + " no permission")
 
         config_collection.delete_one({"_id": "copy-nick"})
