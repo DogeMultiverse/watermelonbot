@@ -4,6 +4,9 @@ from discord.ext import commands
 import pymongo
 import json
 
+import re
+import random
+
 from mastermelon.utils.is_valid_guild import is_valid_guild
 
 with open("watermelon.config", "rb") as f:
@@ -24,12 +27,14 @@ class CopyNick(commands.Cog):
         self._last_member = None
 
     @commands.command(description="Copy target user nick to all server members", brief="Admin Utility",
-                      help="<user:target_user> <char:character_to_replace_with_number:x> "
+                      help="<user:target_user> <char:character_to_replace_with_number:x> <boolean:should_rename:false, "
+                           "if this is false this will just create the db but will not actually rename user in discord>"
                            "<boolean:should_rename_target_user:false> <boolean:should_rename_bot:false>")
     @commands.has_any_role("Admin (Discord)")
     @commands.check(is_valid_guild)
-    async def copy_nick(self, ctx: commands.Context, target_user: discord.User,
-                        character_to_replace_with_number: str = "x", should_rename_target_user: bool = False,
+    async def copy_nick(self, ctx: commands.Context, target_user: discord.Member,
+                        character_to_replace_with_number: str = "x", should_rename: bool = False,
+                        should_rename_target_user: bool = False,
                         should_rename_bot: bool = False):
         copy_nick_config = config_collection.find_one({"id": "copy-nick"})
 
@@ -41,7 +46,13 @@ class CopyNick(commands.Cog):
         config_collection.insert_one({"id": "copy-nick", "targetUserId": target_user.id})
 
         for member in ctx.guild.members:
-            copy_nick_rollback_collection.insert_many([{"nickname": member.nick}])
+            copy_nick_rollback_collection.insert_one({"nickname": member.nick, "id": member.id})
+
+            if should_rename:
+                new_nick = re.sub(character_to_replace_with_number, lambda match: str(random.randint(0, 9)),
+                                  target_user.display_name)
+
+                await member.edit(nick=new_nick)
 
         await ctx.reply('Nick copied')
 
@@ -55,6 +66,10 @@ class CopyNick(commands.Cog):
             await ctx.reply('Copy nick does not exist. Create before using it again.')
 
             return
+
+        for member in copy_nick_rollback_collection.find():
+            member_nickname = member.nickname
+            member_id = member.id
 
         config_collection.delete_one({"id": "copy-nick"})
 
