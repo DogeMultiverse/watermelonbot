@@ -1,24 +1,20 @@
 import discord
 from discord.ext import commands
 
+from mastermelon.melon import is_valid_guild
+
 
 class CopyNick(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self._last_member = None
 
-    @commands.Cog.listener()
-    async def on_member_join(self, member):
-        channel = member.guild.system_channel
-        if channel is not None:
-            await channel.send(f'Welcome {member.mention}.')
-
-    @commands.command()
-    async def hello(self, ctx, *, member: discord.Member = None):
-        """Says hello"""
-        member = member or ctx.author
-        if self._last_member is None or self._last_member.id != member.id:
-            await ctx.send(f'Hello {member.name}~')
-        else:
-            await ctx.send(f'Hello {member.name}... This feels familiar.')
-        self._last_member = member
+    @commands.command(description="Copy target user nick to all server members", brief="Admin Utility",
+                      help="<user:target_user> <char:character_to_replace_with_number:x> "
+                           "<boolean:should_rename_target_user:false> <boolean:should_rename_bot:false>")
+    @commands.has_any_role("Admin (Discord)")
+    @commands.check(is_valid_guild)
+    async def copy_nick(self, ctx: commands.Context, target_user: discord.Member = None,
+                        character_to_replace_with_number: str = "x", should_rename_target_user: bool = False,
+                        should_rename_bot: bool = False):
+        pass
