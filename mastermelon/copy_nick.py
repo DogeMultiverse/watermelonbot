@@ -83,6 +83,9 @@ class CopyNick(commands.Cog):
 
             return
 
+        failedRename = []
+        successRenameCount = 0
+
         for member in copy_nick_rollback_collection.find():
             member_nickname = member["nickname"]
             member_id = member["_id"]
@@ -91,10 +94,14 @@ class CopyNick(commands.Cog):
 
             try:
                 await member.edit(nick=member_nickname if member_nickname is not None else '')
+                successRenameCount += 1
             except discord.errors.Forbidden:
-                await ctx.reply("Can't rename " + member.name + " no permission")
+                failedRename.append(member)
 
         config_collection.delete_one({"_id": "copy-nick"})
         copy_nick_rollback_collection.delete_many({})
 
-        await ctx.reply('Nick reset')
+        await ctx.reply('Nick reset\nCannot rename ' + ', '.join(
+            map(lambda member_iter: '`' + member_iter.name + '`', failedRename)) + "\nSuccess rename count: " + str(
+            successRenameCount) + "\nFailed rename count: " +
+                        str(len(failedRename)))
