@@ -36,17 +36,17 @@ class CopyNick(commands.Cog):
                         character_to_replace_with_number: str = "x", should_rename: bool = False,
                         should_rename_target_user: bool = False,
                         should_rename_bot: bool = False):
-        copy_nick_config = config_collection.find_one({"id": "copy-nick"})
+        copy_nick_config = config_collection.find_one({"_id": "copy-nick"})
 
         if copy_nick_config is not None:
             await ctx.reply('Previous copy nick already exist. Reset before using it again.')
 
             return
 
-        config_collection.insert_one({"id": "copy-nick", "targetUserId": target_user.id})
+        config_collection.insert_one({"_id": "copy-nick", "targetUserId": target_user.id})
 
         for member in ctx.guild.members:
-            copy_nick_rollback_collection.insert_one({"nickname": member.nick, "id": member.id})
+            copy_nick_rollback_collection.insert_one({"nickname": member.nick, "_id": member.id})
 
             if should_rename:
                 new_nick = re.sub(character_to_replace_with_number, lambda match: str(random.randint(0, 9)),
@@ -60,7 +60,7 @@ class CopyNick(commands.Cog):
     @commands.has_any_role("Admin (Discord)")
     @commands.check(is_valid_guild)
     async def copy_nick_reset(self, ctx: commands.Context):
-        copy_nick_config = config_collection.find_one({"id": "copy-nick"})
+        copy_nick_config = config_collection.find_one({"_id": "copy-nick"})
 
         if copy_nick_config is None:
             await ctx.reply('Copy nick does not exist. Create before using it again.')
@@ -68,9 +68,17 @@ class CopyNick(commands.Cog):
             return
 
         for member in copy_nick_rollback_collection.find():
-            member_nickname = member.nickname
-            member_id = member.id
+            member_nickname = member["nickname"]
+            member_id = member["_id"]
 
-        config_collection.delete_one({"id": "copy-nick"})
+            member = ctx.guild.get_member(member_id)
+
+            try:
+                await member.edit(nick=member_nickname if member_nickname is not None else '')
+            except discord.Forbidden:
+                await ctx.reply("Can't rename " + member.name + " no permission")
+
+        config_collection.delete_one({"_id": "copy-nick"})
+        copy_nick_rollback_collection.delete_many({})
 
         await ctx.reply('Nick reset')
