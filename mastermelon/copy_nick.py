@@ -28,10 +28,19 @@ class CopyNick(commands.Cog):
                            "<boolean:should_rename_target_user:false> <boolean:should_rename_bot:false>")
     @commands.has_any_role("Admin (Discord)")
     @commands.check(is_valid_guild)
-    async def copy_nick(self, ctx: commands.Context, target_user: discord.Member = None,
+    async def copy_nick(self, ctx: commands.Context, target_user: discord.User,
                         character_to_replace_with_number: str = "x", should_rename_target_user: bool = False,
                         should_rename_bot: bool = False):
-        pass
+        copy_nick_config = config_collection.find_one({"id": "copy-nick"})
+
+        if copy_nick_config is not None:
+            await ctx.reply('Previous copy nick already exist. Reset before using it again.')
+
+        config_collection.insert_one({"id": "copy-nick", "targetUserId": target_user.id})
+
+        print(copy_nick_config)
+        for member in ctx.guild.members:
+            print(member.name, member.nick)
 
     @commands.command(description="Reset previous copy nick", brief="Admin Utility")
     @commands.has_any_role("Admin (Discord)")
