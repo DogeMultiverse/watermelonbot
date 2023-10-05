@@ -14,7 +14,8 @@ with open("watermelon.config", "rb") as f:
 if prefix in ['w?', 't?']:
     client = pymongo.MongoClient(mongo_key)
     db = client.get_database("AlexMindustry")
-    homework_high_score_collection = db["homeworkHighScore"]
+    copy_nick_rollback_collection = db["copyNickRollback"]
+    config_collection = db["config"]
 
 
 class CopyNick(commands.Cog):
