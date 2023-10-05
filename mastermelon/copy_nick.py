@@ -45,6 +45,9 @@ class CopyNick(commands.Cog):
 
         config_collection.insert_one({"_id": "copy-nick", "targetUserId": target_user.id})
 
+        failedRename = []
+        successRenameCount = 0
+
         for member in ctx.guild.members:
             copy_nick_rollback_collection.insert_one({"nickname": member.nick, "_id": member.id})
 
@@ -60,10 +63,14 @@ class CopyNick(commands.Cog):
 
                 try:
                     await member.edit(nick=new_nick)
+                    successRenameCount += 1
                 except discord.errors.Forbidden:
-                    await ctx.reply("Can't rename " + member.name + " no permission")
+                    failedRename.append(member)
 
-        await ctx.reply('Nick copied')
+        await ctx.reply('Nick copied\nCannot rename ' + ', '.join(
+            map(lambda member_iter: '`' + member_iter.name + '`', failedRename)) + "\nSuccess rename count: " + str(
+            successRenameCount) + "\nFailed rename count: " +
+                        str(len(failedRename)))
 
     @commands.command(description="Reset previous copy nick", brief="Admin Utility")
     @commands.has_any_role("Admin (Discord)")
