@@ -18,3 +18,9 @@ class CopyNick(commands.Cog):
                         character_to_replace_with_number: str = "x", should_rename_target_user: bool = False,
                         should_rename_bot: bool = False):
         pass
+
+    @commands.command(description="Reset previous copy nick", brief="Admin Utility")
+    @commands.has_any_role("Admin (Discord)")
+    @commands.check(is_valid_guild)
+    async def copy_nick_reset(self, ctx: commands.Context):
+        pass
