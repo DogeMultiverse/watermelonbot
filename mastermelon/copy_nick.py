@@ -40,9 +40,8 @@ class CopyNick(commands.Cog):
 
         config_collection.insert_one({"id": "copy-nick", "targetUserId": target_user.id})
 
-        print(copy_nick_config)
         for member in ctx.guild.members:
-            print(member.name, member.nick)
+            copy_nick_rollback_collection.insert_many([{"nickname": member.nick}])
 
         await ctx.reply('Nick copied')
 
