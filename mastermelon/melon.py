@@ -852,10 +852,10 @@ async def register(ctx: discord.ext.commands.Context, pin: str):
             for found_object in found_objects:  # delete all the pins from database
                 registerpin.find_one_and_delete({"_id": found_object})
             await ctx.channel.send(
-                f'Successfully registered <@!{ctx.author.id}>. Welcome to Alex Multiverse. Enjoy your in game skins/effects.')
+                f'✅Successfully registered 👍 <@!{ctx.author.id}>. Welcome to Alex Multiverse. Enjoy your in game skins/effects.')
         else:
             await ctx.channel.send(
-                f"Pin not found for <@!{ctx.author.id}>. Make sure you did `/register` in Mindustry within the last 5 mins. Don't spam it.")
+                f"❌Pin not found for <@!{ctx.author.id}>. Make sure you did `/register` in Mindustry within the last 5 mins. Don't spam it.")
 
 
 @bot.command(description=f"get image with user's pfp", brief="Utility")
