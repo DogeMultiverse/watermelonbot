@@ -22,6 +22,7 @@ from mastermelon import cookiegame
 from mastermelon import gen_image
 from mastermelon import feedback
 from mastermelon.copy_nick import CopyNick
+from mastermelon.utils.is_valid_guild import is_valid_guild_check, is_valid_guild
 
 
 def get_date_str():
@@ -97,20 +98,6 @@ description = '''An example bot to showcase the discord.ext.commands extension
 module.
 
 There are a number of utility commands being showcased here.'''
-
-GUILD_IDS = [785543836608364556, 729946922810605690]
-
-
-def is_valid_guild_check(guild_id):
-    if prefix in ['t?']:
-        return True
-
-    return guild_id in GUILD_IDS
-
-
-def is_valid_guild(ctx):
-    return is_valid_guild_check(ctx.guild.id)
-
 
 with open("watermelon.config", "rb") as f:
     js = json.load(f)
