@@ -49,7 +49,10 @@ class CopyNick(commands.Cog):
             copy_nick_rollback_collection.insert_one({"nickname": member.nick, "_id": member.id})
 
             if should_rename:
-                if should_rename_target_user and member.id == target_user.id:
+                if not should_rename_target_user and member.id == target_user.id:
+                    continue
+
+                if not should_rename_bot and member.bot:
                     continue
 
                 new_nick = re.sub(character_to_replace_with_number, lambda match: str(random.randint(0, 9)),
