@@ -2,3 +2,4 @@ venv
 watermelon.config
 data/*
 mastermelon/__pycache__
+mastermelon/utils/__pycache__
