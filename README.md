@@ -41,22 +41,19 @@ Bot for managing discord and servers, written in python.
 # Config file
 
 ## With config file
-- Create a txt file "watermelon.config"
+- Create a txt file "watermelon.config" ( or rename the example config file `watermelon.example.config`)
 - Add the following lines to the file:
 ```json
 {
   "prefix": "!",
   "bot_token": "<BOT_TOKEN>",
-  "mongo_key": "mongodb+srv://<USER>:<PASS>@<CLUSTER_IP>/<DB_NAME>?retryWrites=true&w=majority&socketTimeoutMS=36000&connectTimeoutMS=36000"
+  "mongo_key": "mongodb+srv://<USER>:<PASS>@<CLUSTER_IP>/<DB_NAME>?retryWrites=true&w=majority&socketTimeoutMS=36000&connectTimeoutMS=36000",
+  "GUILD_ID1":"785543836608364556",
+  "GUILD_ID2":"729946922810605690"
 }
 ```
-or
 
-## With .env file
-```.env
-bot_token=BOT_TOKEN
-mongo_key=mongodb+srv://<USER>:<PASS>@<CLUSTER_IP>/<DB_NAME>?retryWrites=true&w=majority&socketTimeoutMS=36000&connectTimeoutMS=36000
-```
+change values of GUILD_ID1 and GUILD_ID2 to the GUILD_ID that you own.
 
 # To Do
 Coming soon 
