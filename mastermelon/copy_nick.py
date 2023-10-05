@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 
-from mastermelon.melon import is_valid_guild
+from mastermelon.utils.is_valid_guild import is_valid_guild
 
 
 class CopyNick(commands.Cog):
