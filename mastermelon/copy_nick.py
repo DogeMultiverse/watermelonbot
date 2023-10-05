@@ -67,10 +67,10 @@ class CopyNick(commands.Cog):
                 except discord.errors.Forbidden:
                     failedRename.append(member)
 
-        await ctx.reply('Nick copied\nCannot rename ' + ', '.join(
-            map(lambda member_iter: '`' + member_iter.name + '`', failedRename)) + "\nSuccess rename count: " + str(
-            successRenameCount) + "\nFailed rename count: " +
-                        str(len(failedRename)))
+        await ctx.reply('Nick copied\nCannot rename: ' + ', '.join(
+            map(lambda member_iter: '`' + member_iter.name + '`', failedRename)) + "\nSuccess rename count: `" + str(
+            successRenameCount) + "`\nFailed rename count: `" +
+                        str(len(failedRename)) + "`")
 
     @commands.command(description="Reset previous copy nick", brief="Admin Utility")
     @commands.has_any_role("Admin (Discord)")
@@ -101,7 +101,7 @@ class CopyNick(commands.Cog):
         config_collection.delete_one({"_id": "copy-nick"})
         copy_nick_rollback_collection.delete_many({})
 
-        await ctx.reply('Nick reset\nCannot rename ' + ', '.join(
-            map(lambda member_iter: '`' + member_iter.name + '`', failedRename)) + "\nSuccess rename count: " + str(
-            successRenameCount) + "\nFailed rename count: " +
-                        str(len(failedRename)))
+        await ctx.reply('Nick reset\nCannot rename: ' + ', '.join(
+            map(lambda member_iter: '`' + member_iter.name + '`', failedRename)) + "\nSuccess rename count: `" + str(
+            successRenameCount) + "`\nFailed rename count: `" +
+                        str(len(failedRename)) + "`")
