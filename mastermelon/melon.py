@@ -101,8 +101,15 @@ There are a number of utility commands being showcased here.'''
 GUILD_IDS = [785543836608364556, 729946922810605690]
 
 
+def is_valid_guild_check(guild_id):
+    if prefix in ['t?']:
+        return True
+
+    return guild_id in GUILD_IDS
+
+
 def is_valid_guild(ctx):
-    return ctx.guild.id in GUILD_IDS
+    return is_valid_guild_check(ctx.guild.id)
 
 
 with open("watermelon.config", "rb") as f:
@@ -1004,7 +1011,8 @@ async def appeal(ctx: discord.ext.commands.Context, punishment: str, idoruuid: s
 async def on_message(message: discord.Message):
     if message.guild is None:  # Ignore DMs
         return
-    if message.guild.id not in GUILD_IDS:
+
+    if not is_valid_guild_check(message.guild.id):
         return
 
     fig = "https://media.discordapp.net/attachments/785543837116399636/806563140116152380/reallyangrymelon.png"
