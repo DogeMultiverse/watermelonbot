@@ -1,7 +1,20 @@
 import discord
 from discord.ext import commands
 
+import pymongo
+import json
+
 from mastermelon.utils.is_valid_guild import is_valid_guild
+
+with open("watermelon.config", "rb") as f:
+    js = json.load(f)
+    mongo_key: str = js["mongo_key"]
+    prefix: str = js["prefix"]
+
+if prefix in ['w?', 't?']:
+    client = pymongo.MongoClient(mongo_key)
+    db = client.get_database("AlexMindustry")
+    homework_high_score_collection = db["homeworkHighScore"]
 
 
 class CopyNick(commands.Cog):
