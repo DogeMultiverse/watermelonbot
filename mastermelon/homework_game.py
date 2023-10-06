@@ -36,7 +36,7 @@ def generate_find2root():
         val1 = ""
     sign2 = "+" if x1 * x2 + c >= 0 else ""
     string = f"Find the roots of \n`x² " + \
-        val1 + sign2 + f"{x1 * x2 + c} = {c}`\n"
+             val1 + sign2 + f"{x1 * x2 + c} = {c}`\n"
     string += f"Input your answer with a `,` in between.\n"
     return solution, string
 
@@ -103,11 +103,12 @@ async def run_homeworkgame(ctx, bot):
 
         high_scores = homework_high_score_collection.find().sort("score").limit(5)
 
-        scores = [f"`{i + 1}`  `{high_score['score']:.2f}s`  : {ctx.message.guild.get_member(high_score['_id']).name}"
-                  for
-                  i, high_score
-                  in
-                  enumerate(high_scores)]
+        scores = [
+            f"`{i + 1}`  `{high_score['score']:.2f}s`  : {ctx.message.guild.get_member(high_score['_id']).display_name}"
+            for
+            i, high_score
+            in
+            enumerate(high_scores)]
 
         await ctx.channel.send("Homework (BETA 2.0) `Leaderboard`\n" + "\n".join(scores))
     except ValueError:
