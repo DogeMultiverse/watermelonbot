@@ -35,7 +35,8 @@ def generate_find2root():
     else:
         val1 = ""
     sign2 = "+" if x1 * x2 + c >= 0 else ""
-    string = f"Find the roots of \n`x² " + val1 + sign2 + f"{x1 * x2 + c} = {c}`\n"
+    string = f"Find the roots of \n`x² " + \
+        val1 + sign2 + f"{x1 * x2 + c} = {c}`\n"
     string += f"Input your answer with a `,` in between.\n"
     return solution, string
 
@@ -49,7 +50,8 @@ def check_find2root():
         anss = tuple([int(i) for i in ans.split(",")])
         correct = anss == sol or anss == (sol[1], sol[0])
         vfast = " Thats really fast." if time_taken < 3 else ""
-        print(f"Correct, you took {time_taken:.2f}s.{vfast}" if correct else f"Wrong, its {sol}.")
+        print(
+            f"Correct, you took {time_taken:.2f}s.{vfast}" if correct else f"Wrong, its {sol}.")
     except ValueError:
         print("Input error. Follow instructions exactly.")
 
@@ -90,12 +92,14 @@ async def run_homeworkgame(ctx, bot):
             player_in_high_score = homework_high_score_collection.find_one({"_id": player_id})
 
             if player_in_high_score is None:
-                homework_high_score_collection.insert_one({"_id": player_id, "score": time_taken})
+                homework_high_score_collection.insert_one(
+                    {"_id": player_id, "score": time_taken})
             else:
                 current_score = player_in_high_score['score']
 
                 if current_score > time_taken:
-                    homework_high_score_collection.update_one({"_id": player_id}, {"$set": {"score": time_taken}})
+                    homework_high_score_collection.update_one(
+                        {"_id": player_id}, {"$set": {"score": time_taken}})
 
         high_scores = homework_high_score_collection.find().sort("score").limit(5)
 
