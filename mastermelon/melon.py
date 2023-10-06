@@ -69,14 +69,16 @@ def get_latest_exp(res, convertedexp_doc):
                     serverstr = rservername + (
                         " [TOP 1%]" if exp > 40000 else (" [TOP 10%]" if exp > 15000 else ""))
                     if server[7:].replace(" SERVER", "") not in convertedexp_doc[muuid_i]:
-                        convertedexp_doc[muuid_i][rservername] = {"claimed": 0, "lcdate": None}
+                        convertedexp_doc[muuid_i][rservername] = {
+                            "claimed": 0, "lcdate": None}
                         claimed = 0
                         lcdate = None
                     else:
                         claimed = convertedexp_doc[muuid_i][rservername]["claimed"]
                         lcdate = convertedexp_doc[muuid_i][rservername]["lcdate"]
                     exp_builder += f"{exp:>6}  " + f"{serverstr:<21}" + \
-                                   last_updated[muuid_i][server].strftime("%Y-%m-%d %H:%M") + f"   {claimed:<6}" + "\n"
+                                   last_updated[muuid_i][server].strftime(
+                                       "%Y-%m-%d %H:%M") + f"   {claimed:<6}" + "\n"
                     muuid_exp_dict["servers"].append({"servername": rservername,
                                                       "exp": exp, "claimed": claimed, "lcdate": lcdate,
                                                       "lupdated": last_updated[muuid_i][server]
@@ -85,7 +87,8 @@ def get_latest_exp(res, convertedexp_doc):
                     print(exp, server)
                     print(str(e))
         if len(exp_builder) > 0:
-            exp_builder = "```\n <EXP>  <SERVER>             <LASTUPDATED,UTC>  <CLAIMED>\n" + exp_builder + "\n```"
+            exp_builder = "```\n <EXP>  <SERVER>             <LASTUPDATED,UTC>  <CLAIMED>\n" + \
+                exp_builder + "\n```"
             str_builder += exp_builder
             exp_dict[muuid_i] = muuid_exp_dict
     return str_builder, exp_dict, convertedexp_doc
@@ -169,8 +172,10 @@ class bb(commands.Bot):
             # add the invited member to the inviter's list
             invite_dict_info = {"invited": {"name": f"{member.name}#{member.discriminator}", "duuid": member.id,
                                             "date": datetime.utcnow()}}
-            discordinvites.find_one_and_update({"duuid": invite.inviter.id}, {"$push": invite_dict_info})
-            print(f"Member {member.name} Joined. Invite Code: {invite.code}. Inviter: {invite.inviter}")
+            discordinvites.find_one_and_update({"duuid": invite.inviter.id}, {
+                                               "$push": invite_dict_info})
+            print(
+                f"Member {member.name} Joined. Invite Code: {invite.code}. Inviter: {invite.inviter}")
             if invite.code in invitecode_mapping:
                 to_send = f'{member.mention}, you are the #{total_members} member' + \
                           f".\n Inviter: {invitecode_mapping[invite.code]}. \nInvite counts: {invite.uses}"
@@ -193,7 +198,8 @@ class bb(commands.Bot):
             embed.add_field(name=f"Welcome to {guild.name}!", value=to_send)
             embed.set_thumbnail(url=str(member.avatar_url))
 
-            avatar = member.avatar_url_as(format="png", static_format="png", size=64)
+            avatar = member.avatar_url_as(
+                format="png", static_format="png", size=64)
             name = f"{member.name}#{member.discriminator}"
             image_data = await gen_image.getwelcomeimage(name=name, avatar=avatar)
             await guild.system_channel.send(embed=embed, file=image_data)
@@ -220,8 +226,10 @@ class bb(commands.Bot):
             invite: discord.guild.Invite
             for invite in self.invites[guild.id]:
                 await self.update_self_invite_dict(guild, invite)
-        self.bg_task.append(self.loop.create_task(self.update_mind_status_task()))
-        git_update_channel: discord.TextChannel = self.get_channel(788228956372992020)
+        self.bg_task.append(self.loop.create_task(
+            self.update_mind_status_task()))
+        git_update_channel: discord.TextChannel = self.get_channel(
+            788228956372992020)
         await git_update_channel.send(f"melon bot started at {get_date_str()}")
 
     async def update_self_invite_dict(self, guild, invite):
@@ -242,8 +250,10 @@ class bb(commands.Bot):
         await self.wait_until_ready()
         try:
             test = False
-            status_msg_channel: discord.TextChannel = self.get_channel(791158921443409950)
-            status_log_channel: discord.TextChannel = self.get_channel(791129836948422676)
+            status_msg_channel: discord.TextChannel = self.get_channel(
+                791158921443409950)
+            status_log_channel: discord.TextChannel = self.get_channel(
+                791129836948422676)
             while prefix == ("t?" if test else "w?"):  # only run for test bot
                 t0 = time.time()
                 messages = await status_log_channel.history(limit=30, oldest_first=False,
@@ -274,7 +284,8 @@ class bb(commands.Bot):
                     await status_msg[0].edit(content=strbuilder)
                 else:  # if not found, send as a new msg
                     await status_msg_channel.send(strbuilder)
-                print(f"update mindus servers took {time.time() - t0:.3f}seconds {get_date_str()}")
+                print(
+                    f"update mindus servers took {time.time() - t0:.3f}seconds {get_date_str()}")
                 await asyncio.sleep(60 * 5)
         except RuntimeError:
             print("mindus status update closed")
@@ -310,9 +321,11 @@ async def help(ctx, args=None):
         x: discord.ext.commands
         for i, x in enumerate(bot.commands):
             if str(x.brief) in dictt:
-                dictt[str(x.brief)].append({"name": x.name, "description": x.description})
+                dictt[str(x.brief)].append(
+                    {"name": x.name, "description": x.description})
             else:
-                dictt[str(x.brief)] = [{"name": x.name, "description": x.description}]
+                dictt[str(x.brief)] = [
+                    {"name": x.name, "description": x.description}]
         for category, commandss in dictt.items():
             help_embed.add_field(name=category if category != "None" else "Others/Misc",
                                  value="`" + ("`, `".join([c["name"] for c in commandss])) + "`")
@@ -326,12 +339,14 @@ async def help(ctx, args=None):
     elif args in command_names_list:
         help_embed.title = "Command Information"
         command = bot.get_command(args)
-        command_help = "" if isinstance(command.help, type(None)) else ("Help: " + command.help + "\n")
+        command_help = "" if isinstance(command.help, type(
+            None)) else ("Help: " + command.help + "\n")
         command_desc = "" if (isinstance(command.description, type(None)) or command.description == "") else (
-                "\nDescription: " + command.description)
+            "\nDescription: " + command.description)
         help_embed.add_field(
             name="Command name: `" + args + "`",
-            value=command_help + "Usage: `" + prefix + args + " " + command.signature + "`" + command_desc
+            value=command_help + "Usage: `" + prefix + args +
+            " " + command.signature + "`" + command_desc
         )
 
     # If someone is just trolling:
@@ -379,7 +394,8 @@ async def gettest(ctx: commands.Context):
              help="<serverid, -1 for allservers>")
 @commands.has_role("Admin (Discord)")
 @commands.check(is_valid_guild)
-async def restartserver(ctx: commands.Context, serverid: int = None):  # todo add servercommand: str = "hubkick"
+# todo add servercommand: str = "hubkick"
+async def restartserver(ctx: commands.Context, serverid: int = None):
     if serverid is None:
         await console_commands.getserver(ctx)
         await ctx.send(f"use <serverid, -1 for allservers>")
@@ -394,7 +410,8 @@ async def restartserver(ctx: commands.Context, serverid: int = None):  # todo ad
              help="<serverid, -1 for allservers>")
 @commands.has_role("Admin (Discord)")
 @commands.check(is_valid_guild)
-async def gameoverserver(ctx: commands.Context, serverid: int = None):  # todo add servercommand: str = "hubkick"
+# todo add servercommand: str = "hubkick"
+async def gameoverserver(ctx: commands.Context, serverid: int = None):
     if serverid is None:
         await console_commands.getserver(ctx)
         await ctx.send(f"use <serverid, -1 for allservers>")
@@ -468,7 +485,8 @@ async def changemindusrole(ctx, user: discord.user.User, role: str):
             f"Error, input invalid, u gave {user}type{type(user)}, {role}type{type(role)}, type{type(discord.user.User)}type{type(discord.Member)}")
         return
     if role in ["Admin", "Mod", "Player"]:
-        result = duuid1.update_many({"duuid": userid}, {"$set": {"role": role}})
+        result = duuid1.update_many(
+            {"duuid": userid}, {"$set": {"role": role}})
         if result.modified_count > 0:
             await ctx.send(f"Congrats, {usermention} is now a {role} in Mindustry")
         else:
@@ -596,7 +614,8 @@ async def checkexp(ctx: discord.ext.commands.Context, user: discord.User = None)
         print("User has no EXP.")
         await ctx.channel.send("User has no EXP or user not found.")
     else:
-        str_builder, exp_dict, convertedexp_doc = get_latest_exp(res, convertedexp_doc)
+        str_builder, exp_dict, convertedexp_doc = get_latest_exp(
+            res, convertedexp_doc)
         if len(str_builder) > 0:
             convertedexp.find_one_and_replace({"duuid": userTarget},
                                               {"duuid": userTarget, "converted": convertedexp_doc})
@@ -619,8 +638,9 @@ async def checkexp(ctx: discord.ext.commands.Context, user: discord.User = None)
                                        f"(You still can keep your EXP)")
             else:
                 await ctx.channel.send(
-                    str_builder + f"\n Type `{prefix}convertexp` to convert your EXP into {ej.ax_emoji}."
-                                  f"(You still can keep your EXP)")
+                    str_builder +
+                    f"\n Type `{prefix}convertexp` to convert your EXP into {ej.ax_emoji}."
+                    f"(You still can keep your EXP)")
         else:
             await ctx.channel.send("You have no exp. ;-;")
 
@@ -637,7 +657,8 @@ async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
                     50: ["whiteLancerRandom"], 80: ["whiteLancerRadius", "pixel", "bubble"],
                     200: ["rainbowPixel", "rainbowBubble"]}
     effects = [ee for c, e in effects_cost.items() for ee in e]
-    owned_effects_collection = ingamecosmetics.find_one({"duuid": ctx.author.id})
+    owned_effects_collection = ingamecosmetics.find_one(
+        {"duuid": ctx.author.id})
     if owned_effects_collection is None:
         await ctx.channel.send("You need to have a **REGISTERED** mindustry account.")
         return
@@ -676,9 +697,13 @@ async def axleaderboard(ctx: discord.ext.commands.Context):
     string = f"{ej.ax_emoji} Leaderboard\n" + f"Rank, Amount, User\n"
     found = False
     ranks = []
+    count = 0
     for rank, (duuid, axx) in enumerate(ranks_temp):
+        if count >= 3: # This is easy
+            break
         if getUsernameFromDUUID(duuid) != "invalid user":
             ranks.append((duuid, axx))
+            count+= 1
     for rank, (duuid, axx) in enumerate(ranks):
         if rank < 10:
             username = getUsernameFromDUUID(duuid)
@@ -752,7 +777,8 @@ async def giveaxmultiple(ctx: discord.ext.commands.Context, amount: int, *args):
         ax.find_one_and_update({"duuid": member.id}, {"$inc": {"ax": amount}})
 
         # Accumulate the update message for this user
-        updates.append(f"{amount}{ej.ax_emoji} awarded to {member.mention}. Now {old_val + amount}{ej.ax_emoji}.")
+        updates.append(
+            f"{amount}{ej.ax_emoji} awarded to {member.mention}. Now {old_val + amount}{ej.ax_emoji}.")
 
     # Join all the update messages into a single message and send it at the end
     await ctx.channel.send("\n".join(updates) + f"\nReason: {' '.join(reason)}")
@@ -809,7 +835,8 @@ async def register(ctx: discord.ext.commands.Context, pin: str):
         await ctx.channel.send(f'Pin has to be digits only. eg, `12345` or `12346`')
     else:
         await ctx.channel.send(f'Pin input is `{pin}`, please wait.')
-        res = registerpin.find({"pin": pin, "date": {"$gte": datetime.utcnow() - timedelta(minutes=5)}})
+        res = registerpin.find(
+            {"pin": pin, "date": {"$gte": datetime.utcnow() - timedelta(minutes=5)}})
         found = False
         userdata = None
         found_objects = []
@@ -830,10 +857,10 @@ async def register(ctx: discord.ext.commands.Context, pin: str):
             for found_object in found_objects:  # delete all the pins from database
                 registerpin.find_one_and_delete({"_id": found_object})
             await ctx.channel.send(
-                f'Successfully registered <@!{ctx.author.id}>. Welcome to Alex Multiverse. Enjoy your in game skins/effects.')
+                f'✅Successfully registered 👍 <@!{ctx.author.id}>. Welcome to Alex Multiverse. Enjoy your in game skins/effects.')
         else:
             await ctx.channel.send(
-                f"Pin not found for <@!{ctx.author.id}>. Make sure you did `/register` in Mindustry within the last 5 mins. Don't spam it.")
+                f"❌Pin not found for <@!{ctx.author.id}>. Make sure you did `/register` in Mindustry within the last 5 mins. Don't spam it.")
 
 
 @bot.command(description=f"get image with user's pfp", brief="Utility")
@@ -848,20 +875,27 @@ async def getimage(ctx: discord.ext.commands.Context, user: discord.User):
 
 @bot.command(brief="Links", description="Shows the links to github.")
 async def github(ctx: discord.ext.commands.Context):
-    embed = discord.Embed(title=f"Github links", colour=discord.Colour.random().value)
+    embed = discord.Embed(title=f"Github links",
+                          colour=discord.Colour.random().value)
     embed.add_field(name="watermelonbot (python)", value="https://github.com/alexpvpmindustry/watermelonbot",
                     inline=False)
-    embed.add_field(name="lol bot (javascript)", value="https://github.com/unjown/unjownbot", inline=False)
+    embed.add_field(name="lol bot (javascript)",
+                    value="https://github.com/unjown/unjownbot", inline=False)
     await ctx.channel.send(embed=embed)
 
 
 @bot.command(brief="Links", description="Shows the links to donate.")
 async def donate(ctx: discord.ext.commands.Context):
-    embed = discord.Embed(title=f"Donation links", colour=discord.Colour.random().value)
-    embed.add_field(name="ko-fi ($0 Fee)", value="https://ko-fi.com/dogemultiverse", inline=False)
-    embed.add_field(name="PayPal", value="https://www.paypal.com/paypalme/alexservers", inline=False)
-    embed.add_field(name="Buy Me A Coffee", value="https://www.buymeacoffee.com/alexservers", inline=False)
-    embed.add_field(name="Patreon", value="https://www.patreon.com/DogeMultiverse", inline=False)
+    embed = discord.Embed(title=f"Donation links",
+                          colour=discord.Colour.random().value)
+    embed.add_field(name="ko-fi ($0 Fee)",
+                    value="https://ko-fi.com/dogemultiverse", inline=False)
+    embed.add_field(
+        name="PayPal", value="https://www.paypal.com/paypalme/alexservers", inline=False)
+    embed.add_field(name="Buy Me A Coffee",
+                    value="https://www.buymeacoffee.com/alexservers", inline=False)
+    embed.add_field(
+        name="Patreon", value="https://www.patreon.com/DogeMultiverse", inline=False)
     await ctx.channel.send(embed=embed)
 
 
@@ -878,9 +912,11 @@ async def giveaway(ctx: discord.ext.commands.Context, what: str, channel: discor
         cog: giveaway_bot.Giveaway = bot.get_cog("giveaway")
         print("cog not started, started it")
     if what == "add":
-        embed = giveaway_bot.form_msg_embed(message, amount, winners, days, hours * 3600, 0)
+        embed = giveaway_bot.form_msg_embed(
+            message, amount, winners, days, hours * 3600, 0)
         msg = await channel.send(embed=embed)
-        cog.addGiveawayEvent(msg.id, channel, channelannc, message, amount, winners, days, hours)
+        cog.addGiveawayEvent(msg.id, channel, channelannc,
+                             message, amount, winners, days, hours)
         await msg.add_reaction(ej.ax_emoji)
         await ctx.channel.send(f"giveaway added to {channel}. Giving {amount} {ej.ax_emoji} to {winners} people.")
     elif what.startswith("remove"):
@@ -894,8 +930,10 @@ async def giveaway(ctx: discord.ext.commands.Context, what: str, channel: discor
 @bot.command()
 @commands.check(is_valid_guild)
 async def feedback(ctx):
-    if True: return
-    button = ui.Button(label="Write", style=discord.ButtonStyle.primary)  # create_button
+    if True:
+        return
+    button = ui.Button(
+        label="Write", style=discord.ButtonStyle.primary)  # create_button
     view = ui.View()  # create view
     view.add_item(button)  # add to view button
 
@@ -931,7 +969,8 @@ async def convertexp(ctx: discord.ext.commands.Context):
         await ctx.channel.send("User has no EXP or user not found. Can't convert emptiness.")
         return
     else:
-        str_builder, exp_dict, convertedexp_doc = get_latest_exp(res, convertedexp_doc)
+        str_builder, exp_dict, convertedexp_doc = get_latest_exp(
+            res, convertedexp_doc)
         if len(str_builder) > 0:
             new_Ax = 0
             for muuid, exps in exp_dict.items():
@@ -960,7 +999,8 @@ async def convertexp(ctx: discord.ext.commands.Context):
             if ax.find_one({"duuid": ctx.author.id}) is None:
                 ax.insert_one({"duuid": ctx.author.id, "ax": new_Ax})
             else:
-                ax.find_one_and_update({"duuid": ctx.author.id}, {"$inc": {"ax": new_Ax}})
+                ax.find_one_and_update({"duuid": ctx.author.id}, {
+                                       "$inc": {"ax": new_Ax}})
             userduuid = ctx.author.id
             old_val = ax.find_one({"duuid": userduuid})
             if isinstance(old_val, type(None)):
@@ -987,9 +1027,12 @@ async def appeal(ctx: discord.ext.commands.Context, punishment: str, idoruuid: s
     await ctx.send("Thanks for appealing. Please be patient while our moderators attend to your appeal.")
     channel = bot.get_channel(791490149753683988)  # appeal-submission
     embed = discord.Embed(title="Appeal")
-    embed.set_author(name=ctx.author.name + "#" + ctx.author.discriminator, icon_url=ctx.author.avatar_url)
-    embed.add_field(name="Type:", value=str(punishment) + f" {ctx.author.mention}", inline=False)
-    embed.add_field(name="In-game Player Name:", value=str(idoruuid), inline=False)
+    embed.set_author(name=ctx.author.name + "#" +
+                     ctx.author.discriminator, icon_url=ctx.author.avatar_url)
+    embed.add_field(name="Type:", value=str(punishment) +
+                    f" {ctx.author.mention}", inline=False)
+    embed.add_field(name="In-game Player Name:",
+                    value=str(idoruuid), inline=False)
     embed.add_field(name="Reason:", value=str(reason), inline=False)
     await channel.send(embed=embed)
 
@@ -1053,7 +1096,8 @@ def runbot():
         with open("watermelon.config", "rb") as f:
             js = json.load(f)
             error_ping = js["error_ping"]
-        requests.post(error_ping, data={"content": "melon bot error 910" + strr})
+        requests.post(error_ping, data={
+                      "content": "melon bot error 910" + strr})
         raise
 
 #     elif message.content.startswith(prefix + "claimeffect"):
