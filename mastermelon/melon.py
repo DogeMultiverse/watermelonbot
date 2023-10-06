@@ -696,9 +696,13 @@ async def axleaderboard(ctx: discord.ext.commands.Context):
     string = f"{ej.ax_emoji} Leaderboard\n" + f"Rank, Amount, User\n"
     found = False
     ranks = []
+    count = 0
     for rank, (duuid, axx) in enumerate(ranks_temp):
+        if count >= 3: # This is easy
+            break
         if getUsernameFromDUUID(duuid) != "invalid user":
             ranks.append((duuid, axx))
+            count+= 1
     for rank, (duuid, axx) in enumerate(ranks):
         if rank < 10:
             username = getUsernameFromDUUID(duuid)
