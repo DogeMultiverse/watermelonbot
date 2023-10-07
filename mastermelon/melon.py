@@ -87,7 +87,7 @@ def get_latest_exp(res, convertedexp_doc):
                     print(str(e))
         if len(exp_builder) > 0:
             exp_builder = "```\n <EXP>  <SERVER>             <LASTUPDATED,UTC>  <CLAIMED>\n" + \
-                exp_builder + "\n```"
+                          exp_builder + "\n```"
             str_builder += exp_builder
             exp_dict[muuid_i] = muuid_exp_dict
     return str_builder, exp_dict, convertedexp_doc
@@ -172,7 +172,7 @@ class bb(commands.Bot):
             invite_dict_info = {"invited": {"name": f"{member.name}#{member.discriminator}", "duuid": member.id,
                                             "date": datetime.utcnow()}}
             discordinvites.find_one_and_update({"duuid": invite.inviter.id}, {
-                                               "$push": invite_dict_info})
+                "$push": invite_dict_info})
             print(
                 f"Member {member.name} Joined. Invite Code: {invite.code}. Inviter: {invite.inviter}")
             if invite.code in invitecode_mapping:
@@ -341,11 +341,11 @@ async def help(ctx, args=None):
         command_help = "" if isinstance(command.help, type(
             None)) else ("Help: " + command.help + "\n")
         command_desc = "" if (isinstance(command.description, type(None)) or command.description == "") else (
-            "\nDescription: " + command.description)
+                "\nDescription: " + command.description)
         help_embed.add_field(
             name="Command name: `" + args + "`",
             value=command_help + "Usage: `" + prefix + args +
-            " " + command.signature + "`" + command_desc
+                  " " + command.signature + "`" + command_desc
         )
 
     # If someone is just trolling:
@@ -688,48 +688,14 @@ async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
 @bot.command(description=f"Check user's ranking in {ej.ax_emoji}", brief="Utility")
 @commands.check(is_valid_guild)
 async def axleaderboard(ctx: discord.ext.commands.Context):
-    cursor = ax.find({"ax": {"$gte": 0}})
-    res = dict()
-    for i, cur in enumerate(cursor):
-        res[cur["duuid"]] = cur["ax"]
-    ranks_temp = sorted(list(res.items()), key=lambda x: x[1], reverse=True)
-    string = f"{ej.ax_emoji} Leaderboard\n" + f"Rank, Amount, User\n"
-    found = False
-    ranks = []
-    count = 0
-    for rank, (duuid, axx) in enumerate(ranks_temp):
-        if count >= 3: # This is easy
-            break
-        if getUsernameFromDUUID(duuid) != "invalid user":
-            ranks.append((duuid, axx))
-            count+= 1
-    for rank, (duuid, axx) in enumerate(ranks):
-        if rank < 10:
-            username = getUsernameFromDUUID(duuid)
-            if str(ctx.author.id) == str(duuid):
-                found = True
-                string += f"{rank + 1:>2}.➡{axx:>8}{ej.ax_emoji}  {username} \n"
-            else:
-                string += f"{rank + 1:>2}.  {axx:>8}{ej.ax_emoji}  {username} \n"
-        elif found:
-            break
-        elif str(ctx.author.id) == str(duuid):
-            found = True
-            if rank + 1 > 13:
-                string += ".\n"
-            if rank + 1 > 12:
-                string += ".\n"
-            if rank + 1 > 11:  # add the previous rank if rank is >11
-                duuid_temp, axx_temp = ranks[rank - 1]
-                username = getUsernameFromDUUID(duuid_temp)
-                string += f"{rank :>2}.  {axx_temp:>8}{ej.ax_emoji} {username} \n"
-            username = getUsernameFromDUUID(duuid)
-            string += f"{rank + 1:>2}.➡{axx:>8}{ej.ax_emoji} {username} \n"
-            if len(ranks) > rank + 2:  # add next rank if there exists
-                duuid_temp, axx_temp = ranks[rank + 1]
-                username = getUsernameFromDUUID(duuid_temp)
-                string += f"{rank + 2:>2}.  {axx_temp:>8}{ej.ax_emoji} {username} \n"
-    await ctx.channel.send(string)
+    cursor = ax.find({"ax": {"$gte": 0}}).sort('ax').limit(3)
+
+    output = f"{ej.ax_emoji} Leaderboard\n" + f"Rank, Amount, User\n"
+
+    for i, userAx in enumerate(cursor):
+        output += f'{i}. {userAx["ax"]}{ej.ax_emoji}: {ctx.message.guild.get_member(userAx["duuid"]).display_name}\n'
+
+    await ctx.reply(output)
 
 
 @bot.command(description="Allocate Ax.", brief="Admin Utility", help="<amount:integer> <@user> <reason>")
@@ -999,7 +965,7 @@ async def convertexp(ctx: discord.ext.commands.Context):
                 ax.insert_one({"duuid": ctx.author.id, "ax": new_Ax})
             else:
                 ax.find_one_and_update({"duuid": ctx.author.id}, {
-                                       "$inc": {"ax": new_Ax}})
+                    "$inc": {"ax": new_Ax}})
             userduuid = ctx.author.id
             old_val = ax.find_one({"duuid": userduuid})
             if isinstance(old_val, type(None)):
@@ -1027,9 +993,9 @@ async def appeal(ctx: discord.ext.commands.Context, punishment: str, idoruuid: s
     channel = bot.get_channel(791490149753683988)  # appeal-submission
     embed = discord.Embed(title="Appeal")
     embed.set_author(name=ctx.author.name + "#" +
-                     ctx.author.discriminator, icon_url=ctx.author.avatar_url)
+                          ctx.author.discriminator, icon_url=ctx.author.avatar_url)
     embed.add_field(name="Type:", value=str(punishment) +
-                    f" {ctx.author.mention}", inline=False)
+                                        f" {ctx.author.mention}", inline=False)
     embed.add_field(name="In-game Player Name:",
                     value=str(idoruuid), inline=False)
     embed.add_field(name="Reason:", value=str(reason), inline=False)
@@ -1095,7 +1061,7 @@ def runbot():
             js = json.load(f)
             error_ping = js["error_ping"]
         requests.post(error_ping, data={
-                      "content": "melon bot error 910" + strr})
+            "content": "melon bot error 910" + strr})
         raise
 
 #     elif message.content.startswith(prefix + "claimeffect"):
