@@ -11,11 +11,12 @@ import pymongo
 with open("watermelon.config", "rb") as f:
     js = json.load(f)
     mongo_key: str = js["mongo_key"]
-    # prefix: str = js["prefix"]
+    prefix: str = js["prefix"]
 
-client = pymongo.MongoClient(mongo_key)
-db = client.get_database("AlexMindustry")
-homework_high_score_collection = db["homeworkHighScore"]
+if prefix in ["w?", "t?"]:
+    client = pymongo.MongoClient(mongo_key)
+    db = client.get_database("AlexMindustry")
+    homework_high_score_collection = db["homeworkHighScore"]
 
 
 def d1(value: int):
@@ -35,7 +36,7 @@ def generate_find2root():
         val1 = ""
     sign2 = "+" if x1 * x2 + c >= 0 else ""
     string = f"Find the roots of \n`x² " + \
-        val1 + sign2 + f"{x1 * x2 + c} = {c}`\n"
+             val1 + sign2 + f"{x1 * x2 + c} = {c}`\n"
     string += f"Input your answer with a `,` in between.\n"
     return solution, string
 
@@ -87,9 +88,8 @@ async def run_homeworkgame(ctx, bot):
         msg = await ctx.channel.send(reply)
         await msg.add_reaction(party_emoji if correct else kekw_emoji)
         if correct:
-            player_id = str(ctx.author)
-            player_in_high_score = homework_high_score_collection.find_one({
-                                                                           "_id": player_id})
+            player_id = ctx.author.id
+            player_in_high_score = homework_high_score_collection.find_one({"_id": player_id})
 
             if player_in_high_score is None:
                 homework_high_score_collection.insert_one(
@@ -101,10 +101,14 @@ async def run_homeworkgame(ctx, bot):
                     homework_high_score_collection.update_one(
                         {"_id": player_id}, {"$set": {"score": time_taken}})
 
-        high_scores = homework_high_score_collection.find()
+        high_scores = homework_high_score_collection.find().sort("score").limit(5)
 
-        scores = [f"`{i + 1}`  `{high_score['score']:.2f}s`  : {high_score['_id']}" for i, high_score in
-                  enumerate(high_scores)]
+        scores = [
+            f"`{i + 1}`  `{high_score['score']:.2f}s`  : {ctx.message.guild.get_member(high_score['_id']).display_name}"
+            for
+            i, high_score
+            in
+            enumerate(high_scores)]
 
         await ctx.channel.send("Homework (BETA 2.0) `Leaderboard`\n" + "\n".join(scores))
     except ValueError:
