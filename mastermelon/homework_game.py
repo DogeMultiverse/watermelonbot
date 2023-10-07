@@ -7,6 +7,7 @@ from mastermelon import emojis as ej
 from time import time as t
 import json
 import pymongo
+from mastermelon.utils.get_user_display_name import get_user_display_name
 
 with open("watermelon.config", "rb") as f:
     js = json.load(f)
@@ -104,7 +105,7 @@ async def run_homeworkgame(ctx, bot):
         high_scores = homework_high_score_collection.find().sort("score").limit(5)
 
         scores = [
-            f"`{i + 1}`  `{high_score['score']:.2f}s`  : {ctx.message.guild.get_member(high_score['_id']).display_name}"
+            f"`{i + 1}`  `{high_score['score']:.2f}s`  : {get_user_display_name(ctx, high_score['_id'])}"
             for
             i, high_score
             in
