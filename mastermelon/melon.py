@@ -434,6 +434,7 @@ async def getserver(ctx):
 @commands.check(is_valid_guild)
 async def getver(ctx):
     await console_commands.get_version_of_plugin_from_all_servers(ctx)
+    await ctx.send("send `w?servupdate -1` to update all servers")
 
 
 @bot.command(description="see server console (admin only)", brief="Admin Mindustry Utility")
