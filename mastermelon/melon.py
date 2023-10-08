@@ -111,7 +111,7 @@ if prefix in ["w?", "t?"]:  # only access mongodb for w? and t?
     discordinvites: pymongo.collection = db["discordinvites"]
     registerpin: pymongo.collection = db["registerpin"]
     duuid1: pymongo.collection = db["duuid1"]
-#axleader
+
 invitecode_mapping = {"KPVVsj2MGW": "Alex Mindustry Invite", "BnBf2STAAd": "Doge Youtube Invite",
                       "GSdkpZZuxN": "Doge Youtube Premium Invite", "BmCssqnhX6": "Alex TOP MC Invite",
                       "FpKnzzQFne": "Alex TOP MC SERVERS Invite", "EhzVgNGxPD": "Alex Annoucement Invite",
