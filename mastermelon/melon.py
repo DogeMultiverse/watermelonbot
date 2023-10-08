@@ -111,7 +111,7 @@ if prefix in ["w?", "t?"]:  # only access mongodb for w? and t?
     discordinvites: pymongo.collection = db["discordinvites"]
     registerpin: pymongo.collection = db["registerpin"]
     duuid1: pymongo.collection = db["duuid1"]
-
+#axleader
 invitecode_mapping = {"KPVVsj2MGW": "Alex Mindustry Invite", "BnBf2STAAd": "Doge Youtube Invite",
                       "GSdkpZZuxN": "Doge Youtube Premium Invite", "BmCssqnhX6": "Alex TOP MC Invite",
                       "FpKnzzQFne": "Alex TOP MC SERVERS Invite", "EhzVgNGxPD": "Alex Annoucement Invite",
@@ -624,16 +624,18 @@ async def axleaderboard(ctx: discord.ext.commands.Context):
     for i, cur in enumerate(cursor):
         res[cur["duuid"]] = cur["ax"]
     ranks_temp = sorted(list(res.items()), key=lambda x: x[1], reverse=True)
-    string = f"{ej.ax_emoji} Leaderboard\n" + f"Rank, Amount, User\n"
+    #string = f"{ej.ax_emoji} Leaderboard\n" + f"Rank, Amount, User\n"
     found = False
     ranks = []
     count = 0
+    
     for rank, (duuid, axx) in enumerate(ranks_temp):
-        if count >= 3: # This is easy
+        if count >= 3: 
             break
         if getUsernameFromDUUID(duuid) != "invalid user":
             ranks.append((duuid, axx))
             count+= 1
+            
     for rank, (duuid, axx) in enumerate(ranks):
         if rank < 10:
             username = getUsernameFromDUUID(duuid)
@@ -660,7 +662,9 @@ async def axleaderboard(ctx: discord.ext.commands.Context):
                 duuid_temp, axx_temp = ranks[rank + 1]
                 username = getUsernameFromDUUID(duuid_temp)
                 string += f"{rank + 2:>2}.  {axx_temp:>8}{ej.ax_emoji} {username} \n"
-    await ctx.channel.send(string)
+    
+    embed = discord.Embed(title="AxLeaderBoard", description=string)
+    await ctx.channel.send(embed=embed)
 
 
 @bot.command(description="Allocate Ax.", brief="Admin Utility", help="<amount:integer> <@user> <reason>")
