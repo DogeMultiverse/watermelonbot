@@ -625,6 +625,7 @@ async def axleaderboard(ctx: discord.ext.commands.Context):
         res[cur["duuid"]] = cur["ax"]
     ranks_temp = sorted(list(res.items()), key=lambda x: x[1], reverse=True)
     #string = f"{ej.ax_emoji} Leaderboard\n" + f"Rank, Amount, User\n"
+    string = ""
     found = False
     ranks = []
     count = 0
