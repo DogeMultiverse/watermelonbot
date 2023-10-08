@@ -922,6 +922,9 @@ async def convertexp(ctx: discord.ext.commands.Context):
     if prefix == "t?" and ctx.author.id != DUUID_ALEX:
         await ctx.channel.send("t? is only for alex to test")
         return
+    if True:
+        await ctx.channel.send('debugging in progress')
+        return
     await ctx.channel.send(f'Conversion rate: 1000 EXP -> 1 {ej.ax_emoji}. '
                            f'Minimum conversion = 1000 EXP.', delete_after=20)
     # add a new collection to show how much was claimed # add last claimed time.
