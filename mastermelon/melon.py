@@ -695,7 +695,7 @@ async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
 @bot.command(description=f"Check user's ranking in {ej.ax_emoji}", brief="Utility")
 @commands.check(is_valid_guild)
 async def axleaderboard(ctx: discord.ext.commands.Context):
-    cursor = ax.find({"ax": {"$gte": 0}}).sort('ax', -1).limit(3)
+    cursor = ax.find({"ax": {"$gte": 0}}).sort('ax', -1).limit(10)
 
     output = f"{ej.ax_emoji} Leaderboard\n" + f"Rank, Amount, User\n"
 
