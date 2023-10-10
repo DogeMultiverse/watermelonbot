@@ -554,17 +554,17 @@ async def addhype(ctx, messageid: int, channel: discord.TextChannel = None, coun
 async def on_command_error(ctx: discord.ext.commands.Context, error: Exception, *args, **kwargs):
     print(ctx, str(error))
     if isinstance(type(error), discord.ext.commands.UserInputError):
-        await ctx.message.channel.send("Wrong arguments: " + str(error))
+        await ctx.message.channel.send(f"Wrong arguments {ctx.author.mention}: " + str(error))
     elif isinstance(error, discord.ext.commands.errors.BadArgument):
-        await ctx.message.channel.send("Bad arguments: " + str(error))
+        await ctx.message.channel.send(f"Bad arguments {ctx.author.mention}: " + str(error))
     elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
-        await ctx.message.channel.send("Missing argument: " + str(error))
+        await ctx.message.channel.send(f"Missing argument {ctx.author.mention}: " + str(error))
     elif isinstance(error, discord.ext.commands.errors.CommandNotFound):
-        await ctx.message.channel.send("ERROR: CommandNotFound")
+        await ctx.message.channel.send(f"ERROR {ctx.author.mention}: CommandNotFound")
     elif isinstance(error, discord.ext.commands.MissingRole):
-        await ctx.channel.send("You dont have the permission to run this command.")
+        await ctx.channel.send(f"You dont have the permission to run this command. {ctx.author.mention}")
     else:
-        await ctx.message.channel.send("Unknown error:" + str(type(error)) + str(error))
+        await ctx.message.channel.send(f"Unknown error {ctx.author.mention}:" + str(type(error)) + str(error))
 
 
 @bot.command(description="Play the guessing number game.", brief="Game")
