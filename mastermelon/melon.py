@@ -77,16 +77,16 @@ def get_latest_exp(res, convertedexp_doc):
                         claimed = convertedexp_doc[muuid_i][rservername]["claimed"]
                         lcdate = convertedexp_doc[muuid_i][rservername]["lcdate"]
                     if last_updated[muuid_i][server] < datetime(2023, 8, 8):
-                        legacy_server=True
+                        legacy_server = True
                     else:
-                        legacy_server=False
+                        legacy_server = False
                     exp_builder += f"{exp:>6}  " + f"{serverstr:<21}" + \
                                    last_updated[muuid_i][server].strftime(
                                        "%Y-%m-%d %H:%M") + f"   {claimed:<6} "+("(legacy server)" if legacy_server else "") + "\n"
                     muuid_exp_dict["servers"].append({"servername": rservername,
                                                       "exp": exp, "claimed": claimed, "lcdate": lcdate,
                                                       "lupdated": last_updated[muuid_i][server],
-                                                      "legacy_server":legacy_server
+                                                      "legacy_server": legacy_server
                                                       })
                 except Exception as e:
                     print(exp, server)
@@ -347,11 +347,11 @@ async def help(ctx, args=None):
         command_help = "" if isinstance(command.help, type(
             None)) else ("Help: " + command.help + "\n")
         command_desc = "" if (isinstance(command.description, type(None)) or command.description == "") else (
-                "\nDescription: " + command.description)
+            "\nDescription: " + command.description)
         help_embed.add_field(
             name="Command name: `" + args + "`",
             value=command_help + "Usage: `" + prefix + args +
-                  " " + command.signature + "`" + command_desc
+            " " + command.signature + "`" + command_desc
         )
 
     # If someone is just trolling:
@@ -1009,9 +1009,9 @@ async def appeal(ctx: discord.ext.commands.Context, punishment: str, idoruuid: s
     channel = bot.get_channel(791490149753683988)  # appeal-submission
     embed = discord.Embed(title="Appeal")
     embed.set_author(name=ctx.author.name + "#" +
-                          ctx.author.discriminator, icon_url=ctx.author.avatar_url)
+                     ctx.author.discriminator, icon_url=ctx.author.avatar_url)
     embed.add_field(name="Type:", value=str(punishment) +
-                                        f" {ctx.author.mention}", inline=False)
+                    f" {ctx.author.mention}", inline=False)
     embed.add_field(name="In-game Player Name:",
                     value=str(idoruuid), inline=False)
     embed.add_field(name="Reason:", value=str(reason), inline=False)
