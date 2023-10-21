@@ -466,6 +466,7 @@ async def servupdate(ctx: commands.Context, serverid: int = None):
         await console_commands.getserver(ctx)
         await ctx.send(f"use <serverid, -1 for allservers>")
     elif serverid == -1:  # update all servers
+        await ctx.send(f"Updating servers...",delete_after=5)
         for serverid in range(len(console_commands.getservers())):
             await console_commands.servupload(ctx, serverid)
     else:
