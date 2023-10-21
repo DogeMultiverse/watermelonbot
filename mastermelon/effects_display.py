@@ -102,6 +102,9 @@ async def showeffectsmenu(ctx: ext.commands.Context, effects_cost: dict, owned_e
 
 async def makepurchase(ctx: discord.ext.commands.Context, effects_cost: dict, owned_effects, effects, peffect, ax,
                        ingamecosmetics):
+    await ctx.channel.send("Buying effects are not available for now. Coming soon! Meanwhile you can enjoy the free pixel effect in Mindustry!")
+    if True:
+        return
     try:
         if (peffect in effects) and not (peffect + "Effect" in owned_effects):
             peffectcost = [c for c, e in effects_cost.items() if peffect in e][0]
