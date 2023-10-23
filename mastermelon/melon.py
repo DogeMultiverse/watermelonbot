@@ -2,6 +2,7 @@ import time
 from datetime import timedelta
 from datetime import datetime
 import traceback
+import logging
 
 import requests
 import discord
@@ -1060,6 +1061,15 @@ def strip_colourbrackets(inputstr):
 
 
 def runbot():
+    timestr = datetime.now().isoformat(timespec='minutes')
+    logger = logging.getLogger('discord')
+    logger.setLevel(logging.DEBUG)
+    handler = logging.FileHandler(filename=f'logs/discord_{timestr}.log', encoding='utf-8', mode='w')
+    handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+    logger.addHandler(handler)
+    # Assume client refers to a discord.Client subclass...
+    # client.run(token, log_handler=handler, log_level=logging.DEBUG)
+
     with open("watermelon.config", "rb") as f:
         js = json.load(f)
         bot_token = js["bot_token"]
@@ -1067,7 +1077,7 @@ def runbot():
     # bot.load_extension("mastermelon.giveaway_bot2")
     bot.add_cog(giveaway_bot.Giveaway(bot))
     try:
-        bot.run(bot_token)
+        bot.run(bot_token)#, log_handler=handler, log_level=logging.DEBUG)
     except KeyboardInterrupt:
         print("Exiting")
         asyncio.run(bot.close())
