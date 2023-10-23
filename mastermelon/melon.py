@@ -1063,7 +1063,7 @@ def strip_colourbrackets(inputstr):
 def runbot():
     timestr = datetime.now().isoformat(timespec='minutes')
     logger = logging.getLogger('discord')
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.WARN)
     handler = logging.FileHandler(filename=f'logs/discord_{timestr}.log', encoding='utf-8', mode='w')
     handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
     logger.addHandler(handler)
