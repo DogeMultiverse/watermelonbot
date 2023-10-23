@@ -3,4 +3,4 @@ watermelon.config
 data/*
 mastermelon/__pycache__
 mastermelon/utils/__pycache__
-log/*
+logs/*
