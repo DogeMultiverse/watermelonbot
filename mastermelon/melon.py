@@ -11,7 +11,7 @@ import pymongo
 import asyncio
 import random
 from discord.ext import commands
-# from discord import ui this dont work in discord 1.7.3
+# from discord import ui this dont work in discord 1.7.3 
 from mastermelon import counting_bot, console_commands
 from mastermelon import highlow_game
 from mastermelon import homework_game
