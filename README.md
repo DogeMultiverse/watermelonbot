@@ -52,6 +52,9 @@ Bot for managing discord and servers, written in python.
   "GUILD_ID2":"729946922810605690"
 }
 ```
+# other files
+
+must have these folders: `data/mindustry/mods/common/` and `logs` and `data`
 
 change values of GUILD_ID1 and GUILD_ID2 to the GUILD_ID that you own.
 
