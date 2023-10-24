@@ -138,7 +138,7 @@ async def get_version_of_plugin_from_all_servers(ctx: commands.Context):
         for i,host,screen,port,loc in servers:
             cmd = f'cat {servfolders()[i]}/config/mods/ASP_version.txt'
             out,_ = ssh_withcmd(host, cmd)
-            out = str(out)[2+17:]
+            out = str(out)[2+17:-1]
             stringg.append( f"`{i}` `{out}` `{host}:{port}` `{screen}`" )
         with open("/root/Documents/watermelonbot/watermelonbot/data/mindustry/mods/common/ASP_version.txt","r") as f:
             ff = f.readlines()[0][17:]
