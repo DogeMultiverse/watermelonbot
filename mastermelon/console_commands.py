@@ -118,6 +118,7 @@ async def showconsole(ctx, i, host, screen, port):
 
 async def servupload(ctx,serverid):
     servers = getservers()
+    await ctx.channel.send("Uploading plugins...", delete_after=3)
     try:
         i,host,screen,port,loc = servers[serverid]
         # add logic here to upload the files to the servers
