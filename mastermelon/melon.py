@@ -12,7 +12,7 @@ import pymongo
 import asyncio
 import random
 from discord.ext import commands
-# from discord import ui this dont work in discord 1.7.3 
+# from discord import ui this dont work in discord 1.7.3
 from mastermelon import counting_bot, console_commands
 from mastermelon import highlow_game
 from mastermelon import homework_game
@@ -467,7 +467,7 @@ async def servupdate(ctx: commands.Context, serverid: int = None):
         await console_commands.getserver(ctx)
         await ctx.send(f"use <serverid, -1 for allservers>")
     elif serverid == -1:  # update all servers
-        await ctx.send(f"Updating servers...",delete_after=5)
+        await ctx.send(f"Updating servers...", delete_after=5)
         for serverid in range(len(console_commands.getservers())):
             await console_commands.servupload(ctx, serverid)
     else:
@@ -534,7 +534,30 @@ async def addemoji(ctx, emoji: str, messageid: int, channel: discord.TextChannel
              help="<message_id> <channel> <counts> (duration will be ~ counts*10 secs)", brief="Hype")
 @commands.has_any_role("Admin (Discord)", "Mod (Discord)")
 @commands.check(is_valid_guild)
-async def addhype(ctx, messageid: int, channel: discord.TextChannel = None, counts: int = 5):
+async def addhype(ctx, message: discord.Message, counts: int = 5):
+    emojis = await ctx.guild.fetch_emojis()
+    try:
+        total_emojis = 0
+        await ctx.send(f"Hype sending! Self destructing...", delete_after=3)
+        for emoji_custom in random.sample(emojis, k=len(emojis)):
+            if emoji_custom.name.lower() in ["partyglasses", "pepoclap", "roll", "blob", "auke", "catdance", "pog",
+                                             "hypertada", "feelsgoodman", "cata", "petangry",
+                                             "typing", "petmelon", "petalex"]:
+                total_emojis += 1
+                await asyncio.sleep(random.randint(3, 3 + counts * 10))
+                await message.add_reaction(emoji_custom)
+            if total_emojis > counts:
+                break
+    except discord.NotFound:
+        await ctx.send("Message id not found. Maybe message was deleted?", delete_after=3)
+    await ctx.message.delete(delay=3)
+
+
+@bot.command(description="adds hype emojis",
+             help="<message_id> <channel> <counts> (duration will be ~ counts*10 secs)", brief="Hype")
+@commands.has_any_role("Admin (Discord)", "Mod (Discord)")
+@commands.check(is_valid_guild)
+async def addhype2(ctx, messageid: int, channel: discord.TextChannel = None, counts: int = 5):
     emojis = await ctx.guild.fetch_emojis()
     try:
         if channel is None:
@@ -1064,8 +1087,10 @@ def runbot():
     timestr = datetime.now().isoformat(timespec='minutes')
     logger = logging.getLogger('discord')
     logger.setLevel(logging.WARN)
-    handler = logging.FileHandler(filename=f'logs/discord_{timestr}.log', encoding='utf-8', mode='w')
-    handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+    handler = logging.FileHandler(
+        filename=f'logs/discord_{timestr}.log', encoding='utf-8', mode='w')
+    handler.setFormatter(logging.Formatter(
+        '%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
     logger.addHandler(handler)
     # Assume client refers to a discord.Client subclass...
     # client.run(token, log_handler=handler, log_level=logging.DEBUG)
@@ -1077,7 +1102,7 @@ def runbot():
     # bot.load_extension("mastermelon.giveaway_bot2")
     bot.add_cog(giveaway_bot.Giveaway(bot))
     try:
-        bot.run(bot_token)#, log_handler=handler, log_level=logging.DEBUG)
+        bot.run(bot_token)  # , log_handler=handler, log_level=logging.DEBUG)
     except KeyboardInterrupt:
         print("Exiting")
         asyncio.run(bot.close())
