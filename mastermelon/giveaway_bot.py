@@ -79,7 +79,7 @@ class Giveaway(commands.Cog, name="giveaway"):
         # print(self.data)
         if payload.member.bot:
             return
-        current_time = datetime.now().replace(tzinfo=pytz.UTC)
+        current_time = datetime.now()
         for gaws in self.data["running"]:
             if gaws["messageid"] == payload.message_id:
                 if (gaws["enddate"] < current_time) or gaws["winners"] <= len(set(gaws["participants"])):
@@ -110,7 +110,7 @@ class Giveaway(commands.Cog, name="giveaway"):
 
     def addGiveawayEvent(self, messageid: int, channel: discord.TextChannel, channelannc: discord.TextChannel,
                          msg: str, amount: int, winners: int, days: int, hours: int):
-        enddate = datetime.now().replace(tzinfo=pytz.UTC) + timedelta(days=days, hours=hours)
+        enddate = datetime.now() + timedelta(days=days, hours=hours)
         gaws = {"winners": winners, "amount": amount, "messageid": messageid, "channelid": channel.id,
                 "channelanncid": channelannc.id, "message": msg, "enddate": enddate, "participants": []}
         self.data["running"].append(gaws)
@@ -125,7 +125,7 @@ class Giveaway(commands.Cog, name="giveaway"):
         self.savedata()
 
     async def showallgevents(self, ctx: discord.ext.commands.Context):
-        st = [f"{gaws['messageid']}: timeleft{gaws['enddate'] - datetime.now().replace(tzinfo=pytz.UTC)}"
+        st = [f"{gaws['messageid']}: timeleft{gaws['enddate'] - datetime.now()}"
               for gaws in self.data["running"]]
         await ctx.channel.send(", ".join(st), delete_after=15)
 
@@ -134,7 +134,7 @@ class Giveaway(commands.Cog, name="giveaway"):
         await asyncio.sleep(20)
         while not self.bot.is_closed():
             await asyncio.sleep(180)
-            current_time = datetime.now().replace(tzinfo=pytz.UTC)
+            current_time = datetime.now()
             for gaws in self.data["running"]:  # update the time in the footer, if ended, edit end msg
                 if (gaws["enddate"] < current_time) or gaws["winners"] <= len(set(gaws["participants"])):
                     await self.edit_end_msg(gaws)
