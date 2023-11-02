@@ -60,7 +60,7 @@ class Giveaway(commands.Cog, name="giveaway"):
                     self.data = data
         except FileNotFoundError:
             self.data = {"running": [], "ended": []}
-        self.bot.loop.create_task(self.giveaway_background_task())
+        #self.bot.loop.create_task(self.giveaway_background_task())
 
     def savedata(self):
         with open("data/giveaway_bot.config", "w") as f:
