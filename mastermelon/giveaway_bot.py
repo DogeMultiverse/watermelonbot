@@ -72,7 +72,7 @@ class Giveaway(commands.Cog, name="giveaway"):
         title = feelsbm_emoji + f" {gaws['amount']} {ax_emoji} GIVEAWAY ENDED " + feelsbm_emoji
         await message.edit(
             embed=discord.Embed(title=title, description=gaws["message"]).set_footer(
-                text=f";-; come back again... ig... {gaws['claimed']} claimed"))
+                text=f";-; come back again... ig... {len(gaws['participants'])} claimed"))
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent):  # todo on emoji reaction!
