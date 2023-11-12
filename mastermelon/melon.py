@@ -7,7 +7,7 @@ import logging
 import requests
 import discord
 import json
-from mastermelon.anti_mindus_bot import process_anti_bot
+from mastermelon.anti_mindus_bot import plugin_anti_bot, vkick_anti_bot
 from mastermelon.disc_constants import DUUID_ALEX, DUUID_WATERMELON
 import pymongo
 import asyncio
@@ -1063,7 +1063,9 @@ async def on_message(message: discord.Message):
     elif message.content == ':pepoclap:' and prefix == "t?":
         await message.reply(pepo_clap)
     elif prefix == "w?" and message.channel.id == 789511356197765190: # admin logs channel
-        await process_anti_bot(message,bot)
+        await vkick_anti_bot(message,bot)
+    elif prefix == "w?" and message.channel.id == 796305521270587413: # moderator logs channel
+        await plugin_anti_bot(message,bot)
     elif prefix == "w?" and message.channel.id == 805105861450137600:  # counting hardcore channel
         if message.author.id != bot.user.id:
             await counting_bot.run_counterbot(message, bot)
