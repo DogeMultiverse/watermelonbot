@@ -8,10 +8,10 @@ async def vkick_anti_bot(message,bot):
     if "ModAdmin Hammer vkick" not in message.content:
         return
     if ("Reason grief" in message.content) or ("Reason bot" in message.content): 
-        await message.channel.send("recieved this message, "+message.content)
+        await message.channel.send("☠️ recieved this message, "+message.content)
         ban_command = message.content.split("\n")[2] # ban by ip
         ban_command= ban_command.split("-1 ")[1]
-        await message.channel.send("this is the send command to servers: "+ban_command+"\nsending command")
+        await message.channel.send("☠️ this is the send command to servers: "+ban_command+"\nsending command")
         await console_commands.sendcommandtoserver(message,-1,ban_command)
 
 async def plugin_anti_bot(message,bot):
@@ -27,5 +27,5 @@ async def plugin_anti_bot(message,bot):
         strr = ip.split(".")[:3]
         subnet_ip = ".".join(strr)
         sendcmd = f"subnet-ban add {subnet_ip}"
-        await message.channel.send(f"sending this command to servers: {sendcmd}")
+        await message.channel.send(f"☠️☠️🤖🤖 sending this command to servers: {sendcmd}")
         await console_commands.sendcommandtoserver(message,-1,sendcmd)
