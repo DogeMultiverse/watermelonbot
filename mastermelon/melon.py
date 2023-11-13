@@ -26,6 +26,7 @@ from mastermelon import feedback
 from mastermelon.utils.is_valid_guild import is_valid_guild_check, is_valid_guild
 from mastermelon.utils.get_user_display_name import get_user_display_name
 
+autoban_counts = [0,0] # griefers and bots
 
 def get_date_str():
     return str(datetime.now())[:-4]
@@ -1063,9 +1064,9 @@ async def on_message(message: discord.Message):
     elif message.content == ':pepoclap:' and prefix == "t?":
         await message.reply(pepo_clap)
     elif prefix == "w?" and message.channel.id == 789511356197765190: # admin logs channel
-        await vkick_anti_bot(message,bot)
+        await vkick_anti_bot(message,bot,autoban_counts)
     elif prefix == "w?" and message.channel.id == 796305521270587413: # moderator logs channel
-        await plugin_anti_bot(message,bot)
+        await plugin_anti_bot(message,bot,autoban_counts)
     elif prefix == "w?" and message.channel.id == 805105861450137600:  # counting hardcore channel
         if message.author.id != bot.user.id:
             await counting_bot.run_counterbot(message, bot)
