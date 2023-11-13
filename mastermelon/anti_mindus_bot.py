@@ -9,7 +9,7 @@ async def vkick_anti_bot(message,bot,autoban_counts):
     if "ModAdmin Hammer vkick" not in message.content:
         return
     autoban_channel: discord.TextChannel = bot.get_channel(1165956715230015529)
-    autoban_message = autoban_channel.fetch_message(1173435083353505792)
+    autoban_message = await autoban_channel.fetch_message(1173435083353505792)
     if ("Reason grief" in message.content) or ("Reason bot" in message.content): 
         await message.channel.send("☠️ autoban activated")
         autoban_counts[0] +=1
@@ -26,7 +26,7 @@ async def plugin_anti_bot(message,bot,autoban_counts):
         return
     ip = message.content.split("BOT detected! IP banned: ")[1]
     autoban_channel: discord.TextChannel = bot.get_channel(1165956715230015529)
-    autoban_message = autoban_channel.fetch_message(1173435083353505792)
+    autoban_message = await autoban_channel.fetch_message(1173435083353505792)
     if len(ip.split("."))!=4:
         await message.channel.send("error here 24")
         return
