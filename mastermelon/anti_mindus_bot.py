@@ -16,7 +16,7 @@ async def vkick_anti_bot(message,bot,autoban_counts):
         ban_command = message.content.split("\n")[2] # ban by ip
         ban_command= ban_command.split('-1 "')[1][:-1]
         await autoban_message.channel.send(f"☠️{autoban_counts[0]} this is the send command to servers: "+ban_command+"\nsending command")
-        await console_commands.sendcommandtoserver(autoban_message,-1,ban_command)
+        await console_commands.sendcommandtoserver(autoban_message,-1,ban_command,False)
 
 async def plugin_anti_bot(message,bot,autoban_counts):
     
@@ -36,4 +36,4 @@ async def plugin_anti_bot(message,bot,autoban_counts):
         subnet_ip = ".".join(strr)
         sendcmd = f"subnet-ban add {subnet_ip}"
         await message.channel.send(f"☠️☠️{autoban_counts[1]}🤖🤖 autoban activated sending this command to servers: {sendcmd}")
-        await console_commands.sendcommandtoserver(autoban_message,-1,sendcmd)
+        await console_commands.sendcommandtoserver(autoban_message,-1,sendcmd,False)

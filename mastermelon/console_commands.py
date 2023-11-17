@@ -77,7 +77,7 @@ async def readserver(ctx: commands.Context, serverid: int):
     else: 
         pass 
 
-async def sendcommandtoserver(ctx: commands.Context, serverid: int, consolecommand: str):
+async def sendcommandtoserver(ctx: commands.Context, serverid: int, consolecommand: str, display: bool = True):
     # this sends command to server with "enter" at the end
     # will print the output after the command is ran
     # also, no js is allowed, unless by alex......
@@ -88,21 +88,22 @@ async def sendcommandtoserver(ctx: commands.Context, serverid: int, consolecomma
     try:
         if serverid==-1: # this sends to all
             for serverid in range(len( servers )):
-                await send_command_to_1_server(ctx, serverid, consolecommand, servers)
+                await send_command_to_1_server(ctx, serverid, consolecommand, servers, display)
         else: # just sends to 1
-            await send_command_to_1_server(ctx, serverid, consolecommand, servers)
+            await send_command_to_1_server(ctx, serverid, consolecommand, servers, display)
     except Exception as e:
         strr=traceback.format_exc()
         await ctx.channel.send("error occurred 82:" + str(e)+"tb:"+strr)
     else: 
         pass 
 
-async def send_command_to_1_server(ctx, serverid, consolecommand, servers):
+async def send_command_to_1_server(ctx, serverid, consolecommand, servers, display = True):
     i,host,screen,port,loc = servers[serverid]
     await ctx.channel.send(f"sending {consolecommand} to `{i}` `{host}{port}` with screen `{screen}`, waiting 2 seconds")
     send_consolecommand(host, f'screen -S {screen} -p 0 -X stuff "{consolecommand}^M"')
-    await asyncio.sleep(1)
-    await showconsole(ctx, i, host, screen, port)
+    if display:
+        await asyncio.sleep(1)
+        await showconsole(ctx, i, host, screen, port)
 
 async def showconsole(ctx, i, host, screen, port):
     await ctx.channel.send(f"reading console on `{i}` `{host}{port}` with screen `{screen}`", delete_after=3)
