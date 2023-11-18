@@ -25,7 +25,7 @@ def getservers(): # host screen port
             ("root@alexmindustrypvp.ddns.net"    , "pvp_v7_asia"       , "6767" , "LD ASI"),
             ("root@alexmindustrypvp.ddns.net"    , "surv_v7"           , "6768" , "LD ASI")
                ]
-    servers = servers[2:]
+    servers = servers[1:]
     return [(i,host,screen,port,loc) for i,(host,screen,port,loc) in enumerate(servers)]
 
 def servfolders():
