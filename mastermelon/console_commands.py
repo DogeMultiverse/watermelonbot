@@ -20,8 +20,8 @@ def scp_cmd(host:str, src: str, dst: str):
 
 def getservers(): # host screen port
     servers = [
-            ("root@alexmindustryv7.servegame.com", "pvp_v7_2023"       , "25588", "LD USA"),
-            ("root@alexmindustryv7.servegame.com", "attack_usw_v7_2023", "41962", "LD USA"),
+            ("root@alexmindustryv7.servegame.com", "pvp_v7_2023"       , "41962", "LD USA"),
+            ("root@alexmindustryv7.servegame.com", "attack_usw_v7_2023", "25588", "LD USA"),
             ("root@alexmindustrypvp.ddns.net"    , "pvp_v7_asia"       , "6767" , "LD ASI"),
             ("root@alexmindustrypvp.ddns.net"    , "surv_v7"           , "6768" , "LD ASI")
                ]
