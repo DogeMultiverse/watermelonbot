@@ -20,19 +20,19 @@ def scp_cmd(host:str, src: str, dst: str):
 
 def getservers(): # host screen port
     servers = [
-            ("root@alexmindustryv7.servegame.com", "pvp_v7_2023"       , "41962", "LD USA"),
+            #("root@alexmindustryv7.servegame.com", "pvp_v7_2023"       , "41962", "LD USA"),
             ("root@alexmindustryv7.servegame.com", "attack_usw_v7_2023", "25588", "LD USA"),
             ("root@alexmindustrypvp.ddns.net"    , "pvp_v7_asia"       , "6767" , "LD ASI"),
             ("root@alexmindustrypvp.ddns.net"    , "surv_v7"           , "6768" , "LD ASI"),
             ("root@172.234.80.96"                , "surv_v7"           , "6768" , "LD JPY"),
             ("root@139.162.41.78"                , "pvp_v7_asia"       , "6767" , "LD SG2")
                ]
-    servers = servers[1:]
+    servers = servers
     return [(i,host,screen,port,loc) for i,(host,screen,port,loc) in enumerate(servers)]
 
 def servfolders():
     return [
-        "/root/Documents/pvp_v7_2023",
+        #"/root/Documents/pvp_v7_2023",
         "/root/Documents/attack_usw_v7_2023",
         "/root/Documents/pvp_v7_asia",
         "/root/Documents/surv_v7",
