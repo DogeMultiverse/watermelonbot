@@ -11,6 +11,8 @@ from mastermelon import guessing_game
 from mastermelon import melon
 
 if __name__ == '__main__':
+    # todo: create required folders on first initalisation
+    # folders: logs, mods, (maybe more)
     print_hi('PyCharm')
     # guessing_game.runbot()
     try:
