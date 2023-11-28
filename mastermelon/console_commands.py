@@ -132,7 +132,7 @@ async def servupload(ctx,serverid):
         # add logic here to upload the files to the servers
         # use subprocess to scp the files
         #scp run_scp.py root@alexmindustryv7.servegame.com:/root/Documents/pvp_v7_2023/config/mods
-        out,err = scp_cmd(host,src="/root/Documents/watermelonbot/watermelonbot/data/mindustry/mods/common/*",
+        out,err = scp_cmd(host,src="/root/Documents/watermelonbot/data/mindustry/mods/common/*",
                 dst=f"{servfolders()[i]}/config/mods")
         await ctx.channel.send(f"done upload: `{i}` `{host}{port}` with screen `{screen}`, output:{str(out)[-1000:]}")
     except Exception as e:
@@ -149,7 +149,7 @@ async def get_version_of_plugin_from_all_servers(ctx: commands.Context):
             out,_ = ssh_withcmd(host, cmd)
             out = str(out)[2+17:-1]
             stringg.append( f"`{i}` `{out}` `{host}:{port}` `{screen}`" )
-        with open("/root/Documents/watermelonbot/watermelonbot/data/mindustry/mods/common/ASP_version.txt","r") as f:
+        with open("/root/Documents/watermelonbot/data/mindustry/mods/common/ASP_version.txt","r") as f:
             ff = f.readlines()[0][17:]
             ff1=ff.split(":")[0]
         await ctx.channel.send( f"Plugin version on servers (latest: `{ff1}`):\n"+("\n".join(stringg)))
