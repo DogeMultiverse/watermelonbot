@@ -62,10 +62,7 @@ def get_latest_exp(res, convertedexp_doc):
         muuid_exp_dict = {"In_Game_Name": muuid_name[muuid_i], "servers": []}
         for server, exp in sorted(list(exps.items()),
                                   key=lambda x: 0 if isinstance(x[1], type(None)) else x[1], reverse=True):
-            if server in ["ALEX | ATTACK SERVER", "ALEX | PVP SERVER", "ALEX | SURVIVAL SERVER",
-                          "ALEX | PVP2 SERVER (USA)", "ALEX PVP V7 (ASIA)", "ALEX SURVIVAL V7",
-                          'ALEX | TURBO PVP SERVER', "ALEX | PVP SERVER (ASIA)", "ALEX | HEX SERVER",
-                          "ALEX | PVP (USA)", "ALEX | PVP (ASIA)", "ALEX | ATTACK (USA)", "ALEX | SURVIVAL (ASIA)"]:
+            if server in ["ALEX | PVP (USA)", "ALEX | PVP (ASIA)", "ALEX | ATTACK (USA)", "ALEX | SURVIVAL (ASIA)"]:
                 try:
                     exp = 0 if exp is None else exp
                     rservername = server[7:].replace(" SERVER", "")
