@@ -10,13 +10,13 @@ async def vkick_anti_bot(message,bot,autoban_counts):
         return
     autoban_channel: discord.TextChannel = bot.get_channel(1165956715230015529)
     autoban_message = await autoban_channel.fetch_message(1173435083353505792)
-    if ("Reason grief" in message.content) or ("Reason bot" in message.content): 
+    if ("Reason grief" in message.content) or ("Reason bot" in message.content) or ("Reason nsfw" in message.content): 
         await message.channel.send("☠️ autoban activated")
         autoban_counts[0] +=1
         ban_command = message.content.split("\n")[2] # ban by ip
-        ban_command= ban_command.split('-1 "')[1][:-1]
-        username = "username" # todo, add username into plugin report
-        await autoban_message.channel.send(f"☠️{autoban_counts[0]} ban user: `{username}`. "+ban_command+"\nsending command")
+        ban_command= ban_command.split('-1 "')[1][:-1] 
+        username = message.content.split("\n")[0][14:] # todo parse this properly
+        await autoban_message.channel.send(f"☠️{autoban_counts[0]} ban user: {username}. "+ban_command+"\nsending command")
         await console_commands.sendcommandtoserver(autoban_message,-1,ban_command,False)
 
 async def plugin_anti_bot(message,bot,autoban_counts):
