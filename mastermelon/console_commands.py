@@ -44,15 +44,15 @@ async def restartserver(ctx: commands.Context, serverid: int):
     servers = getservers()
     try:
         i,host,screen,port,loc = servers[serverid]
-        await ctx.channel.send(f"sending gameover command to `{i}` `{host}{port}` with screen `{screen}`, waiting 2 seconds")
+        await ctx.channel.send(f"sending gameover command to `{i}` `{host}:{port}` with screen `{screen}`, waiting 2 seconds")
         cmd =f'screen -S {screen} -p 0 -X stuff "gameover^M"'
         send_consolecommand(host, cmd)
         await asyncio.sleep(2)
-        await ctx.channel.send(f"sending exit command to `{i}` `{host}{port}` with screen `{screen}`")
+        await ctx.channel.send(f"sending exit command to `{i}` `{host}:{port}` with screen `{screen}`")
         cmd =f'screen -S {screen} -p 0 -X stuff "exit^M"'
         send_consolecommand(host, cmd)
         await asyncio.sleep(2)
-        await ctx.channel.send(f"Completed restart for `{i}` `{host}{port}` `{screen}`")
+        await ctx.channel.send(f"Completed restart for `{i}` `{host}:{port}` `{screen}`")
     except Exception as e:
         strr=traceback.format_exc()
         await ctx.channel.send("error occurred 45:" + str(e)+"tb:"+strr)
@@ -63,10 +63,10 @@ async def gameoverserver(ctx: commands.Context, serverid: int):
     servers = getservers()
     try:
         i,host,screen,port,loc = servers[serverid]
-        await ctx.channel.send(f"sending gameover command to `{i}` `{host}{port}` with screen `{screen}` ")
+        await ctx.channel.send(f"sending gameover command to `{i}` `{host}:{port}` with screen `{screen}` ")
         cmd =f'screen -S {screen} -p 0 -X stuff "gameover^M"'
         send_consolecommand(host, cmd) 
-        await ctx.channel.send(f"sent gameover command for `{i}` `{host}{port}` `{screen}`")
+        await ctx.channel.send(f"sent gameover command for `{i}` `{host}:{port}` `{screen}`")
     except Exception as e:
         strr=traceback.format_exc()
         await ctx.channel.send("error occurred 66:" + str(e)+"tb:"+strr)
@@ -106,14 +106,14 @@ async def sendcommandtoserver(ctx: commands.Context, serverid: int, consolecomma
 
 async def send_command_to_1_server(ctx, serverid, consolecommand, servers, display = True):
     i,host,screen,port,loc = servers[serverid]
-    await ctx.channel.send(f"sending {consolecommand} to `{i}` `{host}{port}` with screen `{screen}`, waiting 2 seconds")
+    await ctx.channel.send(f"sending {consolecommand} to `{i}` `{host}:{port}` with screen `{screen}`, waiting 2 seconds")
     send_consolecommand(host, f'screen -S {screen} -p 0 -X stuff "{consolecommand}^M"')
     if display:
         await asyncio.sleep(1)
         await showconsole(ctx, i, host, screen, port)
 
 async def showconsole(ctx, i, host, screen, port):
-    await ctx.channel.send(f"reading console on `{i}` `{host}{port}` with screen `{screen}`", delete_after=3)
+    await ctx.channel.send(f"reading console on `{i}` `{host}:{port}` with screen `{screen}`", delete_after=3)
     cmd =f'screen -S {screen} -p 0 -X hardcopy -h "screen_log.log"'
     send_consolecommand(host, cmd)
     await asyncio.sleep(1)
@@ -121,8 +121,8 @@ async def showconsole(ctx, i, host, screen, port):
     cmd =f'cat {fld}/screen_log.log'
     out,err = ssh_withcmd(host, cmd)
     output = str(out[-1500:])[2:-1].split("\\n") 
-    await ctx.channel.send( f"`{host}{port}` `{screen}`:\n"+ "\n".join(output))
-    await ctx.channel.send(f"Completed reading for `{i}` `{host}{port}` `{screen}`")# todo delete those msgs if passed
+    await ctx.channel.send( f"`{host}:{port}` `{screen}`:\n"+ "\n".join(output))
+    await ctx.channel.send(f"Completed reading for `{i}` `{host}:{port}` `{screen}`")# todo delete those msgs if passed
 
 async def servupload(ctx,serverid):
     servers = getservers()
@@ -134,7 +134,7 @@ async def servupload(ctx,serverid):
         #scp run_scp.py root@alexmindustryv7.servegame.com:/root/Documents/pvp_v7_2023/config/mods
         out,err = scp_cmd(host,src="/root/Documents/watermelonbot/data/mindustry/mods/common/*",
                 dst=f"{servfolders()[i]}/config/mods")
-        await ctx.channel.send(f"done upload: `{i}` `{host}{port}` with screen `{screen}`, output:{str(out)[-1000:]}")
+        await ctx.channel.send(f"done upload: `{i}` `{host}:{port}` with screen `{screen}`, output:{str(out)[-1000:]}")
     except Exception as e:
         strr=traceback.format_exc()
         await ctx.channel.send("error occurred 99:" + str(e)+"tb:"+strr)
