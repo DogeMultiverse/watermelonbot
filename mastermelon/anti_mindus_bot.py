@@ -15,8 +15,8 @@ async def vkick_anti_bot(message,bot,autoban_counts):
         autoban_counts[0] +=1
         ban_command = message.content.split("\n")[2] # ban by ip
         ban_command= ban_command.split('-1 "')[1][:-1] 
-        username = message.content.split("\n")[0][14:] # todo parse this properly
-        await autoban_message.channel.send(f"☠️{autoban_counts[0]} ban user: {username}. "+ban_command+"\nsending command")
+        username = message.content.split("\n")[0][14:-1] # todo parse this properly
+        await autoban_message.channel.send(f"☠️{autoban_counts[0]} banning user: {username}. "+ban_command+"\nsending command")
         await console_commands.sendcommandtoserver(autoban_message,-1,ban_command,False)
 
 async def plugin_anti_bot(message,bot,autoban_counts):
