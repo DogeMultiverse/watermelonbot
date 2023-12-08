@@ -26,7 +26,8 @@ from mastermelon import feedback
 from mastermelon.utils.is_valid_guild import is_valid_guild_check, is_valid_guild
 from mastermelon.utils.get_user_display_name import get_user_display_name
 
-autoban_counts = [0,0] # griefers and bots
+autoban_counts = [0, 0]  # griefers and bots
+
 
 def get_date_str():
     return str(datetime.now())[:-4]
@@ -897,6 +898,30 @@ async def donate(ctx: discord.ext.commands.Context):
     await ctx.channel.send(embed=embed)
 
 
+@bot.command(brief="Links", description="Shows the affiliate links.", aliases=['aff'])
+async def affiliate(ctx: discord.ext.commands.Context):
+    embed = discord.Embed(title=f"Affiliate links",
+                          colour=discord.Colour.random().value)
+    embed.add_field(name="Cheap VPS & webhosting", value="https://my.racknerd.com/aff.php?aff=10213",
+                    inline=False)
+    await ctx.channel.send(embed=embed)
+
+
+@bot.command(brief="Links", description="Shows the link to FAQ.")
+async def faq(ctx: discord.ext.commands.Context):
+    embed = discord.Embed(title=f"FAQ link",
+                          colour=discord.Colour.random().value)
+    embed.add_field(name="FAQ", value="https://discord.com/channels/785543836608364556/785543836750315616",
+                    inline=False)
+    embed.add_field(name="Information", value="https://discord.com/channels/785543836608364556/785543836608364565",
+                    inline=False)
+    embed.add_field(name="Rules", value="https://discord.com/channels/785543836608364556/785543836750315612",
+                    inline=False)
+    embed.add_field(name="Self-roles", value="https://discord.com/channels/785543836608364556/785543836750315619",
+                    inline=False)
+    await ctx.channel.send(embed=embed)
+
+
 @bot.command(description="Create giveaway.", brief="Admin Utility",
              help="<add/remove> <giveawaychannel> <anncchannel> <amount> <winners> <days> <hours> <'msg'>")
 @commands.has_any_role("Admin (Discord)", "Mod (Giveaway)")
@@ -1060,10 +1085,10 @@ async def on_message(message: discord.Message):
         await message.reply("😊", mention_author=True)
     elif message.content == ':pepoclap:' and prefix == "t?":
         await message.reply(pepo_clap)
-    elif prefix == "w?" and message.channel.id == 789511356197765190: # admin logs channel
-        await vkick_anti_bot(message,bot,autoban_counts)
-    elif prefix == "w?" and message.channel.id == 796305521270587413: # moderator logs channel
-        await plugin_anti_bot(message,bot,autoban_counts)
+    elif prefix == "w?" and message.channel.id == 789511356197765190:  # admin logs channel
+        await vkick_anti_bot(message, bot, autoban_counts)
+    elif prefix == "w?" and message.channel.id == 796305521270587413:  # moderator logs channel
+        await plugin_anti_bot(message, bot, autoban_counts)
     elif prefix == "w?" and message.channel.id == 805105861450137600:  # counting hardcore channel
         if message.author.id != bot.user.id:
             await counting_bot.run_counterbot(message, bot)
