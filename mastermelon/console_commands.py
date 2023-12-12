@@ -159,13 +159,6 @@ async def get_version_of_plugin_from_all_servers(ctx: commands.Context):
     else: 
         pass 
 
-def getgame_status():
-    # todo, gets the game status, and if it is available for restart
-    return
-
-def queueforrestart():
-    # todo command to wait for the game to be over and then initiate the restart
-    return
 
 async def getserver(ctx: commands.Context):
     servers = getservers()
