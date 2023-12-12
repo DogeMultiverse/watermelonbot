@@ -18,6 +18,11 @@ def scp_cmd(host:str, src: str, dst: str):
     out,err = procc.communicate()
     return out,err
 
+def rsync_maps_cmd(host:str, src: str, dst: str):
+    procc = subprocess.Popen(f"rsync -a {src} {host}:{dst} --delete", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out,err = procc.communicate()
+    return out,err
+
 def getservers(): # host screen port
     servers = [
             #("root@alexmindustryv7.servegame.com", "pvp_v7_2023"       , "41962", "LD USA"),
@@ -38,6 +43,16 @@ def servfolders():
         "/root/Documents/surv_v7",
         "/root/Documents/pvp_v7_asia",
         "/root/Documents/pvp_usa"
+    ]
+
+def mapfolders():
+    return [
+        #"/root/Documents/pvp_v7_2023",
+        "mindustry_maps/attack_v7/",
+        "mindustry_maps/pvp_v7/",
+        "mindustry_maps/survival_v7/",
+        "mindustry_maps/pvp_v7/",
+        "mindustry_maps/pvp_v7/"
     ]
 
 async def restartserver(ctx: commands.Context, serverid: int):
@@ -137,8 +152,24 @@ async def servupload(ctx,serverid):
         await ctx.channel.send(f"done upload: `{i}` `{host}:{port}` with screen `{screen}`, output:{str(out)[-1000:]}")
     except Exception as e:
         strr=traceback.format_exc()
-        await ctx.channel.send("error occurred 99:" + str(e)+"tb:"+strr)
+        await ctx.channel.send("error occurred 155:" + str(e)+"tb:"+strr)
 
+
+async def syncmindusmap(ctx,serverid):
+    servers = getservers() 
+    await ctx.channel.send("Uploading maps...", delete_after=3)
+    try:
+        i,host,screen,port,loc = servers[serverid]
+        source_folder = mapfolders()[i]
+        # add logic here to upload the maps to the servers
+        # use subprocess to rsync the files 
+        out,err = rsync_maps_cmd(host,src="/root/Documents/watermelonbot/"+source_folder,
+                dst=f"{servfolders()[i]}/config/maps/")
+        await ctx.channel.send(f"done upload: `{i}` `{host}:{port}` with screen `{screen}`, output:{str(out)[-1000:]}")
+    except Exception as e:
+        strr=traceback.format_exc()
+        await ctx.channel.send("error occurred 171:" + str(e)+"tb:"+strr)
+    
 async def get_version_of_plugin_from_all_servers(ctx: commands.Context):
     servers = getservers()
     try:
@@ -155,7 +186,7 @@ async def get_version_of_plugin_from_all_servers(ctx: commands.Context):
         await ctx.channel.send( f"Plugin version on servers (latest: `{ff1}`):\n"+("\n".join(stringg)))
     except Exception as e:
         strr=traceback.format_exc()
-        await ctx.channel.send("error occurred 127:" + str(e)+"tb:"+strr)
+        await ctx.channel.send("error occurred 189:" + str(e)+"tb:"+strr)
     else: 
         pass 
 
