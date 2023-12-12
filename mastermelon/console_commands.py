@@ -19,7 +19,7 @@ def scp_cmd(host:str, src: str, dst: str):
     return out,err
 
 def rsync_maps_cmd(host:str, src: str, dst: str):
-    procc = subprocess.Popen(f"rsync -a {src} {host}:{dst} --delete", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    procc = subprocess.Popen(f"rsync -avh {src} {host}:{dst} --delete", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out,err = procc.communicate()
     return out,err
 
