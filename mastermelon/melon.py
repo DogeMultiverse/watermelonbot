@@ -440,7 +440,7 @@ async def getserver(ctx):
 @commands.check(is_valid_guild)
 async def getver(ctx):
     await console_commands.get_version_of_plugin_from_all_servers(ctx)
-    await ctx.send("send `w?servupdate -1` to update all servers")
+    await ctx.send("send `w?update -1` to update all servers")
 
 
 @bot.command(description="see server console (admin only)", brief="Admin Mindustry Utility")
@@ -462,7 +462,7 @@ async def sendcmd(ctx: commands.Context, serverid: int, consolecommand: str):
              help="<serverid, -1 for allservers>")
 @commands.has_role("Admin (Discord)")
 @commands.check(is_valid_guild)
-async def servupdate(ctx: commands.Context, serverid: int = None):
+async def update(ctx: commands.Context, serverid: int = None):
     if serverid is None:
         await console_commands.getserver(ctx)
         await ctx.send(f"use <serverid, -1 for allservers>")
@@ -472,6 +472,22 @@ async def servupdate(ctx: commands.Context, serverid: int = None):
             await console_commands.servupload(ctx, serverid)
     else:
         await console_commands.servupload(ctx, serverid)
+
+
+@bot.command(description="upload maps to servers.", brief="Admin Mindustry Utility",
+             help="<serverid, -1 for allservers>")
+@commands.has_role("Admin (Discord)")
+@commands.check(is_valid_guild)
+async def syncmap(ctx: commands.Context, serverid: int = None):
+    if serverid is None:
+        await console_commands.getserver(ctx)
+        await ctx.send(f"use <serverid, -1 for allservers>")
+    elif serverid == -1:  # syncmap all servers
+        await ctx.send(f"Updating maps...", delete_after=5)
+        for serverid in range(len(console_commands.getservers())):
+            await console_commands.syncmindusmap(ctx, serverid)
+    else:
+        await console_commands.syncmindusmap(ctx, serverid)
 
 
 @bot.command(description="assigns the user's role in mindustry, role can be Admin|Mod|Player",
