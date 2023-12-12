@@ -95,7 +95,7 @@ async def readserver(ctx: commands.Context, serverid: int):
         await showconsole(ctx, i, host, screen, port)
     except Exception as e:
         strr=traceback.format_exc()
-        await ctx.channel.send("error occurred 67:" + str(e)+"tb:"+strr)
+        await ctx.channel.send("error occurred 98:" + str(e)+"tb:"+strr)
     else: 
         pass 
 
@@ -135,8 +135,9 @@ async def showconsole(ctx, i, host, screen, port):
     fld=servfolders()[i]
     cmd =f'cat {fld}/screen_log.log'
     out,err = ssh_withcmd(host, cmd)
-    output = str(out[-1500:])[2:-1].split("\\n") 
-    await ctx.channel.send( f"`{host}:{port}` `{screen}`:\n"+ "\n".join(output))
+    decoded1 = out.decode("utf-8")
+    decoded1 = decoded1[-1500:]
+    await ctx.channel.send( f"`{host}:{port}` `{screen}`:\n"+ decoded1)
     await ctx.channel.send(f"Completed reading for `{i}` `{host}:{port}` `{screen}`")# todo delete those msgs if passed
 
 async def servupload(ctx,serverid):
@@ -165,8 +166,17 @@ async def syncmindusmap(ctx,serverid):
         # use subprocess to rsync the files 
         out,err = rsync_maps_cmd(host,src="/root/Documents/watermelonbot/"+source_folder,
                 dst=f"{servfolders()[i]}/config/maps/")
-        decoded = out.decode("utf-8")
-        await ctx.channel.send(f"done upload: `{i}` `{host}:{port}` with screen `{screen}`, output:{decoded[-1000:]}")
+        decoded1 = out.decode("utf-8")
+        cmd =f'screen -S {screen} -p 0 -X stuff "reloadmaps^M"'
+        send_consolecommand(host, cmd)
+        await asyncio.sleep(2)
+        cmd =f'screen -S {screen} -p 0 -X stuff "maps^M"'
+        send_consolecommand(host, cmd)
+        await asyncio.sleep(2)
+        await ctx.channel.send(f"done upload: `{i}` `{host}:{port}` with screen `{screen}`, output:{decoded1[-1000:]}")
+        await showconsole(ctx, i, host, screen, port)
+        # send cmd to reloadmaps
+
     except Exception as e:
         strr=traceback.format_exc()
         await ctx.channel.send("error occurred 171:" + str(e)+"tb:"+strr)
