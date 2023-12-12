@@ -165,7 +165,8 @@ async def syncmindusmap(ctx,serverid):
         # use subprocess to rsync the files 
         out,err = rsync_maps_cmd(host,src="/root/Documents/watermelonbot/"+source_folder,
                 dst=f"{servfolders()[i]}/config/maps/")
-        await ctx.channel.send(f"done upload: `{i}` `{host}:{port}` with screen `{screen}`, output:{str(out)[-1000:]}")
+        decoded = out.decode("utf-8")
+        await ctx.channel.send(f"done upload: `{i}` `{host}:{port}` with screen `{screen}`, output:{decoded[-1000:]}")
     except Exception as e:
         strr=traceback.format_exc()
         await ctx.channel.send("error occurred 171:" + str(e)+"tb:"+strr)
