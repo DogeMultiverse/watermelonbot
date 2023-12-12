@@ -16,6 +16,7 @@ Bot for managing discord and servers, written in python.
 
 # How to contribute
 
+
 ## If you wanted to fix or add new features
 - Fork this repo.
 - Commit your changes on the fork.
@@ -58,5 +59,27 @@ must have these folders: `data/mindustry/mods/common/` and `logs` and `data`
 
 change values of GUILD_ID1 and GUILD_ID2 to the GUILD_ID that you own.
 
-# To Do
-Coming soon 
+# How to upload maps.
+
+- fork this repo
+- upload file to repo
+    - make sure file location is correct (survival maps for survival folder)
+    - make sure files ends with `.msav`
+- make PR to master branch.
+- wait ( do not ping alex)
+
+## IMPORTANT: DO NOT DELETE the following: 
+
+- for survival: `mazev4.msav`
+- for pvp: `SpaceFortressV1.msav`
+- for attack: `Ax_Pvp_map_Oh_no_v3.msav`
+
+deleteing these files should only be done by alex.
+- will require a change in `config startCommands`
+
+## notes for uploading maps
+
+- map name should be same as the file name.
+- no special characters in map name or file name.
+    - `[]_` are allowed.
+    - use underscores or camelCase in file name and map name.
