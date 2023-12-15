@@ -643,6 +643,9 @@ async def checkexp(ctx: discord.ext.commands.Context, user: discord.User = None)
     if prefix == "t?" and ctx.author.id != DUUID_ALEX:
         await ctx.channel.send("no testing for u")
         return
+    elif True:
+        await ctx.channel.send("check exp is down. come back later.")
+        return
     if isinstance(user, type(None)):
         userTarget = ctx.author.id
     else:
