@@ -12,6 +12,8 @@ async def vkick_anti_bot(message,bot,autoban_counts):
     mod_report_channel: discord.TextChannel = bot.get_channel(796305521270587413) 
     autoban_message = await autoban_channel.fetch_message(1173435083353505792)
     if ("Reason grief" in message.content) or ("Reason bot" in message.content) or ("Reason nsfw" in message.content): 
+        if message.content.count("Reason")>1:
+            return
         autoban_counts[0] +=1
         ban_command = message.content.split("\n")[2] # ban by ip
         ban_command= ban_command.split('-1 "')[1][:-1] 
@@ -28,6 +30,9 @@ async def plugin_anti_bot(message,bot,autoban_counts):
     if "BOT detected! IP banned: " not in message.content:
         return
     ip = message.content.split("BOT detected! IP banned: ")[1]
+    
+    if message.content.count("BOT detected! IP banned: ")>1:
+        return
     autoban_channel: discord.TextChannel = bot.get_channel(1165956715230015529)
     autoban_message = await autoban_channel.fetch_message(1173435083353505792)
     if len(ip.split("."))!=4:
