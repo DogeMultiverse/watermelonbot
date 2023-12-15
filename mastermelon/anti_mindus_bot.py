@@ -8,6 +8,8 @@ async def vkick_anti_bot(message,bot,autoban_counts):
         return
     if "ModAdmin Hammer vkick" not in message.content:
         return
+    if "Report" in message.content:
+        return
     autoban_channel: discord.TextChannel = bot.get_channel(1165956715230015529)
     mod_report_channel: discord.TextChannel = bot.get_channel(796305521270587413) 
     autoban_message = await autoban_channel.fetch_message(1173435083353505792)
