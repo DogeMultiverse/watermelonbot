@@ -4,3 +4,4 @@ data/*
 mastermelon/__pycache__
 mastermelon/utils/__pycache__
 logs/*
+testing_code.ipynb
