@@ -4,6 +4,7 @@ import discord
 from pymongo.collection import Collection
 from datetime import timedelta
 from datetime import datetime
+from collections import Counter
 
 from mastermelon import emojis as ej
 
@@ -89,14 +90,13 @@ async def checkexp(ctx: discord.ext.commands.Context, user: discord.User, prefix
         await ctx.channel.send("User has no EXP or user not found.")
         return
     convertedexp_doc : pymongo.Documents = convertedexp.find_one({"duuid": userTarget})
-    if convertedexp_doc is None:
-        convertedexp_doc = {"duuid": userTarget, "convertedexp": 0, "lastconvertdate":datetime.utcnow() }
+    if convertedexp_doc is None: 
+        convertedexp_doc = {"duuid": userTarget, "convertedexp": int(exp_doc["EXP"])//2, "lastconvertdate":datetime.utcnow() }
         convertedexp.insert_one(convertedexp_doc)
     # convertedexp_doc should have 3 fields.
-    await ctx.channel.send(convertedexp_doc)
-    # await ctx.channel.send(exp_doc["musername"]+" "+len(exp_doc["servers"])+" exp"+exp_doc["EXP"])
-    await ctx.channel.send(f'{exp_doc["musername"]} {len(exp_doc["servers"])} exp {exp_doc["EXP"]}')
-
+    await ctx.channel.send(f'current exp: {exp_doc["EXP"]}\nconverted exp: {convertedexp_doc["convertedexp"]}\nlast converted: {convertedexp_doc["lastconvertdate"]}')
+    # TODO make this formating better 
+    # await ctx.channel.send(Counter(exp_doc["servers"]).items())
 
 async def checkexp_legacy(ctx: discord.ext.commands.Context, user: discord.User, prefix: str, expgains: Collection, convertedexp: Collection):
     if prefix == "t?" and ctx.author.id != DUUID_ALEX:
