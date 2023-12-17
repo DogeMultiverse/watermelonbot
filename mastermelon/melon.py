@@ -580,7 +580,7 @@ async def guess(ctx: discord.ext.commands.Context):
 @bot.command(description="Check user's registered account's EXP", brief="Utility")
 @commands.check(is_valid_guild)
 async def checkexp(ctx: discord.ext.commands.Context, user: discord.User = None):
-    await mindustry.checkexp(ctx,user,prefix,expv7,convertedexpv7)
+    await mindustry.checkexp(ctx,user,prefix,expv7,convertedexpv7,convertedexpv6=convertedexp,expgainsv6=expgains)
 
 
 @bot.command(description="Displays buyeffect menu.", brief="Utility")
@@ -588,6 +588,9 @@ async def checkexp(ctx: discord.ext.commands.Context, user: discord.User = None)
 async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
     if prefix == "t?" and ctx.author.id != DUUID_ALEX:
         await ctx.channel.send("t? is only for alex to test")
+        return
+    elif True:
+        await ctx.channel.send("Effects coming soon")
         return
     await ctx.channel.send("Fetching effects...", delete_after=2)
     effects_cost = {20: ["yellowDiamond", "yellowSquare", "yellowCircle"],
@@ -855,26 +858,6 @@ async def giveaway(ctx: discord.ext.commands.Context, what: str, channel: discor
         pass
     else:
         await ctx.channel.send("invalid command usage")
-
-
-@bot.command()
-@commands.check(is_valid_guild)
-async def feedback(ctx):
-    if True:
-        return
-    button = ui.Button(
-        label="Write", style=discord.ButtonStyle.primary)  # create_button
-    view = ui.View()  # create view
-    view.add_item(button)  # add to view button
-
-    async def button_callback(interaction: discord.Interaction):  # on button_click
-        modal = feedback.MyModal(title="FeedBack")
-        await interaction.response.send_modal(modal)  # open the modal window
-
-    button.callback = button_callback
-    embed = discord.Embed(title="What would you like to add to the mindustry or discord server",
-                          description="Send a message to the developers", color=discord.Color.red())
-    await ctx.channel.send(embed=embed, view=view)
 
 
 @bot.command(description=f"Convert user's exp into {ej.ax_emoji}.", brief="Utility")

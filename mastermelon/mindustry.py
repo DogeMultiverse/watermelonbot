@@ -75,7 +75,8 @@ def get_latest_exp(res, convertedexp_doc):
     return str_builder, exp_dict, convertedexp_doc
 
 
-async def checkexp(ctx: discord.ext.commands.Context, user: discord.User, prefix: str, expgains: Collection, convertedexp: Collection):
+async def checkexp(ctx: discord.ext.commands.Context, user: discord.User, prefix: str, expgains: Collection,
+                   convertedexp: Collection, convertedexpv6: Collection, expgainsv6: Collection):
     if prefix == "t?" and ctx.author.id != DUUID_ALEX:
         await ctx.channel.send("no testing for u")
         return 
@@ -90,13 +91,40 @@ async def checkexp(ctx: discord.ext.commands.Context, user: discord.User, prefix
         await ctx.channel.send("User has no EXP or user not found.")
         return
     convertedexp_doc : pymongo.Documents = convertedexp.find_one({"duuid": userTarget})
-    if convertedexp_doc is None: 
-        convertedexp_doc = {"duuid": userTarget, "convertedexp": int(exp_doc["EXP"])//2, "lastconvertdate":datetime.utcnow() }
+    EXP = exp_doc["EXP"]
+    if convertedexp_doc is None:
+        latest_claim = get_latest_claim(userTarget,convertedexpv6,expgainsv6)
+        latest_claim = min(EXP,latest_claim)
+        convertedexp_doc = {"duuid": userTarget, "convertedexp": latest_claim, "lastconvertdate":datetime.utcnow() }
         convertedexp.insert_one(convertedexp_doc)
     # convertedexp_doc should have 3 fields.
-    await ctx.channel.send(f'Current EXP: `{exp_doc["EXP"]}`\nConverted EXP: `{convertedexp_doc["convertedexp"]}`\nLast converted: `{convertedexp_doc["lastconvertdate"]}`\nUse `{prefix}convertexp` to convert your EXP to {ej.ax_emoji}. You will still keep your EXP.')
-    # TODO make this formating better 
-    # await ctx.channel.send(Counter(exp_doc["servers"]).items())
+    str_time=convertedexp_doc["lastconvertdate"].strftime("%a %d %b %Y, %I:%M%p")+" (UTC)"
+    await ctx.channel.send( f'Current EXP: `{EXP:,}`\n'\
+                            f'Converted EXP: `{convertedexp_doc["convertedexp"]:,}`\n'\
+                            f'Last converted: `{str_time}`\n'\
+                            f'Use `{prefix}convertexp` to convert your EXP to {ej.ax_emoji}. You will still keep your EXP.'
+                            )
+    # TODO make this formating better
+
+async def convertexp(ctx: discord.ext.commands.Context, user: discord.User, prefix: str, expgains: Collection,
+                   convertedexp: Collection, convertedexpv6: Collection, expgainsv6: Collection):
+    await ctx.channel.send(f'Coming soon...')
+
+def get_latest_claim(duuid,convertedexpv6,expgainsv6):
+    docs = expgainsv6.find({"duuid":duuid}).sort("EXP",-1).limit(1)
+    servername=""
+    for d in docs:
+        servername=d["servername"]
+    latest_claim = 0
+    docs2 = convertedexpv6.find({"duuid":duuid}).limit(1)
+    for d in docs2:
+        for muuid,docc in d["converted"].items():
+            if servername[7:] in docc:
+                claimed = docc[servername[7:] ]["claimed"]
+                if claimed>latest_claim:
+                    latest_claim=claimed
+    return latest_claim
+
 
 async def convertexp(ctx: discord.ext.commands.Context, user: discord.User, prefix: str, expgains: Collection, convertedexp: Collection):
     if prefix == "t?" and ctx.author.id != DUUID_ALEX:
