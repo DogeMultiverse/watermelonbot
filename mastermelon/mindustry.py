@@ -83,7 +83,7 @@ async def checkexp(ctx: discord.ext.commands.Context, user: discord.User, prefix
         userTarget = ctx.author.id
     else:
         userTarget = user.id
-    await ctx.channel.send('getting exp', delete_after=3)
+    await ctx.channel.send('Getting exp', delete_after=3)
 
     exp_doc : pymongo.Documents = expgains.find_one({"duuid": userTarget},{"_id": 0, "musername": 1, "EXP": 1, "servers": 1})
     if exp_doc is None:
@@ -94,10 +94,21 @@ async def checkexp(ctx: discord.ext.commands.Context, user: discord.User, prefix
         convertedexp_doc = {"duuid": userTarget, "convertedexp": int(exp_doc["EXP"])//2, "lastconvertdate":datetime.utcnow() }
         convertedexp.insert_one(convertedexp_doc)
     # convertedexp_doc should have 3 fields.
-    await ctx.channel.send(f'current exp: {exp_doc["EXP"]}\nconverted exp: {convertedexp_doc["convertedexp"]}\nlast converted: {convertedexp_doc["lastconvertdate"]}')
+    await ctx.channel.send(f'Current EXP: `{exp_doc["EXP"]}`\nConverted EXP: `{convertedexp_doc["convertedexp"]}`\nLast converted: `{convertedexp_doc["lastconvertdate"]}`\nUse `{prefix}convertexp` to convert your EXP to {ej.ax_emoji}. You will still keep your EXP.')
     # TODO make this formating better 
     # await ctx.channel.send(Counter(exp_doc["servers"]).items())
 
+async def convertexp(ctx: discord.ext.commands.Context, user: discord.User, prefix: str, expgains: Collection, convertedexp: Collection):
+    if prefix == "t?" and ctx.author.id != DUUID_ALEX:
+        await ctx.channel.send("no testing for u")
+        return 
+    if isinstance(user, type(None)):
+        userTarget = ctx.author.id
+    else:
+        userTarget = user.id
+    await ctx.channel.send('Converting exp', delete_after=3)
+    
+    
 async def checkexp_legacy(ctx: discord.ext.commands.Context, user: discord.User, prefix: str, expgains: Collection, convertedexp: Collection):
     if prefix == "t?" and ctx.author.id != DUUID_ALEX:
         await ctx.channel.send("no testing for u")
