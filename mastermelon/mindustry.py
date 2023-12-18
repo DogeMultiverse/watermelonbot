@@ -97,15 +97,15 @@ async def checkexp(ctx: discord.ext.commands.Context, user: discord.User, prefix
     EXP = exp_doc["EXP"]
     if convertedexp_doc is None:
         latest_claim = get_latest_claim(userTarget,convertedexpv6,expgainsv6)
-        latest_claim = min(EXP,latest_claim)
+        latest_claim = min(EXP,latest_claim)//EXCHANGE_RATE*EXCHANGE_RATE
         convertedexp_doc = {"duuid": userTarget, "convertedexp": latest_claim, "lastconvertdate":datetime.utcnow() }
         convertedexp.insert_one(convertedexp_doc)
     # convertedexp_doc should have 3 fields.
     str_time=convertedexp_doc["lastconvertdate"].strftime("%a %d %b %Y, %I:%M%p")+" (UTC)"
-    await ctx.channel.send( f'Current EXP: `{EXP:,}`\n'\
+    await ctx.channel.send( f'Current EXP for {ctx.author.name}: `{EXP:,}`\n'\
                             f'Converted EXP: `{convertedexp_doc["convertedexp"]:,}`\n'\
                             f'Last converted: `{str_time}`\n'\
-                            f'Use `{prefix}convertexp` to convert your EXP to {ej.ax_emoji}. You will still keep your EXP.'
+                            f'Use `{prefix}convertexp` to convert your EXP to {ej.ax_emoji} (minimum `{EXCHANGE_RATE:,}`EXP). You will still keep your EXP.'
                             )
     # TODO make this formating better
 
