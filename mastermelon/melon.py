@@ -577,12 +577,6 @@ async def guess(ctx: discord.ext.commands.Context):
         await ctx.channel.send('Oops. It is actually {}.'.format(answer))
 
 
-@bot.command(description="Check user's registered account's EXP", brief="Utility")
-@commands.check(is_valid_guild)
-async def checkexp(ctx: discord.ext.commands.Context, user: discord.User = None):
-    await mindustry.checkexp(ctx,user,prefix,expv7,convertedexpv7,convertedexpv6=convertedexp,expgainsv6=expgains)
-
-
 @bot.command(description="Displays buyeffect menu.", brief="Utility")
 @commands.check(is_valid_guild)
 async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
