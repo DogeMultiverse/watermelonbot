@@ -861,6 +861,8 @@ async def giveaway(ctx: discord.ext.commands.Context, what: str, channel: discor
 
 
 @bot.command(description="Check user's registered account's EXP", brief="Utility")
+@commands.check(is_valid_guild)
+async def checkexp(ctx: discord.ext.commands.Context, user: discord.User = None):
 
 @bot.command(description=f"Convert user's exp into {ej.ax_emoji}.", brief="Utility")
 @commands.check(is_valid_guild)
