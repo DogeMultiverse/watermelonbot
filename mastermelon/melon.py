@@ -868,78 +868,8 @@ async def checkexp(ctx: discord.ext.commands.Context, user: discord.User = None)
 
 @bot.command(description=f"Convert user's exp into {ej.ax_emoji}.", brief="Utility")
 @commands.check(is_valid_guild)
-async def convertexp(ctx: discord.ext.commands.Context, member: discord.Member = None):
-    if member is not None and (member.id != ctx.author.id) and ctx.author.id != DUUID_ALEX:
-        await ctx.channel.send(f"{ctx.author.mention} you can only convert your own exp.")
-        return
-    if member is None:
-        member = ctx.author
-    if prefix == "t?" and ctx.author.id != DUUID_ALEX:
-        await ctx.channel.send(f"{ctx.author.mention} t? is only for alex to test")
-        return
-    elif True:
-        await ctx.channel.send("convert exp is down. come back later.")
-        return
-    await ctx.channel.send(f'Conversion rate: 1000 EXP -> 1 {ej.ax_emoji}. '
-                           f'Minimum conversion = 1000 EXP.', delete_after=20)
-    # add a new collection to show how much was claimed # add last claimed time.
-    cursor = expgains.find({"duuid": member.id})
-    convertedexp_doc = convertedexp.find_one({"duuid": member.id})
-    if convertedexp_doc is None:
-        convertedexp.insert_one({"duuid": member.id, "converted": None})
-    else:
-        convertedexp_doc = convertedexp_doc["converted"]
-    res = []
-    for i, cur in enumerate(cursor):
-        res.append(cur)
-    if len(res) == 0:
-        await ctx.channel.send("User has no EXP or user not found. Can't convert emptiness.")
-        return
-    else:
-        str_builder, exp_dict, convertedexp_doc = get_latest_exp(
-            res, convertedexp_doc)
-        if len(str_builder) > 0:
-            new_Ax = 0
-            for muuid, exps in exp_dict.items():
-                for servdata in exps["servers"]:
-                    legacy_server = servdata["legacy_server"]
-                    if not legacy_server:
-                        rservername = servdata["servername"]
-                        exp = servdata["exp"]
-                        if exp is None:
-                            exp = 0
-                        claimed = servdata["claimed"]
-                        if exp < 0:
-                            exp = 0
-                            await ctx.channel.send("There is a bug here, PING alex. error 579")
-                        if claimed < 0:
-                            claimed = 0
-                            await ctx.channel.send("There is a bug here, PING alex. error 580")
-                        claims = (exp - claimed) // 1000  # integer division
-                        if claims < 0:
-                            await ctx.channel.send("There is a bug here, PING alex. error 581")
-                            claims = 0
-                        new_Ax += claims
-                        servdata["claimed"] += claims * 1000
-                        convertedexp_doc[muuid][rservername] = {"claimed": servdata["claimed"],
-                                                                "lcdate": datetime.utcnow()}
-            convertedexp.find_one_and_replace({"duuid": member.id},
-                                              {"duuid": member.id, "converted": convertedexp_doc})
-            if ax.find_one({"duuid": member.id}) is None:
-                ax.insert_one({"duuid": member.id, "ax": new_Ax})
-            else:
-                ax.find_one_and_update({"duuid": member.id}, {
-                    "$inc": {"ax": new_Ax}})
-            userduuid = member.id
-            old_val = ax.find_one({"duuid": userduuid})
-            if isinstance(old_val, type(None)):
-                old_val = 0
-            else:
-                old_val = old_val["ax"]
-            strrr = f"{member.display_name} You have converted {new_Ax * 1000} EXP into {new_Ax} {ej.ax_emoji}.\nCongrats!. You now have {old_val} {ej.ax_emoji}."
-            await ctx.channel.send(strrr)
-        else:
-            await ctx.channel.send(f"{member.display_name} You have no exp. ;-; Can't convert emptiness.")
+async def convertexp(ctx: discord.ext.commands.Context, member: discord.Member = None):  
+    await mindustry.convertexp(ctx,prefix,expv7,convertedexpv7,convertedexpv6=convertedexp,expgainsv6=expgains,ax=ax)
 
 
 @bot.command(description="For Appealing a member", brief="Utility",
