@@ -172,17 +172,6 @@ def get_latest_claim(duuid,convertedexpv6,expgainsv6):
                     latest_claim=claimed
     return latest_claim
 
-
-async def convertexp(ctx: discord.ext.commands.Context, user: discord.User, prefix: str, expgains: Collection, convertedexp: Collection):
-    if prefix == "t?" and ctx.author.id != DUUID_ALEX:
-        await ctx.channel.send("no testing for u")
-        return 
-    if isinstance(user, type(None)):
-        userTarget = ctx.author.id
-    else:
-        userTarget = user.id
-    await ctx.channel.send('Converting exp', delete_after=3)
-    
     
 async def checkexp_legacy(ctx: discord.ext.commands.Context, user: discord.User, prefix: str, expgains: Collection, convertedexp: Collection):
     if prefix == "t?" and ctx.author.id != DUUID_ALEX:
