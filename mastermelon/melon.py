@@ -862,7 +862,7 @@ async def checkexp(ctx: discord.ext.commands.Context, user: discord.User = None)
 
 @bot.command(description=f"Convert user's exp into {ej.ax_emoji}.", brief="Utility")
 @commands.check(is_valid_guild)
-async def convertexp(ctx: discord.ext.commands.Context, member: discord.Member = None):  
+async def convertexp(ctx: discord.ext.commands.Context):  
     await mindustry.convertexp(ctx,prefix,expv7,convertedexpv7,convertedexpv6=convertedexp,expgainsv6=expgains,ax=ax)
 
 
