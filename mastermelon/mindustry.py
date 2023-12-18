@@ -81,7 +81,7 @@ def get_latest_exp(res, convertedexp_doc):
 async def checkexp(ctx: discord.ext.commands.Context, user: discord.User, prefix: str, expgains: Collection,
                    convertedexp: Collection, convertedexpv6: Collection, expgainsv6: Collection):
     if prefix == "t?" and ctx.author.id != DUUID_ALEX:
-        await ctx.channel.send("no testing for u")
+        await ctx.channel.send(f"{ctx.author.name} no testing for u")
         return 
     if isinstance(user, type(None)):
         userTarget = ctx.author.id
