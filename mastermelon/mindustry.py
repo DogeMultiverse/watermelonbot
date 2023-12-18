@@ -8,6 +8,9 @@ from collections import Counter
 
 from mastermelon import emojis as ej
 
+
+EXCHANGE_RATE=1000 # EXP to Ax
+
 def get_latest_exp(res, convertedexp_doc):
     muuid = {}
     muuid_name = {}
@@ -78,7 +81,7 @@ def get_latest_exp(res, convertedexp_doc):
 async def checkexp(ctx: discord.ext.commands.Context, user: discord.User, prefix: str, expgains: Collection,
                    convertedexp: Collection, convertedexpv6: Collection, expgainsv6: Collection):
     if prefix == "t?" and ctx.author.id != DUUID_ALEX:
-        await ctx.channel.send("no testing for u")
+        await ctx.channel.send(f"{ctx.author.name} no testing for u")
         return 
     if isinstance(user, type(None)):
         userTarget = ctx.author.id
@@ -88,27 +91,71 @@ async def checkexp(ctx: discord.ext.commands.Context, user: discord.User, prefix
 
     exp_doc : pymongo.Documents = expgains.find_one({"duuid": userTarget},{"_id": 0, "musername": 1, "EXP": 1, "servers": 1})
     if exp_doc is None:
-        await ctx.channel.send("User has no EXP or user not found.")
+        await ctx.channel.send(f"{ctx.author.name}: User has no EXP or user not found.")
         return
     convertedexp_doc : pymongo.Documents = convertedexp.find_one({"duuid": userTarget})
     EXP = exp_doc["EXP"]
     if convertedexp_doc is None:
         latest_claim = get_latest_claim(userTarget,convertedexpv6,expgainsv6)
-        latest_claim = min(EXP,latest_claim)
+        latest_claim = min(EXP,latest_claim)//EXCHANGE_RATE*EXCHANGE_RATE
         convertedexp_doc = {"duuid": userTarget, "convertedexp": latest_claim, "lastconvertdate":datetime.utcnow() }
         convertedexp.insert_one(convertedexp_doc)
     # convertedexp_doc should have 3 fields.
     str_time=convertedexp_doc["lastconvertdate"].strftime("%a %d %b %Y, %I:%M%p")+" (UTC)"
-    await ctx.channel.send( f'Current EXP: `{EXP:,}`\n'\
+    await ctx.channel.send( f'Current EXP for {ctx.author.name}: `{EXP:,}`\n'\
                             f'Converted EXP: `{convertedexp_doc["convertedexp"]:,}`\n'\
                             f'Last converted: `{str_time}`\n'\
-                            f'Use `{prefix}convertexp` to convert your EXP to {ej.ax_emoji}. You will still keep your EXP.'
+                            f'Use `{prefix}convertexp` to convert your EXP to {ej.ax_emoji} (minimum `{EXCHANGE_RATE:,}`EXP). You will still keep your EXP.'
                             )
     # TODO make this formating better
 
-async def convertexp(ctx: discord.ext.commands.Context, user: discord.User, prefix: str, expgains: Collection,
-                   convertedexp: Collection, convertedexpv6: Collection, expgainsv6: Collection):
-    await ctx.channel.send(f'Coming soon...')
+async def convertexp(ctx: discord.ext.commands.Context, prefix: str, expgains: Collection,
+                   convertedexp: Collection, convertedexpv6: Collection, expgainsv6: Collection, ax: Collection):
+    if prefix == "t?" and ctx.author.id != DUUID_ALEX:
+        await ctx.channel.send(f"{ctx.author.name} no testing for u")
+        return  
+    userTarget = ctx.author.id 
+    await ctx.channel.send(f'Converting EXP to {ej.ax_emoji}', delete_after=3)
+
+    exp_doc : pymongo.Documents = expgains.find_one({"duuid": userTarget},{"_id": 0, "musername": 1, "EXP": 1, "servers": 1})
+    if exp_doc is None:
+        await ctx.channel.send("User has no EXP or user not found.")
+        return
+    convertedexp_doc : pymongo.Documents = convertedexp.find_one({"duuid": userTarget})
+    EXP = exp_doc["EXP"]
+    if convertedexp_doc is None: # first time claiming in the new system
+        latest_claim = get_latest_claim(userTarget,convertedexpv6,expgainsv6)
+        latest_claim = min(EXP,latest_claim)//EXCHANGE_RATE*EXCHANGE_RATE
+        convertedexp_doc = {"duuid": userTarget, "convertedexp": latest_claim, "lastconvertdate":datetime.utcnow() }
+        convertedexp.insert_one(convertedexp_doc)
+
+    latest_claim = int(convertedexp_doc["convertedexp"])//EXCHANGE_RATE*EXCHANGE_RATE
+    # convertedexp_doc should have 3 fields.
+    # do the claim
+    if (EXP-latest_claim) >= EXCHANGE_RATE: # more than exchange rate
+        new_claim = (EXP-latest_claim)//EXCHANGE_RATE*EXCHANGE_RATE
+        # convertedexp_doc = {"duuid": userTarget, "convertedexp": latest_claim+new_claim, "lastconvertdate":datetime.utcnow() }
+        lastconvertdate = datetime.utcnow()
+        convertedexp.find_one_and_update({"duuid": userTarget},{"$set": {"convertedexp": latest_claim+new_claim, "lastconvertdate":lastconvertdate}})
+        # give ax
+        new_ax_to_add = new_claim//EXCHANGE_RATE
+        old_val = ax.find_one({"duuid": userTarget})
+        if isinstance(old_val, type(None)):
+            ax.insert_one({"duuid": userTarget, "ax": 0})
+            old_val = 0
+        else:
+            old_val = old_val["ax"]
+        ax.find_one_and_update({"duuid": userTarget}, {"$inc": {"ax": new_ax_to_add}})
+        str_time=lastconvertdate.strftime("%a %d %b %Y, %I:%M%p")+" (UTC)"
+        await ctx.channel.send( f'{ctx.author.name} gained `{new_ax_to_add:,}` {ej.ax_emoji}\n'\
+                                f'Final balance: `{old_val+new_ax_to_add:,}` {ej.ax_emoji}\n'\
+                                f'Current EXP: `{EXP:,}`\n'\
+                                f'Converted EXP: `{latest_claim+new_claim:,}`\n'\
+                                f'Last converted: `{str_time}`\n'\
+                                f'Use `{prefix}buyeffect` to buy some effects!'
+                                )
+    else:
+        await ctx.channel.send(f"{ctx.author.name}, you dont have enough additional EXP to convert to {ej.ax_emoji}. Use `{prefix}checkexp` to check your EXP.")
 
 def get_latest_claim(duuid,convertedexpv6,expgainsv6):
     docs = expgainsv6.find({"duuid":duuid}).sort("EXP",-1).limit(1)
@@ -120,22 +167,11 @@ def get_latest_claim(duuid,convertedexpv6,expgainsv6):
     for d in docs2:
         for muuid,docc in d["converted"].items():
             if servername[7:] in docc:
-                claimed = docc[servername[7:] ]["claimed"]
+                claimed = int(docc[servername[7:] ]["claimed"])
                 if claimed>latest_claim:
                     latest_claim=claimed
     return latest_claim
 
-
-async def convertexp(ctx: discord.ext.commands.Context, user: discord.User, prefix: str, expgains: Collection, convertedexp: Collection):
-    if prefix == "t?" and ctx.author.id != DUUID_ALEX:
-        await ctx.channel.send("no testing for u")
-        return 
-    if isinstance(user, type(None)):
-        userTarget = ctx.author.id
-    else:
-        userTarget = user.id
-    await ctx.channel.send('Converting exp', delete_after=3)
-    
     
 async def checkexp_legacy(ctx: discord.ext.commands.Context, user: discord.User, prefix: str, expgains: Collection, convertedexp: Collection):
     if prefix == "t?" and ctx.author.id != DUUID_ALEX:
