@@ -8,6 +8,9 @@ from collections import Counter
 
 from mastermelon import emojis as ej
 
+
+EXCHANGE_RATE=1000 # EXP to Ax
+
 def get_latest_exp(res, convertedexp_doc):
     muuid = {}
     muuid_name = {}
