@@ -91,7 +91,7 @@ async def checkexp(ctx: discord.ext.commands.Context, user: discord.User, prefix
 
     exp_doc : pymongo.Documents = expgains.find_one({"duuid": userTarget},{"_id": 0, "musername": 1, "EXP": 1, "servers": 1})
     if exp_doc is None:
-        await ctx.channel.send("User has no EXP or user not found.")
+        await ctx.channel.send(f"{ctx.author.name}: User has no EXP or user not found.")
         return
     convertedexp_doc : pymongo.Documents = convertedexp.find_one({"duuid": userTarget})
     EXP = exp_doc["EXP"]
