@@ -352,6 +352,21 @@ async def restartserver(ctx: commands.Context, serverid: int = None):
         await console_commands.restartserver(ctx, serverid)
 
 
+@bot.command(description="start servers (admin only)", brief="Admin Mindustry Utility",
+             help="<serverid, -1 for allservers>")
+@commands.has_role("Admin (Discord)")
+@commands.check(is_valid_guild) 
+async def startserver(ctx: commands.Context, serverid: int = None):
+    if serverid is None:
+        await console_commands.getserver(ctx)
+        await ctx.send(f"use <serverid, -1 for allservers>")
+    elif serverid == -1:  # start all servers
+        for serverid in range(len(console_commands.getservers())):
+            await console_commands.startserver(ctx, serverid)
+    else:
+        await console_commands.startserver(ctx, serverid)
+
+
 @bot.command(description="send gameover command to servers (admin only)", brief="Admin Mindustry Utility",
              help="<serverid, -1 for allservers>")
 @commands.has_role("Admin (Discord)")

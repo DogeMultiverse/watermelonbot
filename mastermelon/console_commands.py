@@ -74,6 +74,24 @@ async def restartserver(ctx: commands.Context, serverid: int):
     else: 
         pass # todo delete those msgs if passed
 
+
+async def startserver(ctx: commands.Context, serverid: int):
+    servers = getservers()
+    try:
+        i,host,screen,port,loc = servers[serverid]
+        fld=servfolders()[i]
+        await ctx.channel.send(f"Sending screenserverstart command to `{i}` `{host}:{port}` with screen `{screen}`, waiting 2 seconds")
+        cmd =f'cd {fld}; ./screen_server_start.sh'
+        send_consolecommand(host, cmd)
+        await asyncio.sleep(2)
+        await ctx.channel.send(f"Completed start for `{i}` `{host}:{port}` `{screen}`")
+    except Exception as e:
+        strr=traceback.format_exc()
+        await ctx.channel.send("error occurred 45:" + str(e)+"tb:"+strr)
+    else: 
+        pass # todo delete those msgs if passed
+
+
 async def gameoverserver(ctx: commands.Context, serverid: int):
     servers = getservers()
     try:
