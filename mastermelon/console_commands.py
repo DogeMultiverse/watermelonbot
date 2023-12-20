@@ -80,8 +80,8 @@ async def startserver(ctx: commands.Context, serverid: int):
     try:
         i,host,screen,port,loc = servers[serverid]
         fld=servfolders()[i]
-        await ctx.channel.send(f"Sending screenserverstart command to `{i}` `{host}:{port}` with screen `{screen}`, waiting 2 seconds")
-        cmd =f'cd {fld}; ./screen_server_start.sh;'
+        await ctx.channel.send(f"Sending screen server start command to `{i}` `{host}:{port}` with screen `{screen}`, waiting 2 seconds")
+        cmd =f"'cd {fld}; ./screen_server_start.sh;'"
         ssh_withcmd(host, cmd)
         await asyncio.sleep(2)
         await ctx.channel.send(f"Completed start for `{i}` `{host}:{port}` `{screen}`")
