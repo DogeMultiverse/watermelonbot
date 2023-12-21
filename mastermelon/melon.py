@@ -65,6 +65,8 @@ if prefix in ["w?", "t?"]:  # only access mongodb for w? and t?
     discordinvites: Collection = db["discordinvites"]
     registerpin: Collection = db["registerpin"]
     duuid1: Collection = db["duuid1"]
+    #discord names
+    discordname: Collection = db["discordname"]
 
 invitecode_mapping = {"KPVVsj2MGW": "Alex Mindustry Invite", "BnBf2STAAd": "Doge Youtube Invite",
                       "GSdkpZZuxN": "Doge Youtube Premium Invite", "BmCssqnhX6": "Alex TOP MC Invite",
@@ -335,6 +337,24 @@ async def gettest(ctx: commands.Context):
     await ctx.channel.send(len([m for m in ctx.guild.members if not m.bot]))
 
 
+@bot.command(description="start servers (admin only)", brief="Admin Mindustry Utility",
+             help="<serverid, -1 for allservers>")
+@commands.has_role("Admin (Discord)")
+@commands.check(is_valid_guild) 
+async def getnames(ctx: commands.Context, serverid: int = None):
+    if ctx.author.id != DUUID_ALEX:
+        await ctx.channel.send("no testing for u")
+        return
+    if True:
+        await ctx.channel.send("alex, dont run this again... it will add unnecessary additional documents")
+        return
+    listt = [{"duuid":m.id,"discname":m.name,"discri":m.discriminator} for m in ctx.guild.members if not m.bot]
+    discordname.insert_many(listt)
+    #mems = [m for m in ctx.guild.members if not m.bot]
+    #await ctx.channel.send(str(mems[:5]))
+    await ctx.channel.send("done")
+
+
 # commands related to mindustry servers
 @bot.command(description="restart servers (admin only)", brief="Admin Mindustry Utility",
              help="<serverid, -1 for allservers>")
@@ -553,7 +573,7 @@ async def addhype2(ctx, messageid: int, channel: discord.TextChannel = None, cou
 
 @bot.event
 async def on_command_error(ctx: discord.ext.commands.Context, error: Exception, *args, **kwargs):
-    print(ctx, str(error))
+    print(ctx.author,ctx, str(error))
     if isinstance(type(error), discord.ext.commands.UserInputError):
         await ctx.message.channel.send(f"Wrong arguments {ctx.author.mention}: " + str(error))
     elif isinstance(error, discord.ext.commands.errors.BadArgument):
@@ -772,6 +792,11 @@ async def register(ctx: discord.ext.commands.Context, pin: str):
             duuid1.insert_one({"duuid": ctx.author.id, "musername": userdata["musername"],
                                "muuid": userdata["muuid"], "role": role, "color": "0000ffff",
                                "date": datetime.utcnow()})
+            
+            prev_doc = discordname.find_one({"duuid":ctx.author.id})
+            if prev_doc is None:
+                # [{"duuid":m.id,"discname":m.name,"discri":m.discriminator} for m in ctx.guild.members if not m.bot]
+                discordname.insert_one( {"duuid":ctx.author.id,"discname":ctx.author.name,"discri":ctx.author.discriminator} )
             for found_object in found_objects:  # delete all the pins from database
                 registerpin.find_one_and_delete({"_id": found_object})
             await ctx.channel.send(
