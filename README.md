@@ -72,7 +72,8 @@ change values of GUILD_ID1 and GUILD_ID2 to the GUILD_ID that you own.
 
 - for survival: `mazev4.msav`
 - for pvp: `SpaceFortressV1.msav`
-- for attack: `Ax_Pvp_map_Oh_no_v3.msav`
+- for attack: `AxAttV1.msav`
+- for sanbox: `sandboxv3.msav`
 
 deleteing these files should only be done by alex.
 - will require a change in `config startCommands`
