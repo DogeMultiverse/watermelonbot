@@ -102,7 +102,16 @@ async def checkexp(ctx: discord.ext.commands.Context, user: discord.User, prefix
         convertedexp.insert_one(convertedexp_doc)
     # convertedexp_doc should have 3 fields.
     str_time=convertedexp_doc["lastconvertdate"].strftime("%a %d %b %Y, %I:%M%p")+" (UTC)"
-    await ctx.channel.send( f'Current EXP for {ctx.author.name}: `{EXP:,}`\n'\
+    flex=""
+    if EXP>500_000:
+        flex=" (TOP 0.1%)"
+    elif EXP>100_000:
+        flex=" (TOP 1%)"
+    elif EXP>50_000:
+        flex=" (TOP 10%)"
+    elif EXP>5_000:
+        flex=" (TOP 50%)"
+    await ctx.channel.send( f'{ctx.author.name}:\nCurrent EXP`{EXP:,}{flex}`\n'\
                             f'Converted EXP: `{convertedexp_doc["convertedexp"]:,}`\n'\
                             f'Last converted: `{str_time}`\n'\
                             f'Use `{prefix}convertexp` to convert your EXP to {ej.ax_emoji} (minimum `{EXCHANGE_RATE:,}`EXP). You will still keep your EXP.'
