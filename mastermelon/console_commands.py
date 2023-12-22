@@ -49,7 +49,7 @@ def mapfolders():
     return [
         #"/root/Documents/pvp_v7_2023",
         "mindustry_maps/attack_v7/",
-        "mindustry_maps/pvp_v7/",
+        "mindustry_maps/sandbox_v7/",
         "mindustry_maps/survival_v7/",
         "mindustry_maps/pvp_v7/",
         "mindustry_maps/pvp_v7/"
