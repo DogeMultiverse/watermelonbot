@@ -7,9 +7,9 @@ import pymongo
 effect_links = {
     "yellowSpark": "https://media.discordapp.net/attachments/788044465834950666/806246035798229052/screen-capture_3.gif",
     "pixel": "https://media.discordapp.net/attachments/788044465834950666/806244776655061022/screen-capture_1_1.gif",
-    "rainbowBubble": "https://media.discordapp.net/attachments/788044465834950666/806244581963595836/screen-capture_1.gif",
-    "greenCircle": "https://media.discordapp.net/attachments/788044465834950666/806244393173778522/screen-capture.gif",
-    "whiteDoor": "https://media.discordapp.net/attachments/788044465834950666/806229661620371566/screen-capture.gif",
+    #"rainbowBubble": "https://media.discordapp.net/attachments/788044465834950666/806244581963595836/screen-capture_1.gif",
+    #"greenCircle": "https://media.discordapp.net/attachments/788044465834950666/806244393173778522/screen-capture.gif",
+    #"whiteDoor": "https://media.discordapp.net/attachments/788044465834950666/806229661620371566/screen-capture.gif",
     "rainbowPixel": "https://media.discordapp.net/attachments/788044465834950666/806228968558690344/screen-capture.gif",
     "yellowLargeDiam": "https://media.discordapp.net/attachments/788044465834950666/806227969760690186/screen-capture_2.gif",
     "whiteLancerRandom": "https://media.discordapp.net/attachments/788044465834950666/806227110419103834/screen-capture_1.gif",
@@ -17,29 +17,29 @@ effect_links = {
 
 
 async def showeffectsmenu(ctx: ext.commands.Context, effects_cost: dict, owned_effects: list, effects: list,
-                          balance: int, ax: pymongo.collection, ingamecosmetics: pymongo.collection):
+                          balance: int, ax: pymongo.collection, ingamecosmetics: pymongo.collection, discount:float ):
     emojis_used = []
     emoji_i = 0
     strbuilder = ""
     for cost, effectname in effects_cost.items():
         t_str = []
         for eff in effectname:
-            if eff + "Effect" in owned_effects:
+            if eff in owned_effects:
                 emoji_to_add = " ✅`"
             else:
                 emoji_to_add = "`" + ej.letter_emoji[emoji_i]
                 emojis_used.append([ej.letter_emoji[emoji_i], eff])
                 emoji_i += 1
             t_str.append(f"`{eff}" + emoji_to_add)
-        strbuilder += f"`{cost:>3} `" + ej.ax_emoji + "  " + ", ".join(t_str) + "\n"
+        strbuilder += f"~~`{get_pre_discount(cost,discount):>4}`~~  `{cost:>3} `" + ej.ax_emoji + "  " + ", ".join(t_str) + "\n"
     content = f"(Current balance: `{balance}` {ej.ax_emoji})"
     desc = f"`  Price   Effects`  {content}\n" + strbuilder + \
            "\nNote: `✅`=owned. Purchased effects are non-refundable. " \
            "\nIf color is not specified in the effect, it is *configurable* via `/color` in game."
-    embed = discord.Embed.from_dict({"title": f"Alex Mindustry *special* `Effects MENU`",
+    embed = discord.Embed.from_dict({"title": f"Alex Mindustry *special* `Effects MENU`\n{ctx.author.name}: (Christmas 80% discount)",
                                      "description": desc + "\n🔽Click on the emoji below to view more.🔽",
                                      "color": discord.Colour.dark_grey().value})
-    closed_embed = discord.Embed.from_dict({"title": f"Alex Mindustry *special* `Effects MENU`", "description": desc,
+    closed_embed = discord.Embed.from_dict({"title": f"Alex Mindustry *special* `Effects MENU`\n{ctx.author.name}: (Christmas 80% discount)", "description": desc,
                                             "color": discord.Colour.dark_grey().value})
 
     if len(emojis_used) == 0:
@@ -67,7 +67,7 @@ async def showeffectsmenu(ctx: ext.commands.Context, effects_cost: dict, owned_e
                 if emoj[1] in effect_links:
                     cost = [c for c, e in effects_cost.items() if emoj[1] in e][0]
                     animation_embed = discord.Embed(
-                        title=f"Effect name: `{emoj[1]}`, Cost: {cost} {ej.ax_emoji}").set_image(
+                        title=f"Effect name: `{emoj[1]}`\n Cost: ~~{get_pre_discount(cost,discount)}~~ {cost} {ej.ax_emoji}\n{ctx.author.name}: Christmas discount!").set_image(
                         url=effect_links[emoj[1]])
                     animation_embed.add_field(name="Options:", value=f"{'✅'}=>BUY, {'❌'}=>CANCEL")
                     msg2 = await ctx.channel.send(embed=animation_embed)
@@ -91,8 +91,8 @@ async def showeffectsmenu(ctx: ext.commands.Context, effects_cost: dict, owned_e
                         await msg2.remove_reaction(emoji_remove, ctx.bot.user)
                 else:
                     react_msg = await ctx.channel.send(
-                        f"No preview for this effect yet. Please go to HUB to view it.\nTo "
-                        f"purchase, type `{ctx.bot.command_prefix}buyeffect {emoj[1]}`.")
+                        f"No preview for this effect yet. Please go to SANDBOX/HUB to view it.\nTo "
+                        f"purchase, type `{ctx.bot.command_prefix}buyeffect {emoj[1]}` ")
                     await ej.sleep_add_reaction(react_msg, 5, ej.feelsbm_emoji)
 
     for emoj in emojis_used:
@@ -102,11 +102,9 @@ async def showeffectsmenu(ctx: ext.commands.Context, effects_cost: dict, owned_e
 
 async def makepurchase(ctx: discord.ext.commands.Context, effects_cost: dict, owned_effects, effects, peffect, ax,
                        ingamecosmetics):
-    await ctx.channel.send("Buying effects are not available for now. Coming soon! Meanwhile you can enjoy the free pixel effect in Mindustry!")
-    if True:
-        return
+    #await ctx.channel.send("Buying effects are not available for now. Coming soon! Meanwhile you can enjoy the free pixel effect in Mindustry!")
     try:
-        if (peffect in effects) and not (peffect + "Effect" in owned_effects):
+        if (peffect in effects) and not (peffect in owned_effects):
             peffectcost = [c for c, e in effects_cost.items() if peffect in e][0]
             duuid = ctx.author.id
             balance = ax.find_one({"duuid": duuid})["ax"]
@@ -114,10 +112,10 @@ async def makepurchase(ctx: discord.ext.commands.Context, effects_cost: dict, ow
                 ax.find_one_and_replace({"duuid": duuid},
                                         {"duuid": duuid, "ax": balance - peffectcost})
                 ingamecosmetics.find_one_and_update({"duuid": duuid},
-                                                    {"$push": {"effects": peffect + "Effect"}})
+                                                    {"$push": {"effects": peffect }})
                 desc = f"Purchase successful. Congrats! Now you can flex `{peffect}`" \
                        f"\nYou have {balance - peffectcost} {ej.ax_emoji} now." \
-                       f"\nType `/effect {peffect}` in **Alex Mindustry** to use it."
+                       f"\nType `/effect` in **Alex Mindustry** to use it."
                 embed = discord.Embed.from_dict(
                     {"description": desc, "color": discord.Colour.green().value})
                 react = await ctx.channel.send(embed=embed)
@@ -142,3 +140,6 @@ async def makepurchase(ctx: discord.ext.commands.Context, effects_cost: dict, ow
         print(str(e))
         await ctx.channel.send("Please re-join Alex mindustry."
                                "\nIf you get this error again, pls **PING** alex! error 189:" + str(e))
+
+def get_pre_discount(cost,discount:float)->int:
+    return int(cost/(1-discount))

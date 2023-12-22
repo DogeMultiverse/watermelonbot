@@ -618,19 +618,18 @@ async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
     if prefix == "t?" and ctx.author.id != DUUID_ALEX:
         await ctx.channel.send("t? is only for alex to test")
         return
-    elif True:
-        await ctx.channel.send("Effects coming soon")
-        return
     await ctx.channel.send("Fetching effects...", delete_after=2)
-    effects_cost = {20: ["yellowDiamond", "yellowSquare", "yellowCircle"],
-                    30: ["greenCircle", "whiteDoor", "yellowLargeDiam", "yellowSpark"],
-                    50: ["whiteLancerRandom"], 80: ["whiteLancerRadius", "pixel", "bubble"],
-                    200: ["rainbowPixel", "rainbowBubble"]}
+    discount=0.8
+    effects_cost = {30: ["yellowDiamond", "yellowSquare"],
+                    50: [ "yellowSpark"],
+                    80: [ "yellowLargeDiam"],
+                    100: ["whiteLancerRandom"], 
+                    250: ["whiteLancerRadius", "circle", "pixel"],
+                    400: ["rainbowPixel", "rainbowCircle"]}
     effects = [ee for c, e in effects_cost.items() for ee in e]
-    owned_effects_collection = ingamecosmetics.find_one(
-        {"duuid": ctx.author.id})
+    owned_effects_collection = ingamecosmeticsv7.find_one({"duuid": ctx.author.id})
     if owned_effects_collection is None:
-        await ctx.channel.send("You need to have a **REGISTERED** mindustry account.")
+        await ctx.channel.send(f"{ctx.author.name}: You need to have a **REGISTERED** mindustry account.")
         return
     owned_effects = owned_effects_collection["effects"]
     duuid = ctx.author.id
@@ -640,10 +639,10 @@ async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
     else:
         balance = ax.find_one({"duuid": duuid})["ax"]
     if isinstance(peffect, type(None)):
-        await effects_display.showeffectsmenu(ctx, effects_cost, owned_effects, effects, balance, ax, ingamecosmetics)
+        await effects_display.showeffectsmenu(ctx, effects_cost, owned_effects, effects, balance, ax, ingamecosmeticsv7,discount)
     else:
         await ctx.channel.send("Validating purchase...", delete_after=2)
-        await effects_display.makepurchase(ctx, effects_cost, owned_effects, effects, peffect, ax, ingamecosmetics)
+        await effects_display.makepurchase(ctx, effects_cost, owned_effects, effects, peffect, ax, ingamecosmeticsv7)
 
 
 # todo show all effects?
