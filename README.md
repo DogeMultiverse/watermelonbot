@@ -84,3 +84,8 @@ deleteing these files should only be done by alex.
 - no special characters in map name or file name.
     - `[]_` are allowed.
     - use underscores or camelCase in file name and map name.
+
+
+## some misc links
+
+https://httpbin.org/ip
