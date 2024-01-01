@@ -101,7 +101,7 @@ class Giveaway(commands.Cog, name="giveaway"):
                 else:
                     ax.find_one_and_update({"duuid": payload.user_id}, {"$inc": {"ax": gaws["amount"]}})
                 await channel.send(content=f"{payload.member.name}#{payload.member.discriminator} just claimed a "
-                                           f"Giveaway in {channelga.mention} {pog_emoji}")
+                                           f"{gaws['amount']} Giveaway in {channelga.mention} {pog_emoji}")
                 embed = form_msg_embed(gaws["message"], gaws["amount"], gaws["winners"], timeleft.days,
                                        timeleft.seconds, len(set(gaws["participants"])))
                 message: discord.Message = await channelga.fetch_message(gaws["messageid"])
