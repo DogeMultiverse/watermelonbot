@@ -8,3 +8,4 @@ testing_code.ipynb
 .ipynb_checkpoints/testing_code-checkpoint.ipynb
 .ipynb_checkpoints/
 .ipynb_checkpoints*
+.conda
