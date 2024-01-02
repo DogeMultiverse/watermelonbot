@@ -942,7 +942,7 @@ async def appeal(ctx: discord.ext.commands.Context, punishment: str, idoruuid: s
 async def check_command_on_general(ctx: discord.ext.commands.Context):
     general_channel_id = 785543837116399636
     bot_commands_channel_id = 785543837116399637
-    verification_channel_id = 785543837116399637
+    verification_channel_id = 791886317491191818
 
     is_register = ctx.message.content.startswith(f"{prefix}register")
 
