@@ -953,11 +953,13 @@ async def check_command_on_general(ctx: discord.ext.commands.Context):
                 f"Please do not register in <#{ctx.channel.id}> instead do it in <#{verification_channel_id}>."
                 f"\nFor other bot commands you can do it in <#{bot_commands_channel_id}>."
                 f"\nYour command was `{ctx.message.content}`."
+                f"\nPlease re-run your command in the correct channel."
             )
         else:
             await ctx.author.send(
                 f"Please do not use commands in <#{ctx.channel.id}> instead do it in <#{bot_commands_channel_id}>."
                 f"\nYour command was `{ctx.message.content}`."
+                f"\nPlease re-run your command in the correct channel."
             )
 
         return False
