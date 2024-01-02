@@ -58,6 +58,7 @@ if prefix in ["w?", "t?"]:  # only access mongodb for w? and t?
     expv7: Collection = db["expv7"]
     convertedexpv7: Collection = db["convertedexpv7"]
     ingamecosmeticsv7: Collection = db["ingamecosmeticsv7"]
+    hexv7: Collection = db["hexdataV7"]
 
     axdatabase: Collection = db["ax"]
     ipaddress_access_key: str = js["ipaddress_access_key"]
@@ -67,6 +68,7 @@ if prefix in ["w?", "t?"]:  # only access mongodb for w? and t?
     duuid1: Collection = db["duuid1"]
     #discord names
     discordname: Collection = db["discordname"]
+
 
 invitecode_mapping = {"KPVVsj2MGW": "Alex Mindustry Invite", "BnBf2STAAd": "Doge Youtube Invite",
                       "GSdkpZZuxN": "Doge Youtube Premium Invite", "BmCssqnhX6": "Alex TOP MC Invite",
@@ -655,19 +657,32 @@ async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
 #     await effects_display.showeffectsmenu()
 
 
-@bot.command(description=f"Check user's ranking in {ej.ax_emoji}", brief="Utility")
+@bot.command(description=f"Check leaderboard of {ej.ax_emoji} ownership", brief="Utility")
 @commands.check(is_valid_guild)
 async def axleaderboard(ctx: discord.ext.commands.Context):
     cursor = axdatabase.find({"ax": {"$gte": 0}}).sort('ax', -1).limit(10)
-
     output = f"{ej.ax_emoji} Leaderboard\n" + f"Rank, Amount, User\n"
-
     for i, user_ax in enumerate(cursor):
         name = get_user_display_name(ctx, user_ax["duuid"])
-
         output += f'{i}. {user_ax["ax"]}{ej.ax_emoji}: {name}\n'
-
     await ctx.reply(output)
+
+
+@bot.command(description=f"Check leaderboard in hex", brief="Utility")
+@commands.check(is_valid_guild)
+async def hexleaderboard(ctx: discord.ext.commands.Context):
+    docs = hexv7.find({},{"currMMR":1,"musername":1,"_id":0,"losswinrank":1}).sort("currMMR",-1).limit(10)
+    listt = []
+    for d in docs:
+        listt.append(d)
+    output = ["Rank, MMR,   WR,   N, IGN"]
+    for rank,dictt in enumerate(listt[:10]):
+            # wr = sum([ (d>0) and (d<4) for d in dictt["losswinrank"]])/len(dictt["losswinrank"])
+            wr = sum([ d==1 for d in dictt["losswinrank"]])/len(dictt["losswinrank"])
+            matches = len(dictt["losswinrank"])
+            # output.append( f'`  {rank+1:>2}`,` {dictt["currMMR"]}`,`{wr:>5.0%}`,`{matches:>4}`, `{dictt["musername"]}`')
+            output.append( f'`  {rank+1:>2}, {dictt["currMMR"]},{wr:>5.0%},{matches:>4}, {dictt["musername"]}`')
+    await ctx.reply("\n".join(output))
 
 
 @bot.command(description="Allocate Ax.", brief="Admin Utility", help="<amount:integer> <@user> <reason>")
