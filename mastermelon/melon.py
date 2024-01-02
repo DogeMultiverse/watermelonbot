@@ -960,8 +960,6 @@ async def check_command_on_general(ctx: discord.ext.commands.Context):
                 f"\nPlease re-run your command in the correct channel."
             )
 
-        return False
-
     return True
 
 
