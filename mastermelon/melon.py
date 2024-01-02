@@ -27,6 +27,7 @@ from mastermelon import cookiegame
 from mastermelon import gen_image
 from mastermelon import feedback
 from mastermelon import mindustry
+from mastermelon.utils.is_staff import is_staff
 from mastermelon.utils.is_valid_guild import is_valid_guild_check, is_valid_guild
 from mastermelon.utils.get_user_display_name import get_user_display_name
 
@@ -35,6 +36,7 @@ autoban_counts = [0, 0]  # griefers and bots
 
 def get_date_str():
     return str(datetime.now())[:-4]
+
 
 intents = discord.Intents.default()
 intents.members = True
@@ -66,7 +68,7 @@ if prefix in ["w?", "t?"]:  # only access mongodb for w? and t?
     discordinvites: Collection = db["discordinvites"]
     registerpin: Collection = db["registerpin"]
     duuid1: Collection = db["duuid1"]
-    #discord names
+    # discord names
     discordname: Collection = db["discordname"]
 
 
@@ -292,11 +294,11 @@ async def help(ctx, args=None):
         command_help = "" if isinstance(command.help, type(
             None)) else ("Help: " + command.help + "\n")
         command_desc = "" if (isinstance(command.description, type(None)) or command.description == "") else (
-            "\nDescription: " + command.description)
+                "\nDescription: " + command.description)
         help_embed.add_field(
             name="Command name: `" + args + "`",
             value=command_help + "Usage: `" + prefix + args +
-            " " + command.signature + "`" + command_desc
+                  " " + command.signature + "`" + command_desc
         )
 
     # If someone is just trolling:
@@ -342,7 +344,7 @@ async def gettest(ctx: commands.Context):
 @bot.command(description="start servers (admin only)", brief="Admin Mindustry Utility",
              help="<serverid, -1 for allservers>")
 @commands.has_role("Admin (Discord)")
-@commands.check(is_valid_guild) 
+@commands.check(is_valid_guild)
 async def getnames(ctx: commands.Context, serverid: int = None):
     if ctx.author.id != DUUID_ALEX:
         await ctx.channel.send("no testing for u")
@@ -350,10 +352,10 @@ async def getnames(ctx: commands.Context, serverid: int = None):
     if True:
         await ctx.channel.send("alex, dont run this again... it will add unnecessary additional documents")
         return
-    listt = [{"duuid":m.id,"discname":m.name,"discri":m.discriminator} for m in ctx.guild.members if not m.bot]
+    listt = [{"duuid": m.id, "discname": m.name, "discri": m.discriminator} for m in ctx.guild.members if not m.bot]
     discordname.insert_many(listt)
-    #mems = [m for m in ctx.guild.members if not m.bot]
-    #await ctx.channel.send(str(mems[:5]))
+    # mems = [m for m in ctx.guild.members if not m.bot]
+    # await ctx.channel.send(str(mems[:5]))
     await ctx.channel.send("done")
 
 
@@ -377,7 +379,7 @@ async def restartserver(ctx: commands.Context, serverid: int = None):
 @bot.command(description="start servers (admin only)", brief="Admin Mindustry Utility",
              help="<serverid, -1 for allservers>")
 @commands.has_role("Admin (Discord)")
-@commands.check(is_valid_guild) 
+@commands.check(is_valid_guild)
 async def startserver(ctx: commands.Context, serverid: int = None):
     if serverid is None:
         await console_commands.getserver(ctx)
@@ -575,7 +577,7 @@ async def addhype2(ctx, messageid: int, channel: discord.TextChannel = None, cou
 
 @bot.event
 async def on_command_error(ctx: discord.ext.commands.Context, error: Exception, *args, **kwargs):
-    print(ctx.author,ctx, str(error))
+    print(ctx.author, ctx, str(error))
     if isinstance(type(error), discord.ext.commands.UserInputError):
         await ctx.message.channel.send(f"Wrong arguments {ctx.author.mention}: " + str(error))
     elif isinstance(error, discord.ext.commands.errors.BadArgument):
@@ -586,6 +588,10 @@ async def on_command_error(ctx: discord.ext.commands.Context, error: Exception, 
         await ctx.message.channel.send(f"ERROR {ctx.author.mention}: CommandNotFound")
     elif isinstance(error, discord.ext.commands.MissingRole):
         await ctx.channel.send(f"You dont have the permission to run this command. {ctx.author.mention}")
+    elif isinstance(error, discord.ext.commands.CheckFailure):
+        # Fail silently
+        # The check should handle the error and notify the user
+        pass
     else:
         await ctx.message.channel.send(f"Unknown error {ctx.author.mention}:" + str(type(error)) + str(error))
 
@@ -608,7 +614,7 @@ async def guess(ctx: discord.ext.commands.Context):
         await ctx.channel.send('Number too large, should be <1000000. Game ends.')
         return
     if int(guess1.content) == answer or True and ((ctx.author.id in [DUUID_WATERMELON, DUUID_ALEX, 848035383795122186])
-                                                   and random.randint(1, 10) > 5):
+                                                  and random.randint(1, 10) > 5):
         await ctx.channel.send('You are right!!!!')
     else:
         await ctx.channel.send('Oops. It is actually {}.'.format(answer))
@@ -621,11 +627,11 @@ async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
         await ctx.channel.send("t? is only for alex to test")
         return
     await ctx.channel.send("Fetching effects...", delete_after=2)
-    discount=0.8
+    discount = 0.8
     effects_cost = {30: ["yellowDiamond", "yellowSquare"],
-                    50: [ "yellowSpark"],
-                    80: [ "yellowLargeDiam"],
-                    100: ["whiteLancerRandom"], 
+                    50: ["yellowSpark"],
+                    80: ["yellowLargeDiam"],
+                    100: ["whiteLancerRandom"],
                     250: ["whiteLancerRadius", "circle", "pixel"],
                     400: ["rainbowPixel", "rainbowCircle"]}
     effects = [ee for c, e in effects_cost.items() for ee in e]
@@ -641,7 +647,8 @@ async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
     else:
         balance = axdatabase.find_one({"duuid": duuid})["ax"]
     if isinstance(peffect, type(None)):
-        await effects_display.showeffectsmenu(ctx, effects_cost, owned_effects, effects, balance, axdatabase, ingamecosmeticsv7,discount)
+        await effects_display.showeffectsmenu(ctx, effects_cost, owned_effects, effects, balance, axdatabase, ingamecosmeticsv7,
+                                              discount)
     else:
         await ctx.channel.send("Validating purchase...", delete_after=2)
         await effects_display.makepurchase(ctx, effects_cost, owned_effects, effects, peffect, axdatabase, ingamecosmeticsv7)
@@ -806,11 +813,12 @@ async def register(ctx: discord.ext.commands.Context, pin: str):
             duuid1.insert_one({"duuid": ctx.author.id, "musername": userdata["musername"],
                                "muuid": userdata["muuid"], "role": role, "color": "0000ffff",
                                "date": datetime.utcnow()})
-            
-            prev_doc = discordname.find_one({"duuid":ctx.author.id})
+
+            prev_doc = discordname.find_one({"duuid": ctx.author.id})
             if prev_doc is None:
                 # [{"duuid":m.id,"discname":m.name,"discri":m.discriminator} for m in ctx.guild.members if not m.bot]
-                discordname.insert_one( {"duuid":ctx.author.id,"discname":ctx.author.name,"discri":ctx.author.discriminator} )
+                discordname.insert_one(
+                    {"duuid": ctx.author.id, "discname": ctx.author.name, "discri": ctx.author.discriminator})
             for found_object in found_objects:  # delete all the pins from database
                 registerpin.find_one_and_delete({"_id": found_object})
             await ctx.channel.send(
@@ -911,13 +919,14 @@ async def giveaway(ctx: discord.ext.commands.Context, what: str, channel: discor
 @bot.command(description="Check user's registered account's EXP", brief="Utility")
 @commands.check(is_valid_guild)
 async def checkexp(ctx: discord.ext.commands.Context, user: discord.User = None):
-    await mindustry.checkexp(ctx,user,prefix,expv7,convertedexpv7,convertedexpv6=convertedexp,expgainsv6=expgains)
+    await mindustry.checkexp(ctx, user, prefix, expv7, convertedexpv7, convertedexpv6=convertedexp, expgainsv6=expgains)
 
 
 @bot.command(description=f"Convert user's exp into {ej.ax_emoji}.", brief="Utility")
 @commands.check(is_valid_guild)
-async def convertexp(ctx: discord.ext.commands.Context):  
-    await mindustry.convertexp(ctx,prefix,expv7,convertedexpv7,convertedexpv6=convertedexp,expgainsv6=expgains,ax=axdatabase)
+async def convertexp(ctx: discord.ext.commands.Context):
+    await mindustry.convertexp(ctx, prefix, expv7, convertedexpv7, convertedexpv6=convertedexp, expgainsv6=expgains,
+                               ax=axdatabase)
 
 
 @bot.command(description="For Appealing a member", brief="Utility",
@@ -935,13 +944,42 @@ async def appeal(ctx: discord.ext.commands.Context, punishment: str, idoruuid: s
     channel = bot.get_channel(791490149753683988)  # appeal-submission
     embed = discord.Embed(title="Appeal")
     embed.set_author(name=ctx.author.name + "#" +
-                     ctx.author.discriminator, icon_url=ctx.author.avatar_url)
+                          ctx.author.discriminator, icon_url=ctx.author.avatar_url)
     embed.add_field(name="Type:", value=str(punishment) +
-                    f" {ctx.author.mention}", inline=False)
+                                        f" {ctx.author.mention}", inline=False)
     embed.add_field(name="In-game Player Name:",
                     value=str(idoruuid), inline=False)
     embed.add_field(name="Reason:", value=str(reason), inline=False)
     await channel.send(embed=embed)
+
+
+@bot.check
+async def check_command_on_general(ctx: discord.ext.commands.Context):
+    general_channel_id = 785543837116399636
+    bot_commands_channel_id = 785543837116399637
+    verification_channel_id = 791886317491191818
+
+    is_register = ctx.message.content.startswith(f"{prefix}register")
+
+    if is_staff(ctx.author):
+        return True
+
+    if ctx.channel.id == general_channel_id:
+        if is_register:
+            await ctx.reply(
+                f"Please do not register in <#{ctx.channel.id}> instead do it in <#{verification_channel_id}>."
+                f"\nFor other bot commands you can do it in <#{bot_commands_channel_id}>."
+                f"\nYour command was `{ctx.message.content}`."
+                f"\nPlease re-run your command in the correct channel."
+            )
+        else:
+            await ctx.reply(
+                f"Please do not use commands in <#{ctx.channel.id}> instead do it in <#{bot_commands_channel_id}>."
+                f"\nYour command was `{ctx.message.content}`."
+                f"\nPlease re-run your command in the correct channel."
+            )
+
+    return True
 
 
 @bot.event
