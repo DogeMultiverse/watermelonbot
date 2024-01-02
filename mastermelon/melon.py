@@ -59,7 +59,7 @@ if prefix in ["w?", "t?"]:  # only access mongodb for w? and t?
     convertedexpv7: Collection = db["convertedexpv7"]
     ingamecosmeticsv7: Collection = db["ingamecosmeticsv7"]
 
-    ax: Collection = db["ax"]
+    axdatabase: Collection = db["ax"]
     ipaddress_access_key: str = js["ipaddress_access_key"]
     serverplayerupdates: Collection = db["serverplayerupdates"]
     discordinvites: Collection = db["discordinvites"]
@@ -633,16 +633,16 @@ async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
         return
     owned_effects = owned_effects_collection["effects"]
     duuid = ctx.author.id
-    if ax.find_one({"duuid": duuid}) is None:
+    if axdatabase.find_one({"duuid": duuid}) is None:
         balance = 0
-        ax.insert_one({"duuid": duuid, "ax": 0})
+        axdatabase.insert_one({"duuid": duuid, "ax": 0})
     else:
-        balance = ax.find_one({"duuid": duuid})["ax"]
+        balance = axdatabase.find_one({"duuid": duuid})["ax"]
     if isinstance(peffect, type(None)):
-        await effects_display.showeffectsmenu(ctx, effects_cost, owned_effects, effects, balance, ax, ingamecosmeticsv7,discount)
+        await effects_display.showeffectsmenu(ctx, effects_cost, owned_effects, effects, balance, axdatabase, ingamecosmeticsv7,discount)
     else:
         await ctx.channel.send("Validating purchase...", delete_after=2)
-        await effects_display.makepurchase(ctx, effects_cost, owned_effects, effects, peffect, ax, ingamecosmeticsv7)
+        await effects_display.makepurchase(ctx, effects_cost, owned_effects, effects, peffect, axdatabase, ingamecosmeticsv7)
 
 
 # todo show all effects?
@@ -658,7 +658,7 @@ async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
 @bot.command(description=f"Check user's ranking in {ej.ax_emoji}", brief="Utility")
 @commands.check(is_valid_guild)
 async def axleaderboard(ctx: discord.ext.commands.Context):
-    cursor = ax.find({"ax": {"$gte": 0}}).sort('ax', -1).limit(10)
+    cursor = axdatabase.find({"ax": {"$gte": 0}}).sort('ax', -1).limit(10)
 
     output = f"{ej.ax_emoji} Leaderboard\n" + f"Rank, Amount, User\n"
 
@@ -674,13 +674,13 @@ async def axleaderboard(ctx: discord.ext.commands.Context):
 @commands.has_role("Admin (Discord)")
 @commands.check(is_valid_guild)
 async def giveax(ctx: discord.ext.commands.Context, amount: int, user: discord.Member, *reason):
-    old_val = ax.find_one({"duuid": user.id})
+    old_val = axdatabase.find_one({"duuid": user.id})
     if isinstance(old_val, type(None)):
-        ax.insert_one({"duuid": user.id, "ax": 0})
+        axdatabase.insert_one({"duuid": user.id, "ax": 0})
         old_val = 0
     else:
         old_val = old_val["ax"]
-    ax.find_one_and_update({"duuid": user.id}, {"$inc": {"ax": amount}})
+    axdatabase.find_one_and_update({"duuid": user.id}, {"$inc": {"ax": amount}})
     await ctx.channel.send(f"{amount}{ej.ax_emoji} awarded to {user.mention}. "
                            f"Now {old_val + amount}{ej.ax_emoji}.\nReason: {' '.join(reason)}")
 
@@ -703,15 +703,15 @@ async def giveaxmultiple(ctx: discord.ext.commands.Context, amount: int, *args):
     updates = []  # List to accumulate updates for each user
     for user in users:
         member = await commands.MemberConverter().convert(ctx, user)
-        old_val = ax.find_one({"duuid": member.id})
+        old_val = axdatabase.find_one({"duuid": member.id})
 
         if isinstance(old_val, type(None)):
-            ax.insert_one({"duuid": member.id, "ax": 0})
+            axdatabase.insert_one({"duuid": member.id, "ax": 0})
             old_val = 0
         else:
             old_val = old_val["ax"]
 
-        ax.find_one_and_update({"duuid": member.id}, {"$inc": {"ax": amount}})
+        axdatabase.find_one_and_update({"duuid": member.id}, {"$inc": {"ax": amount}})
 
         # Accumulate the update message for this user
         updates.append(
@@ -727,7 +727,7 @@ async def giveaxmultiple(ctx: discord.ext.commands.Context, amount: int, *args):
 async def checkax(ctx: discord.ext.commands.Context, user=None):
     try:
         userduuid = await getDUUIDFromMentionIDElseAuthor(ctx, user)
-        old_val = ax.find_one({"duuid": userduuid})
+        old_val = axdatabase.find_one({"duuid": userduuid})
         if isinstance(old_val, type(None)):
             old_val = 0
         else:
@@ -902,7 +902,7 @@ async def checkexp(ctx: discord.ext.commands.Context, user: discord.User = None)
 @bot.command(description=f"Convert user's exp into {ej.ax_emoji}.", brief="Utility")
 @commands.check(is_valid_guild)
 async def convertexp(ctx: discord.ext.commands.Context):  
-    await mindustry.convertexp(ctx,prefix,expv7,convertedexpv7,convertedexpv6=convertedexp,expgainsv6=expgains,ax=ax)
+    await mindustry.convertexp(ctx,prefix,expv7,convertedexpv7,convertedexpv6=convertedexp,expgainsv6=expgains,ax=axdatabase)
 
 
 @bot.command(description="For Appealing a member", brief="Utility",
@@ -955,7 +955,7 @@ async def on_message(message: discord.Message):
         if message.author.id != bot.user.id:
             await counting_bot.run_counterbot(message, bot)
     elif ("#alexcookie" in message.content) and (message.channel.id == 811993295114076190) and (prefix == "w?"):
-        await cookiegame.triggercookieclaim(message, ax, bot)
+        await cookiegame.triggercookieclaim(message, axdatabase, bot)
     else:
         await bot.process_commands(message)
 
