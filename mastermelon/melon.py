@@ -27,6 +27,7 @@ from mastermelon import cookiegame
 from mastermelon import gen_image
 from mastermelon import feedback
 from mastermelon import mindustry
+from mastermelon.utils.is_staff import is_staff
 from mastermelon.utils.is_valid_guild import is_valid_guild_check, is_valid_guild
 from mastermelon.utils.get_user_display_name import get_user_display_name
 
@@ -944,6 +945,9 @@ async def check_command_on_general(ctx: discord.ext.commands.Context):
     verification_channel_id = 785543837116399637
 
     is_register = ctx.message.content.startswith(f"{prefix}register")
+
+    if is_staff(ctx.author):
+        return True
 
     if ctx.channel.id == general_channel_id:
         if is_register:
