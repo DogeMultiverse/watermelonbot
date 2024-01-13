@@ -842,9 +842,11 @@ async def getimage(ctx: discord.ext.commands.Context, user: discord.User):
 async def github(ctx: discord.ext.commands.Context):
     embed = discord.Embed(title=f"Github links",
                           colour=discord.Colour.random().value)
-    embed.add_field(name="watermelonbot (python)", value="https://github.com/alexpvpmindustry/watermelonbot",
-                    inline=False)
-    embed.add_field(name="lol bot (javascript)",
+    embed.add_field(name="watermelonbot (python)", 
+                    value="https://github.com/DogeMultiverse/watermelonbot",inline=False)
+    embed.add_field(name="Hex Alex plugin (java)",
+                    value="https://github.com/alexpvpmindustry/HexedPlugin", inline=False)
+    embed.add_field(name="lol bot (javascript) ( not maintained ;-; )",
                     value="https://github.com/unjown/unjownbot", inline=False)
     await ctx.channel.send(embed=embed)
 

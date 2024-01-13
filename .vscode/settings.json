@@ -16,5 +16,6 @@
                 "command": "python main.py", // This is executed in the terminal.
             }
         ]
-    }
+    },
+    "files.autoSave": "afterDelay"
 }
