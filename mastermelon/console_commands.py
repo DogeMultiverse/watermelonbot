@@ -30,7 +30,8 @@ def getservers(): # host screen port
             ("root@172.245.187.143"              , "sandbox_usa"       , "6869" , "RN USA"),
             ("root@172.234.80.96"                , "surv_v7"           , "6768" , "LD JPY"),
             ("root@139.162.41.78"                , "pvp_v7_asia"       , "6767" , "LD SG2"),
-            ("root@172.245.187.143"              , "pvp_usa"           , "6868" , "RN USA")
+            ("root@172.245.187.143"              , "pvp_usa"           , "6868" , "RN USA"),
+            ("root@92.119.127.171"               , "surv_eu"           , "6888" , "RN FRN")
                ]
     #servers = servers
     return [(i,host,screen,port,loc) for i,(host,screen,port,loc) in enumerate(servers)]
@@ -42,7 +43,8 @@ def servfolders():
         "/root/Documents/sandbox_usa",
         "/root/Documents/surv_v7",
         "/root/Documents/pvp_v7_asia",
-        "/root/Documents/pvp_usa"
+        "/root/Documents/pvp_usa",
+        "/root/Documents/surv_eu"
     ]
 
 def mapfolders():
@@ -52,7 +54,8 @@ def mapfolders():
         "mindustry_maps/sandbox_v7/",
         "mindustry_maps/survival_v7/",
         "mindustry_maps/pvp_v7/",
-        "mindustry_maps/pvp_v7/"
+        "mindustry_maps/pvp_v7/",
+        "mindustry_maps/survival_v7/"
     ]
 
 async def restartserver(ctx: commands.Context, serverid: int):
