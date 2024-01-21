@@ -55,7 +55,7 @@ def mapfolders():
         "mindustry_maps/survival_v7/",
         "mindustry_maps/pvp_v7/",
         "mindustry_maps/pvp_v7/",
-        "mindustry_maps/survival_v7/"
+        "mindustry_maps/survival_v7_eu/"
     ]
 
 async def restartserver(ctx: commands.Context, serverid: int):
