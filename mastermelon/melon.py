@@ -613,8 +613,7 @@ async def guess(ctx: discord.ext.commands.Context):
     if int(guess1.content) > 1000000:
         await ctx.channel.send('Number too large, should be <1000000. Game ends.')
         return
-    if int(guess1.content) == answer or True and ((ctx.author.id in [DUUID_WATERMELON, DUUID_ALEX, 848035383795122186])
-                                                  and random.randint(1, 10) > 5):
+    if int(guess1.content) == answer or (False and ((ctx.author.id in [DUUID_WATERMELON, DUUID_ALEX]) and random.randint(1, 10) > 5)):
         await ctx.channel.send('You are right!!!!')
     else:
         await ctx.channel.send('Oops. It is actually {}.'.format(answer))
