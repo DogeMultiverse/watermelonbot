@@ -746,48 +746,20 @@ async def giveaxmultiple(ctx: discord.ext.commands.Context, amount: int, *args):
 @bot.command(description="Check user's Ax. If no user is specified, check your own Ax.",
              brief="Utility", help="[@user or discord ID or nothing]")
 @commands.check(is_valid_guild)
-async def checkax(ctx: discord.ext.commands.Context, user=None):
+async def checkax(ctx: discord.ext.commands.Context, user: discord.User = None):
     try:
-        userduuid = await getDUUIDFromMentionIDElseAuthor(ctx, user)
-        old_val = axdatabase.find_one({"duuid": userduuid})
+        if user is None:
+            user = ctx.author
+
+        old_val = axdatabase.find_one({"duuid": user.id})
         if isinstance(old_val, type(None)):
             old_val = 0
         else:
             old_val = old_val["ax"]
 
-        username = getUsernameFromDUUID(userduuid)
-
-        if username is None:
-            await ctx.channel.send(f"Cannot find user with id {userduuid}.")
-        else:
-            await ctx.channel.send(f"{username} currently has {old_val}{ej.ax_emoji}.")
+        await ctx.channel.send(f"{user.display_name} currently has {old_val}{ej.ax_emoji}.")
     except ValueError:
         await ctx.channel.send(f"Invalid input. Try the ID in digits or @user.")
-
-
-async def getDUUIDFromMentionIDElseAuthor(ctx: discord.ext.commands.Context, user=None):
-    if isinstance(user, type(None)):
-        userduuid = int(ctx.author.id)
-    elif isinstance(user, type(discord.Member)):
-        userduuid = int(user.id)
-    elif "<" in user:
-        final_user = ""
-        for char in user:
-            if char in "0123456789":
-                final_user += char
-        userduuid = int(final_user)
-    else:
-        userduuid = int(user)
-    return userduuid
-
-
-def getUsernameFromDUUID(duuid: int) -> Optional[str]:
-    user = bot.get_user(duuid)
-
-    if isinstance(user, type(None)):
-        return None
-    else:
-        return user.name + "#" + str(user.discriminator)
 
 
 @bot.command(description=f"Register your mindustry account with your discord account.", brief="Utility")
