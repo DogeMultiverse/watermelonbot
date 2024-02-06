@@ -3,6 +3,7 @@ from datetime import timedelta
 from datetime import datetime
 import traceback
 import logging
+from typing import Union, Optional
 
 import requests
 import discord
@@ -753,8 +754,13 @@ async def checkax(ctx: discord.ext.commands.Context, user=None):
             old_val = 0
         else:
             old_val = old_val["ax"]
+
         username = getUsernameFromDUUID(userduuid)
-        await ctx.channel.send(f"{username} currently has {old_val}{ej.ax_emoji}.")
+
+        if username is None:
+            await ctx.channel.send(f"Cannot find user with id {userduuid}.")
+        else:
+            await ctx.channel.send(f"{username} currently has {old_val}{ej.ax_emoji}.")
     except ValueError:
         await ctx.channel.send(f"Invalid input. Try the ID in digits or @user.")
 
@@ -775,13 +781,13 @@ async def getDUUIDFromMentionIDElseAuthor(ctx: discord.ext.commands.Context, use
     return userduuid
 
 
-def getUsernameFromDUUID(duuid: int):
+def getUsernameFromDUUID(duuid: int) -> Optional[str]:
     user = bot.get_user(duuid)
+
     if isinstance(user, type(None)):
-        string = "invalid user"
+        return None
     else:
-        string = user.name + "#" + str(user.discriminator)
-    return string
+        return user.name + "#" + str(user.discriminator)
 
 
 @bot.command(description=f"Register your mindustry account with your discord account.", brief="Utility")
