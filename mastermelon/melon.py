@@ -526,6 +526,7 @@ async def getmindusbans(ctx, user: discord.user.User):
         strr+= "banned_muuid:"+d["banned_muuid"]+"\n"
         strr+= "banned_ip:"+d["banned_ip"]+"\n"
         strr+= "banned_reason:"+d["banned_reason"]+"\n"
+        strr+= "servername:"+d["servername"]+"\n"
         strr+= "banned_type:"+d["banned_type"]
         embed.add_field(name=f"({i}) banned_musername: `{d['banned_musername']}`", 
                         value=strr,inline=False) 
