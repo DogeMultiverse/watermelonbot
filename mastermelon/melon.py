@@ -503,6 +503,35 @@ async def changemindusrole(ctx, user: discord.user.User, role: str):
         await ctx.send(f"Error, role not found. Please choose Admin|Mod|Player.")
 
 
+@bot.command(description="gets the recent bans given by a moderator or admin",
+             help="<@user>",
+             brief="Admin Mindustry Utility")
+@commands.has_any_role("Admin (Discord)", "Admin (Mindustry)")
+@commands.check(is_valid_guild)
+async def getmindusbans(ctx, user: discord.user.User):
+    userid: int
+    if isinstance(user, discord.user.User):
+        userid = user.id
+    else:
+        await ctx.send(
+            f"Error, input invalid, u gave {user}type{type(user)}, type{type(discord.user.User)}type{type(discord.Member)}")
+        return
+    docs = mindusbans.find({'banned_by_duuid': userid}).sort("date",-1).limit(10)
+    listt = []
+    embed = discord.Embed(title=f"Bans given by {user.name}",colour=discord.Colour.random().value)
+    for i,d in enumerate(docs):
+        listt.append(d)
+        strr = ""
+        strr+= "date:"+str(d["date"])+"\n"
+        strr+= "banned_muuid:"+d["banned_muuid"]+"\n"
+        strr+= "banned_ip:"+d["banned_ip"]+"\n"
+        strr+= "banned_reason:"+d["banned_reason"]+"\n"
+        strr+= "banned_type:"+d["banned_type"]
+        embed.add_field(name=f"({i}) banned_musername: `{d['banned_musername']}`", 
+                        value=strr,inline=False) 
+    await ctx.channel.send(embed=embed)
+
+
 # end of commands related to mindustry servers
 
 @bot.command(description="adds <:EMOJI:> to the desired <message_id> in [channel]. max 20 emojis per message",
