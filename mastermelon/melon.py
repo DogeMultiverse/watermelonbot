@@ -63,6 +63,10 @@ if prefix in ["w?", "t?"]:  # only access mongodb for w? and t?
     ingamecosmeticsv7: Collection = db["ingamecosmeticsv7"]
     hexv7: Collection = db["hexdataV7"]
 
+    #mindus bans
+    melonbotmindusbans: Collection = db["melonbotmindusbans"]
+    mindusbans: Collection = db["mindusbans"]
+
     axdatabase: Collection = db["ax"]
     ipaddress_access_key: str = js["ipaddress_access_key"]
     serverplayerupdates: Collection = db["serverplayerupdates"]
@@ -980,9 +984,9 @@ async def on_message(message: discord.Message):
     elif message.content == ':pepoclap:' and prefix == "t?":
         await message.reply(pepo_clap)
     elif prefix == "w?" and message.channel.id == 789511356197765190:  # admin logs channel
-        await vkick_anti_bot(message, bot, autoban_counts)
+        await vkick_anti_bot(message, bot, autoban_counts, melonbotmindusbans)
     elif prefix == "w?" and message.channel.id == 796305521270587413:  # moderator logs channel
-        await plugin_anti_bot(message, bot, autoban_counts)
+        await plugin_anti_bot(message, bot, autoban_counts, melonbotmindusbans)
     elif prefix == "w?" and message.channel.id == 805105861450137600:  # counting hardcore channel
         if message.author.id != bot.user.id:
             await counting_bot.run_counterbot(message, bot)
