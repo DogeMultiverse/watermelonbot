@@ -104,7 +104,8 @@ async def checkexp(ctx: discord.ext.commands.Context, user: discord.User, prefix
     str_time = convertedexp_doc["lastconvertdate"].strftime("%a %d %b %Y, %I:%M%p")+" (UTC)"
     flex = getflex(EXP)
     await ctx.channel.send(
-        f'{userTarget.name}:\nCurrent EXP`{EXP:,}` {flex}\n'
+        f'{userTarget.name}:\n'
+        f'Current EXP`{EXP:,}` {flex}\n'
         f'Converted EXP: `{convertedexp_doc["convertedexp"]:,}`\n'
         f'Last converted: `{str_time}`\n'
         f'Use `{prefix}convertexp` to convert your EXP to {ej.ax_emoji} (minimum `{EXCHANGE_RATE:,}`EXP). You will still keep your EXP.'
