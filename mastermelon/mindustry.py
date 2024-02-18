@@ -84,30 +84,33 @@ async def checkexp(ctx: discord.ext.commands.Context, user: discord.User, prefix
         await ctx.channel.send(f"{ctx.author.name} no testing for u")
         return 
     if isinstance(user, type(None)):
-        userTarget = ctx.author.id
+        userTarget = ctx.author
     else:
-        userTarget = user.id
+        userTarget = user
     await ctx.channel.send('Getting exp', delete_after=3)
 
-    exp_doc : pymongo.Documents = expgains.find_one({"duuid": userTarget},{"_id": 0, "musername": 1, "EXP": 1, "servers": 1})
+    exp_doc : pymongo.Documents = expgains.find_one({"duuid": userTarget.id},{"_id": 0, "musername": 1, "EXP": 1, "servers": 1})
     if exp_doc is None:
         await ctx.channel.send(f"{ctx.author.name}: User has no EXP or user not found.")
         return
-    convertedexp_doc : pymongo.Documents = convertedexp.find_one({"duuid": userTarget})
+    convertedexp_doc : pymongo.Documents = convertedexp.find_one({"duuid": userTarget.id})
     EXP = exp_doc["EXP"]
     if convertedexp_doc is None:
-        latest_claim = get_latest_claim(userTarget,convertedexpv6,expgainsv6)
+        latest_claim = get_latest_claim(userTarget.id,convertedexpv6,expgainsv6)
         latest_claim = min(EXP,latest_claim)//EXCHANGE_RATE*EXCHANGE_RATE
-        convertedexp_doc = {"duuid": userTarget, "convertedexp": latest_claim, "lastconvertdate":datetime.utcnow() }
+        convertedexp_doc = {"duuid": userTarget.id, "convertedexp": latest_claim, "lastconvertdate":datetime.utcnow() }
         convertedexp.insert_one(convertedexp_doc)
     # convertedexp_doc should have 3 fields.
-    str_time=convertedexp_doc["lastconvertdate"].strftime("%a %d %b %Y, %I:%M%p")+" (UTC)"
-    flex=getflex(EXP)
-    await ctx.channel.send( f'{ctx.author.name}:\nCurrent EXP`{EXP:,}` {flex}\n'\
-                            f'Converted EXP: `{convertedexp_doc["convertedexp"]:,}`\n'\
-                            f'Last converted: `{str_time}`\n'\
-                            f'Use `{prefix}convertexp` to convert your EXP to {ej.ax_emoji} (minimum `{EXCHANGE_RATE:,}`EXP). You will still keep your EXP.'
-                            )
+    str_time = convertedexp_doc["lastconvertdate"].strftime("%a %d %b %Y, %I:%M%p")+" (UTC)"
+    flex = getflex(EXP)
+    await ctx.channel.send(
+        f'{userTarget.name}:\n'
+        f'Current EXP`{EXP:,}` {flex}\n'
+        f'Converted EXP: `{convertedexp_doc["convertedexp"]:,}`\n'
+        f'Last converted: `{str_time}`\n'
+        f'Use `{prefix}convertexp` to convert your EXP to {ej.ax_emoji} (minimum `{EXCHANGE_RATE:,}`EXP). You will still keep your EXP.'
+    )
+
     # TODO make this formating better
 
 async def convertexp(ctx: discord.ext.commands.Context, prefix: str, expgains: Collection,
