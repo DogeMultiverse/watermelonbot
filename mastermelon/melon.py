@@ -338,6 +338,7 @@ async def getemojis(ctx):
 
 
 @bot.command(description="get countries played", brief="Admin Utility")
+@commands.has_role("Admin (Discord)")
 async def gettest(ctx: commands.Context):
     if ctx.author.id != DUUID_ALEX:
         await ctx.channel.send("no testing for u")
@@ -928,6 +929,22 @@ async def giveaway(ctx: discord.ext.commands.Context, what: str, channel: discor
     else:
         await ctx.channel.send("invalid command usage")
 
+@bot.command(description="Get members with a certain role", brief="Admin Utility")
+@commands.check(is_valid_guild)
+async def getmemberswithrole(ctx: discord.ext.commands.Context, *, role_name: str):
+    guild = ctx.guild
+    role = discord.utils.get(guild.roles, name=role_name)
+    if role is None:
+        await ctx.send(f"Role '{role_name}' not found.")
+        return
+    
+    members = [member for member in guild.members if role in member.roles]
+    member_names = "\n".join([member.name for member in members])
+    
+    if member_names:
+        await ctx.send(f"Members with role '{role_name}':\n{member_names}")
+    else:
+        await ctx.send(f"No members with role '{role_name}' found.")
 
 @bot.command(description="Check user's registered account's EXP", brief="Utility")
 @commands.check(is_valid_guild)
