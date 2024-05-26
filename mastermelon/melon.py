@@ -947,9 +947,20 @@ async def getmemberswithrole(ctx: discord.ext.commands.Context, *, role_name: st
         await ctx.send(f"No members with role '{role_name}' found.")
 
 
-@bot.command(description="Get exp of members with a certain role. Input days to see historical values", brief="Admin Utility")
+@bot.command(description="Get exp of members with a certain role. Input days to see historical values",
+             brief="Admin Utility"
+             help="<role_name> [days]")
 @commands.check(is_valid_guild)
-async def getexpofmemberswithrole(ctx: discord.ext.commands.Context, *, role_name: str, days: int = 7):
+async def getexpofmemberswithrole(ctx: discord.ext.commands.Context, *, args: str):
+    import re
+    args_list = args.rsplit(' ', 1)
+    if len(args_list) == 2 and re.match(r'^\d+$', args_list[1]):
+        role_name = args_list[0]
+        days = int(args_list[1])
+    else:
+        role_name = args
+        days = 7
+    
     guild = ctx.guild
     role = discord.utils.get(guild.roles, name=role_name.strip())
     if role is None:
