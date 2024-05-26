@@ -947,25 +947,47 @@ async def getmemberswithrole(ctx: discord.ext.commands.Context, *, role_name: st
         await ctx.send(f"No members with role '{role_name}' found.")
 
 
-@bot.command(description="Get exp of members with a certain role", brief="Admin Utility")
+@bot.command(description="Get exp of members with a certain role. Input days to see historical values", brief="Admin Utility")
 @commands.check(is_valid_guild)
-async def getexpofmemberswithrole(ctx: discord.ext.commands.Context, *, role_name: str):
+async def getexpofmemberswithrole(ctx: discord.ext.commands.Context, *, role_name: str, days: int = 7):
     guild = ctx.guild
-    role = discord.utils.get(guild.roles, name=role_name)
+    role = discord.utils.get(guild.roles, name=role_name.strip())
     if role is None:
         await ctx.send(f"Role '{role_name}' not found.")
         return
     
     members = [member for member in guild.members if role in member.roles]
     members_id = [member.id for member in members]
-    query = {'duuid': {'$in': members_id}}
-    projection = {'duuid': 1, 'EXP': 1, '_id': 0}
-    documents = expv7.find(query, projection)
-    exp_by_duuid = {doc["duuid"]: doc["EXP"] for doc in documents}
-    member_names = "\n".join(["`"+member.name + f"#{member.discriminator}`    EXP [`"+str(exp_by_duuid.get(member.id,0))+"`]" for member in members])
+    date_threshold = datetime.now() - timedelta(days=days)
+
+    pipeline = [
+        {'$match': {'duuid': {'$in': members_id}}},
+        {'$project': {
+            'duuid': 1,
+            'EXP': 1,
+            'COUNTS': {
+                '$size': {
+                    '$filter': {
+                        'input': '$dates',
+                        'as': 'date',
+                        'cond': {'$gte': ['$$date', date_threshold]}
+                    }
+                }
+            },
+            '_id': 0
+        }}
+    ]
+    documents = expv7.aggregate(pipeline)
+    exp_by_duuid = {doc["duuid"]: {"EXP": doc["EXP"], "COUNTS": doc["COUNTS"]} for doc in documents}
+    member_details = "\n".join(
+        [
+            f"`{member.name}#{member.discriminator}`    EXP [`{exp_by_duuid.get(member.id, {}).get('EXP', 0)}`]    EXPCOUNTS [`{exp_by_duuid.get(member.id, {}).get('COUNTS', 0)}`]"
+            for member in members
+        ]
+    )
     
-    if member_names:
-        await ctx.send(f"Members with role '{role_name}':\n{member_names}")
+    if member_details:
+        await ctx.send(f"Members with role '{role_name}':\n{member_details}")
     else:
         await ctx.send(f"No members with role '{role_name}' found.")
 
