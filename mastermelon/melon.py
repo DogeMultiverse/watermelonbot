@@ -939,12 +939,36 @@ async def getmemberswithrole(ctx: discord.ext.commands.Context, *, role_name: st
         return
     
     members = [member for member in guild.members if role in member.roles]
-    member_names = "\n".join([member.name for member in members])
+    member_names = "\n".join([member.name + f"#{member.discriminator}" for member in members])
     
     if member_names:
         await ctx.send(f"Members with role '{role_name}':\n{member_names}")
     else:
         await ctx.send(f"No members with role '{role_name}' found.")
+
+
+@bot.command(description="Get exp of members with a certain role", brief="Admin Utility")
+@commands.check(is_valid_guild)
+async def getexpofmemberswithrole(ctx: discord.ext.commands.Context, *, role_name: str):
+    guild = ctx.guild
+    role = discord.utils.get(guild.roles, name=role_name)
+    if role is None:
+        await ctx.send(f"Role '{role_name}' not found.")
+        return
+    
+    members = [member for member in guild.members if role in member.roles]
+    members_id = [member.id for member in members]
+    query = {'duuid': {'$in': members_id}}
+    projection = {'duuid': 1, 'EXP': 1, '_id': 0}
+    documents = expv7.find(query, projection)
+    exp_by_duuid = {doc["duuid"]: doc["EXP"] for doc in documents}
+    member_names = "\n".join(["`"+member.name + f"#{member.discriminator}`    EXP [`"+str(exp_by_duuid.get(member.id,0))+"`]" for member in members])
+    
+    if member_names:
+        await ctx.send(f"Members with role '{role_name}':\n{member_names}")
+    else:
+        await ctx.send(f"No members with role '{role_name}' found.")
+
 
 @bot.command(description="Check user's registered account's EXP", brief="Utility")
 @commands.check(is_valid_guild)
