@@ -36,10 +36,10 @@ async def showeffectsmenu(ctx: ext.commands.Context, effects_cost: dict, owned_e
     desc = f"`  Price   Effects`  {content}\n" + strbuilder + \
            "\nNote: `✅`=owned. Purchased effects are non-refundable. " \
            "\nIf color is not specified in the effect, it is *configurable* via `/color` in game."
-    embed = discord.Embed.from_dict({"title": f"Alex Mindustry *special* `Effects MENU`\n{ctx.author.name}: (🎄Christmas🎄 80% discount)",
+    embed = discord.Embed.from_dict({"title": f"Alex Mindustry *special* `Effects MENU`\n{ctx.author.name}: (🪦Memorial Day🪦 50% discount)",
                                      "description": desc + "\n🔽Click on the emoji below to view more.🔽",
                                      "color": discord.Colour.dark_grey().value})
-    closed_embed = discord.Embed.from_dict({"title": f"Alex Mindustry *special* `Effects MENU`\n{ctx.author.name}: (🎄Christmas🎄 80% discount)", "description": desc,
+    closed_embed = discord.Embed.from_dict({"title": f"Alex Mindustry *special* `Effects MENU`\n{ctx.author.name}: (🪦Memorial Day🪦 50% discount)", "description": desc,
                                             "color": discord.Colour.dark_grey().value})
 
     if len(emojis_used) == 0:

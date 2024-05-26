@@ -661,13 +661,13 @@ async def buyeffect(ctx: discord.ext.commands.Context, peffect: str = None):
         await ctx.channel.send("t? is only for alex to test")
         return
     await ctx.channel.send("Fetching effects...", delete_after=2)
-    discount = 0.8
-    effects_cost = {30: ["yellowDiamond", "yellowSquare"],
-                    50: ["yellowSpark"],
-                    80: ["yellowLargeDiam"],
-                    100: ["whiteLancerRandom"],
-                    250: ["whiteLancerRadius", "circle", "pixel"],
-                    400: ["rainbowPixel", "rainbowCircle"]}
+    discount = 0.5
+    effects_cost = {50: ["yellowDiamond", "yellowSquare"],
+                    100: ["yellowSpark"],
+                    160: ["yellowLargeDiam"],
+                    200: ["whiteLancerRandom"],
+                    550: ["whiteLancerRadius", "circle", "pixel"],
+                    800: ["rainbowPixel", "rainbowCircle"]}
     effects = [ee for c, e in effects_cost.items() for ee in e]
     owned_effects_collection = ingamecosmeticsv7.find_one({"duuid": ctx.author.id})
     if owned_effects_collection is None:
