@@ -948,7 +948,7 @@ async def getmemberswithrole(ctx: discord.ext.commands.Context, *, role_name: st
 
 
 @bot.command(description="Get exp of members with a certain role. Input days to see historical values",
-             brief="Admin Utility"
+             brief="Admin Utility",
              help="<role_name> [days]")
 @commands.check(is_valid_guild)
 async def getexpofmemberswithrole(ctx: discord.ext.commands.Context, *, args: str):
