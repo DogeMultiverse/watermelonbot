@@ -992,13 +992,14 @@ async def getexpofmemberswithrole(ctx: discord.ext.commands.Context, *, args: st
     exp_by_duuid = {doc["duuid"]: {"EXP": doc["EXP"], "COUNTS": doc["COUNTS"]} for doc in documents}
     member_details = "\n".join(
         [
-            f"`{member.name}#{member.discriminator}`    EXP [`{exp_by_duuid.get(member.id, {}).get('EXP', 0)}`]    EXPCOUNTS [`{exp_by_duuid.get(member.id, {}).get('COUNTS', 0)}`]"
+            f"`{member.name}#{member.discriminator}`    EXP [`{exp_by_duuid.get(member.id, {}).get('EXP', 0)}`]    TIME [`{exp_by_duuid.get(member.id, {}).get('COUNTS', 0)*3}`]"
             for member in members
         ]
     )
     
     if member_details:
-        await ctx.send(f"Members with role '{role_name}':\n{member_details}")
+        withS = "s" if days>1 else ""
+        await ctx.send(f"Members with role '{role_name}'. Playtime in the last {days} day{withS}:\n{member_details}")
     else:
         await ctx.send(f"No members with role '{role_name}' found.")
 
