@@ -233,12 +233,12 @@ async def checkexp_legacy(ctx: discord.ext.commands.Context, user: discord.User,
 
 def getflex(EXP):
     flex=""
-    if EXP>500_000:
+    if EXP>800_000:
         flex=" (TOP 0.1%)"
-    elif EXP>100_000:
+    elif EXP>200_000:
         flex=" (TOP 1%)"
-    elif EXP>50_000:
+    elif EXP>100_000:
         flex=" (TOP 10%)"
-    elif EXP>5_000:
+    elif EXP>50_000:
         flex=" (TOP 50%)"
     return flex
