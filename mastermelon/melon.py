@@ -224,14 +224,14 @@ class bb(commands.Bot):
                     if " is **running**:" in msg.content and "**PLAYERS**" in msg.content:
                         # print(msg.content, msg.created_at)
                         msg1 = msg.content.split(" is **running**: ")
-                        msg10 = strip_colourbrackets(msg1[0])
-                        if msg10 not in servers:
-                            servers.add(msg10)
+                        servername = strip_colourbrackets(msg1[0])
+                        if servername not in servers:
+                            servers.add(servername)
                             msg2 = msg1[1].split(", **PLAYERS**=")
                             msg3 = msg2[1].split(", **RAM**=")
                             ss = strip_colourbrackets(msg2[0])
                             maps += [
-                                f"✅ `ONLINE`✅ {msg10}\n`            `**Map**: `{ss}`  **Players**:`{msg3[0]}`  **RAM**:`{msg3[1]}`\n"]
+                                f"✅ `ONLINE`✅ {servername}\n`            `**Map**: `{ss}`  **Players**:`{msg3[0]}`  **RAM**:`{msg3[1]}`\n"]
                 if len(servers) == 0:
                     strbuilder += "Servers Ded :("
                 else:
