@@ -21,6 +21,7 @@ async def showeffectsmenu(ctx: ext.commands.Context, effects_cost: dict, owned_e
     emojis_used = []
     emoji_i = 0
     strbuilder = ""
+    discount_name = "🪦Memorial Day🪦 50% discount"
     for cost, effectname in effects_cost.items():
         t_str = []
         for eff in effectname:
@@ -36,10 +37,10 @@ async def showeffectsmenu(ctx: ext.commands.Context, effects_cost: dict, owned_e
     desc = f"`  Price   Effects`  {content}\n" + strbuilder + \
            "\nNote: `✅`=owned. Purchased effects are non-refundable. " \
            "\nIf color is not specified in the effect, it is *configurable* via `/color` in game."
-    embed = discord.Embed.from_dict({"title": f"Alex Mindustry *special* `Effects MENU`\n{ctx.author.name}: (🪦Memorial Day🪦 50% discount)",
+    embed = discord.Embed.from_dict({"title": f"Alex Mindustry *special* `Effects MENU`\n{ctx.author.name}: ({discount_name})",
                                      "description": desc + "\n🔽Click on the emoji below to view more.🔽",
                                      "color": discord.Colour.dark_grey().value})
-    closed_embed = discord.Embed.from_dict({"title": f"Alex Mindustry *special* `Effects MENU`\n{ctx.author.name}: (🪦Memorial Day🪦 50% discount)", "description": desc,
+    closed_embed = discord.Embed.from_dict({"title": f"Alex Mindustry *special* `Effects MENU`\n{ctx.author.name}: ({discount_name})", "description": desc,
                                             "color": discord.Colour.dark_grey().value})
 
     if len(emojis_used) == 0:
@@ -67,7 +68,7 @@ async def showeffectsmenu(ctx: ext.commands.Context, effects_cost: dict, owned_e
                 if emoj[1] in effect_links:
                     cost = [c for c, e in effects_cost.items() if emoj[1] in e][0]
                     animation_embed = discord.Embed(
-                        title=f"Effect name: `{emoj[1]}`\n Cost: ~~{get_pre_discount(cost,discount)}~~ {cost} {ej.ax_emoji}\n{ctx.author.name}: 🎄Christmas🎄 80% discount!").set_image(
+                        title=f"Effect name: `{emoj[1]}`\n Cost: ~~{get_pre_discount(cost,discount)}~~ {cost} {ej.ax_emoji}\n{ctx.author.name}: {discount_name}!").set_image(
                         url=effect_links[emoj[1]])
                     animation_embed.add_field(name="Options:", value=f"{'✅'}=>BUY, {'❌'}=>CANCEL")
                     msg2 = await ctx.channel.send(embed=animation_embed)
