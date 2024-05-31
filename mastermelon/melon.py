@@ -229,9 +229,11 @@ class bb(commands.Bot):
                             servers.add(servername)
                             msg2 = msg1[1].split(", **PLAYERS**=")
                             msg3 = msg2[1].split(", **RAM**=")
+                            num_players = msg3[0]
+                            RAM = msg3[1]
                             ss = strip_colourbrackets(msg2[0])
                             maps += [
-                                f"✅ `ONLINE`✅ {servername}\n`            `**Map**: `{ss}`  **Players**:`{msg3[0]}`  **RAM**:`{msg3[1]}`\n"]
+                                f"✅ `ONLINE`✅ {servername}\n`            `**Map**: `{ss}`  **Players**:`{num_players}`  **RAM**:`{RAM}`\n"]
                 if len(servers) == 0:
                     strbuilder += "Servers Ded :("
                 else:
