@@ -128,7 +128,7 @@ class bb(commands.Bot):
             invite = resp_invite
             # add the invited member to the inviter's list
             invite_dict_info = {"invited": {"name": f"{member.name}#{member.discriminator}", "duuid": member.id,
-                                            "date": datetime.utcnow()}}
+                                            "date": datetime.now()}}
             discordinvites.find_one_and_update({"duuid": invite.inviter.id}, {
                 "$push": invite_dict_info})
             print(
@@ -214,7 +214,7 @@ class bb(commands.Bot):
             while prefix == ("t?" if test else "w?"):  # only run for test bot
                 t0 = time.time()
                 messages = await status_log_channel.history(limit=30, oldest_first=False,
-                                                            after=datetime.utcnow() - timedelta(minutes=7)).flatten()
+                                                            after=datetime.now() - timedelta(minutes=7)).flatten()
                 msg: discord.Message
                 servers = set()
                 timestamp = int(datetime.now().timestamp())
@@ -807,7 +807,7 @@ async def register(ctx: discord.ext.commands.Context, pin: str):
     else:
         await ctx.channel.send(f'Pin input is `{pin}`, please wait.')
         res = registerpin.find(
-            {"pin": pin, "date": {"$gte": datetime.utcnow() - timedelta(minutes=5)}})
+            {"pin": pin, "date": {"$gte": datetime.now() - timedelta(minutes=5)}})
         found = False
         userdata = None
         found_objects = []
@@ -824,7 +824,7 @@ async def register(ctx: discord.ext.commands.Context, pin: str):
                     role = "Mod"
             duuid1.insert_one({"duuid": ctx.author.id, "musername": userdata["musername"],
                                "muuid": userdata["muuid"], "role": role, "color": "0000ffff",
-                               "date": datetime.utcnow()})
+                               "date": datetime.now()})
 
             prev_doc = discordname.find_one({"duuid": ctx.author.id})
             if prev_doc is None:
