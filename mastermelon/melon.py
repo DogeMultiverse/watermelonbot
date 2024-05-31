@@ -220,6 +220,7 @@ class bb(commands.Bot):
                 timestamp = int(datetime.now().timestamp())
                 strbuilder = f"Updated <t:{timestamp}:R>\n"
                 maps = []
+                players_in_servers = dict()
                 for msg in messages:
                     if " is **running**:" in msg.content and "**PLAYERS**" in msg.content:
                         # print(msg.content, msg.created_at)
@@ -234,6 +235,7 @@ class bb(commands.Bot):
                             ss = strip_colourbrackets(msg2[0])
                             maps += [
                                 f"✅ `ONLINE`✅ {servername}\n`            `**Map**: `{ss}`  **Players**:`{num_players}`  **RAM**:`{RAM}`\n"]
+                            players_in_servers[servername] = int(float(num_players))
                 if len(servers) == 0:
                     strbuilder += "Servers Ded :("
                 else:
@@ -243,6 +245,15 @@ class bb(commands.Bot):
                     await status_msg[0].edit(content=strbuilder)
                 else:  # if not found, send as a new msg
                     await status_msg_channel.send(strbuilder)
+                # TODO save the time series onto AlexMindustry.hourly_players
+                # time
+                # 2024-06-01T01:42:14.186+00:00
+                # servername
+                # "server1"
+                # _id
+                # 665a0bf6455d852255c337ec
+                # player_count
+                # 25
                 print(
                     f"update mindus servers took {time.time() - t0:.3f}seconds {get_date_str()}")
                 await asyncio.sleep(60 * 5)
