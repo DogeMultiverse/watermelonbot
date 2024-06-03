@@ -558,13 +558,11 @@ async def getmindusbans(ctx, user: discord.user.User):
 
 
 @bot.command(description="plots the historical usage of servers. specify the hours in the past, default 24hours.",
-             help="<hours>",
+             help="[hours]",
              brief="Admin Mindustry Utility")
 @commands.has_any_role("Admin (Discord)", "Admin (Mindustry)")
 @commands.check(is_valid_guild)
-async def plotmindushistory(ctx, hours: int = None):
-    if hours is None:
-        hours = 24
+async def plotmindushistory(ctx, hours: int = 24): 
     await mindustry.plotanalytics(ctx,hourly_players,hours)
 
 
