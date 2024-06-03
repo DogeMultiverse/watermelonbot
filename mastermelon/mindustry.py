@@ -276,7 +276,7 @@ async def plotanalytics(ctx,hourly_players,last_hours):
             # Calculate total players per hour
             for dt, players in zip(datetimes, avg_players):
                 total_players_per_hour[dt] += players
-                
+
         ax2 = ax.twinx()
         total_datetimes, total_players = zip(*sorted(total_players_per_hour.items()))
         ax2.plot(total_datetimes, total_players, marker='x', color='r', linestyle='--', label='Total Players')
@@ -300,6 +300,9 @@ async def plotanalytics(ctx,hourly_players,last_hours):
     end_time = datetime.now()
     start_time = end_time - timedelta(hours=last_hours)
     average_players_data = fetch_average_players(start_time,end_time)
+    if len(average_players_data)==0:
+        await ctx.reply("not enough data for time period.")
+        return
     fig = figplot_average_players(average_players_data,start_time,end_time)
     image_buffer = io.BytesIO()
     fig.savefig(image_buffer, format='png', dpi=150)
