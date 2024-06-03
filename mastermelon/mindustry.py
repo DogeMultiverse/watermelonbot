@@ -267,7 +267,6 @@ async def plotanalytics(ctx,hourly_players,last_hours):
         return data
 
     def figplot_average_players(data,start_time,end_time):
-        #plt.figure(figsize=(12, 8))
         fig, ax = plt.subplots(1, 1, figsize=(8, 6))
         
         for servername, values in data.items():
@@ -303,7 +302,6 @@ async def plotanalytics(ctx,hourly_players,last_hours):
             filename=f'players_in_server.png'
         )
     )
-    pass
 
 def getflex(EXP):
     flex=""
