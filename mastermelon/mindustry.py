@@ -231,9 +231,7 @@ async def checkexp_legacy(ctx: discord.ext.commands.Context, user: discord.User,
             await ctx.channel.send("You have no exp. ;-;")
 
 async def plotanalytics(ctx,hourly_players,last_hours):
-    def fetch_average_players(last_hours):
-        end_time = datetime.now()
-        start_time = end_time - timedelta(hours=last_hours)
+    def fetch_average_players(start_time,end_time):
         # Aggregate data to calculate average players per hour
         pipeline = [
             {
@@ -268,7 +266,7 @@ async def plotanalytics(ctx,hourly_players,last_hours):
         
         return data
 
-    def figplot_average_players(data):
+    def figplot_average_players(data,start_time,end_time):
         #plt.figure(figsize=(12, 8))
         fig, ax = plt.subplots(1, 1, figsize=(8, 6))
         
@@ -277,7 +275,7 @@ async def plotanalytics(ctx,hourly_players,last_hours):
             datetimes, avg_players = zip(*values)
             ax.plot(datetimes, avg_players, marker='o', label=servername)
         
-        ax.set_xlabel('Datetime (UTC)')
+        ax.set_xlabel(f'Datetime (UTC) from {start_time.strftime("%Y-%m-%d")} to {end_time.strftime("%Y-%m-%d")}')
         ax.set_ylabel('Average Number of Players')
         ax.set_title('Average Number of Players per Server per Hour')
         ax.legend()
@@ -285,15 +283,18 @@ async def plotanalytics(ctx,hourly_players,last_hours):
         
         # Set major ticks format to show only hours
         ax.xaxis.set_major_locator(mdates.HourLocator(interval=1))
-        ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M'))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%d %HH'))
+        plt.setp(ax.get_xticklabels(), rotation=45, ha='right')
 
         plt.tight_layout()
         return fig
-
-    average_players_data = fetch_average_players(last_hours)
-    fig = figplot_average_players(average_players_data)
+    
+    end_time = datetime.now()
+    start_time = end_time - timedelta(hours=last_hours)
+    average_players_data = fetch_average_players(start_time,end_time)
+    fig = figplot_average_players(average_players_data,start_time,end_time)
     image_buffer = io.BytesIO()
-    fig.savefig(image_buffer, format='png', dpi=50)
+    fig.savefig(image_buffer, format='png', dpi=150)
     image_buffer.seek(0)
 
     await ctx.reply(
