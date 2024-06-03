@@ -75,6 +75,8 @@ if prefix in ["w?", "t?"]:  # only access mongodb for w? and t?
     duuid1: Collection = db["duuid1"]
     # discord names
     discordname: Collection = db["discordname"]
+    # hourly number of players
+    hourly_players : Collection = db["hourly_players"]
 
 
 invitecode_mapping = {"KPVVsj2MGW": "Alex Mindustry Invite", "BnBf2STAAd": "Doge Youtube Invite",
@@ -245,20 +247,28 @@ class bb(commands.Bot):
                     await status_msg[0].edit(content=strbuilder)
                 else:  # if not found, send as a new msg
                     await status_msg_channel.send(strbuilder)
-                # TODO save the time series onto AlexMindustry.hourly_players
-                # time
-                # 2024-06-01T01:42:14.186+00:00
-                # servername
-                # "server1"
-                # _id
-                # 665a0bf6455d852255c337ec
-                # player_count
-                # 25
+                # save the time series onto AlexMindustry.hourly_players
+                add_hourly_player_data(players_in_servers)
                 print(
                     f"update mindus servers took {time.time() - t0:.3f}seconds {get_date_str()}")
                 await asyncio.sleep(60 * 5)
         except RuntimeError:
             print("mindus status update closed")
+
+def add_hourly_player_data(players_in_servers):
+    # this is the of the number of players currently in the servers
+    data = []
+    current_time = datetime.now()
+    
+    for server, count in players_in_servers.items():
+        data.append({
+            'servername': server,
+            'player_count': count,
+            'time': current_time
+        })
+    # Insert the documents into the collection
+    hourly_players.insert_many(data)
+    print(f"Added data for servers at {current_time}")
 
 
 bot = bb(command_prefix=prefix, description=description, intents=intents)
