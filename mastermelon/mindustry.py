@@ -1,13 +1,14 @@
+import io
 import pymongo
 from mastermelon.disc_constants import DUUID_ALEX
 import discord
 from pymongo.collection import Collection
 from datetime import timedelta
 from datetime import datetime
-from collections import Counter
+from collections import Counter,defaultdict
 
 from mastermelon import emojis as ej
-
+import matplotlib.pyplot as plt
 
 EXCHANGE_RATE=1000 # EXP to Ax
 
@@ -76,7 +77,6 @@ def get_latest_exp(res, convertedexp_doc):
             str_builder += exp_builder
             exp_dict[muuid_i] = muuid_exp_dict
     return str_builder, exp_dict, convertedexp_doc
-
 
 async def checkexp(ctx: discord.ext.commands.Context, user: discord.User, prefix: str, expgains: Collection,
                    convertedexp: Collection, convertedexpv6: Collection, expgainsv6: Collection):
@@ -177,7 +177,6 @@ def get_latest_claim(duuid,convertedexpv6,expgainsv6):
                     latest_claim=claimed
     return latest_claim
 
-    
 async def checkexp_legacy(ctx: discord.ext.commands.Context, user: discord.User, prefix: str, expgains: Collection, convertedexp: Collection):
     if prefix == "t?" and ctx.author.id != DUUID_ALEX:
         await ctx.channel.send("no testing for u")
@@ -230,6 +229,79 @@ async def checkexp_legacy(ctx: discord.ext.commands.Context, user: discord.User,
         else:
             await ctx.channel.send("You have no exp. ;-;")
 
+async def plotanalytics(ctx,hourly_players,last_hours):
+    def fetch_average_players(last_hours):
+        end_time = datetime.now()
+        start_time = end_time - timedelta(hours=last_hours)
+        # Aggregate data to calculate average players per hour
+        pipeline = [
+            {
+                '$match': {
+                    'time': {'$gte': start_time, '$lte': end_time}
+                }
+            },
+            {
+                '$group': {
+                    '_id': {
+                        'servername': '$servername',
+                        'hour': {'$hour': '$time'},
+                        'year': {'$year': '$time'},
+                        'month': {'$month': '$time'},
+                        'day': {'$dayOfMonth': '$time'}
+                    },
+                    'average_players': {'$avg': '$player_count'}
+                }
+            },
+            {
+                '$sort': {'_id.year': 1, '_id.month': 1, '_id.day': 1, '_id.hour': 1}
+            }
+        ]
+        
+        result = hourly_players.aggregate(pipeline)
+        
+        # Process the results
+        data = defaultdict(list)
+        for doc in result:
+            datetime_obj = datetime(doc['_id']['year'], doc['_id']['month'], doc['_id']['day'], doc['_id']['hour'])
+            data[doc['_id']['servername']].append((datetime_obj, doc['average_players']))
+        
+        return data
+
+    def figplot_average_players(data):
+        #plt.figure(figsize=(12, 8))
+        fig, ax = plt.subplots(1, 1, figsize=(8, 6))
+        
+        for servername, values in data.items():
+            values.sort()  # Ensure the values are sorted by datetime
+            datetimes, avg_players = zip(*values)
+            ax.plot(datetimes, avg_players, marker='o', label=servername)
+        
+        ax.set_xlabel('Datetime (UTC)')
+        ax.set_ylabel('Average Number of Players')
+        ax.set_title('Average Number of Players per Server per Hour')
+        ax.legend()
+        ax.grid(True)
+        
+        # Set major ticks format to show only hours
+        ax.xaxis.set_major_locator(mdates.HourLocator(interval=1))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M'))
+
+        plt.tight_layout()
+        return fig
+
+    average_players_data = fetch_average_players(last_hours)
+    fig = figplot_average_players(average_players_data)
+    image_buffer = io.BytesIO()
+    fig.savefig(image_buffer, format='png', dpi=50)
+    image_buffer.seek(0)
+
+    await ctx.reply(
+        file=discord.File(
+            fp=image_buffer,
+            filename=f'players_in_server.png'
+        )
+    )
+    pass
 
 def getflex(EXP):
     flex=""
