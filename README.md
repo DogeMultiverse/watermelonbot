@@ -86,6 +86,6 @@ deleteing these files should only be done by alex.
     - use underscores or camelCase in file name and map name.
 
 
-## some misc links
+## some misc links  
 
 https://httpbin.org/ip
