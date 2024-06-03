@@ -268,12 +268,21 @@ async def plotanalytics(ctx,hourly_players,last_hours):
 
     def figplot_average_players(data,start_time,end_time):
         fig, ax = plt.subplots(1, 1, figsize=(8, 6))
-        
+        total_players_per_hour = defaultdict(int)
         for servername, values in data.items():
             values.sort()  # Ensure the values are sorted by datetime
             datetimes, avg_players = zip(*values)
             ax.plot(datetimes, avg_players, marker='o', label=servername)
-        
+            # Calculate total players per hour
+            for dt, players in zip(datetimes, avg_players):
+                total_players_per_hour[dt] += players
+                
+        ax2 = ax.twinx()
+        total_datetimes, total_players = zip(*sorted(total_players_per_hour.items()))
+        ax2.plot(total_datetimes, total_players, marker='x', color='r', linestyle='--', label='Total Players')
+        ax2.set_ylabel('Total Number of Players', color='red')
+        ax2.tick_params(axis='y', labelcolor='red')
+
         ax.set_xlabel(f'Datetime (UTC) from {start_time.strftime("%Y-%m-%d")} to {end_time.strftime("%Y-%m-%d")}')
         ax.set_ylabel('Average Number of Players')
         ax.set_title('Average Number of Players per Server per Hour')
