@@ -167,6 +167,8 @@ class bb(commands.Bot):
             await guild.system_channel.send(embed=embed, file=image_data)
 
     async def on_member_remove(self, member: discord.Member):
+        if prefix == "t?":
+            return
         # Updates the cache when a user leaves to make sure everything is up to date
         invites_before_remove = self.invites[member.guild.id]
         invites_after_remove = await member.guild.invites()
