@@ -34,10 +34,17 @@ from mastermelon.utils.get_user_display_name import get_user_display_name
 
 autoban_counts = [0, 0]  # griefers and bots
 
+
+# some hardcoded variables
 ADMIN_LOGS_CHANNEL = 789511356197765190
 MODERATOR_LOGS_CHANNEL = 796305521270587413
 COUNTING_CHANNEL = 805105861450137600
 APPEAL_CHANNEL = 791490149753683988
+
+PREFIX_TEST = "t?"
+PREFIX_PROD = "w?"
+
+
 def get_date_str():
     return str(datetime.now())[:-4]
 
@@ -213,12 +220,11 @@ class bb(commands.Bot):
     async def update_mind_status_task(self):
         await self.wait_until_ready()
         try:
-            test = False
             status_msg_channel: discord.TextChannel = self.get_channel(
                 791158921443409950)
             status_log_channel: discord.TextChannel = self.get_channel(
                 791129836948422676)
-            while prefix == ("t?" if test else "w?"):  # only run for test bot
+            while prefix == PREFIX_PROD:  
                 t0 = time.time()
                 messages = await status_log_channel.history(limit=30, oldest_first=False,
                                                             after=datetime.now() - timedelta(minutes=7)).flatten()
@@ -375,7 +381,7 @@ async def gettest(ctx: commands.Context):
     await ctx.channel.send(len([m for m in ctx.guild.members if not m.bot]))
 
 
-@bot.command(description="start servers (admin only)", brief="Admin Mindustry Utility",
+@bot.command(description="get names of users (admin only)", brief="Admin Mindustry Utility",
              help="<serverid, -1 for allservers>")
 @commands.has_role("Admin (Discord)")
 @commands.check(is_valid_guild)
