@@ -399,6 +399,42 @@ async def getnames(ctx: commands.Context, serverid: int = None):
     await ctx.channel.send("done")
 
 
+@bot.command(description="Get info of user's mindustry account", brief="Admin Mindustry Utility",
+             help="<DUUID of user>") 
+@commands.has_any_role("Admin (Discord)","Admin (Mindustry)")
+@commands.check(is_valid_guild)
+async def getmindusinfo(ctx: commands.Context, DUUID: int = None):
+    if ctx.author.id != DUUID_ALEX:
+        await ctx.channel.send("no testing for u")
+        return
+    # TODO: make this function accept both int and @user
+    # search for this duuid in duuid1
+    # return the name, ip, muuid etc etc.
+    duuid_docs = duuid1.find({"duuid":DUUID}).sort("date",pymongo.DESCENDING)
+    embed = discord.Embed(title=f"Accounts of {DUUID}")
+    list_muuid = []
+    for userdata in duuid_docs:
+        musername = userdata["musername"]
+        muuid = userdata["muuid"]
+        role = userdata["role"]
+        color = userdata["color"]
+        date1 = userdata["date"]
+        strr=f"musername:`{musername}`, role:`{role}`, color:`{color}`, date:`{date1}`"
+        if (muuid in list_muuid) or (len(list_muuid)>20):
+            continue
+        list_muuid.append(muuid)
+        embed.add_field(name=f"muuid {muuid}",value=strr,inline=False)
+    if len(list_muuid)==0:
+        await ctx.channel.send("User not registered. Unable to unban.")
+        return
+    embed.add_field(name=f"All muuid {len(list_muuid)}",value=" ".join(list_muuid),inline=False)
+    await ctx.channel.send(embed=embed)
+    #docs = mindusbans.find({'banned_by_duuid': userid}).sort("date",-1).limit(10)
+    for muuid in list_muuid:
+        mindusbans_docs = mindusbans.find({'banned_muuid': muuid})
+    # TODO find all other IP that are related.
+    # TODO find the banned statuses.
+
 # commands related to mindustry servers
 @bot.command(description="restart servers (admin only)", brief="Admin Mindustry Utility",
              help="<serverid, -1 for allservers>")
