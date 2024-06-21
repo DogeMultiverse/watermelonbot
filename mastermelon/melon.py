@@ -1052,7 +1052,7 @@ async def convertexp(ctx: discord.ext.commands.Context):
                                ax=axdatabase)
 
 
-@bot.command(description="For Appealing a member", brief="Utility",
+@bot.command(description="For appealing a banned account of a registered member", brief="Utility",
              help="<minecraftBan|terrariaBan|mindustryKick|mindustryBan> <in_game_name> <reason>")
 @commands.check(is_valid_guild)
 async def appeal(ctx: discord.ext.commands.Context, punishment: str, idoruuid: str, *, reason: str):
