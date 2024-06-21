@@ -658,9 +658,9 @@ async def addhype2(ctx, messageid: int, channel: discord.TextChannel = None, cou
 async def on_command_error(ctx: discord.ext.commands.Context, error: Exception, *args, **kwargs):
     print(ctx.author, ctx, str(error))
     if isinstance(type(error), discord.ext.commands.UserInputError):
-        await ctx.message.channel.send(f"Wrong arguments {ctx.author.mention}: {error} Use `{prefix}help command` to learn to use the command properly.")
+        await ctx.message.channel.send(f"Wrong arguments {ctx.author.mention}: {error} Use `{prefix}help {ctx.command.name}` to learn to use the command properly.")
     elif isinstance(error, discord.ext.commands.errors.BadArgument):
-        await ctx.message.channel.send(f"Bad arguments {ctx.author.mention}: {error} Use `{prefix}help command` to learn to use the command properly.")
+        await ctx.message.channel.send(f"Bad arguments {ctx.author.mention}: {error} Use `{prefix}help {ctx.command.name}` to learn to use the command properly.")
     elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
         await ctx.message.channel.send(f"Missing argument {ctx.author.mention}: {error} Use `{prefix}help {ctx.command.name}` to learn to use the command properly.")
     elif isinstance(error, discord.ext.commands.errors.CommandNotFound):
