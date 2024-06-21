@@ -34,7 +34,10 @@ from mastermelon.utils.get_user_display_name import get_user_display_name
 
 autoban_counts = [0, 0]  # griefers and bots
 
-
+ADMIN_LOGS_CHANNEL = 789511356197765190
+MODERATOR_LOGS_CHANNEL = 796305521270587413
+COUNTING_CHANNEL = 805105861450137600
+APPEAL_CHANNEL = 791490149753683988
 def get_date_str():
     return str(datetime.now())[:-4]
 
@@ -1061,7 +1064,7 @@ async def appeal(ctx: discord.ext.commands.Context, punishment: str, idoruuid: s
         await ctx.channel.send("you must fill a reason of you got banned/kick")
         return
     await ctx.send("Thanks for appealing. Please be patient while our moderators attend to your appeal.")
-    channel = bot.get_channel(791490149753683988)  # appeal-submission
+    channel = bot.get_channel(APPEAL_CHANNEL)  # appeal-submission
     embed = discord.Embed(title="Appeal")
     embed.set_author(name=ctx.author.name + "#" +
                           ctx.author.discriminator, icon_url=ctx.author.avatar_url)
@@ -1120,11 +1123,11 @@ async def on_message(message: discord.Message):
         await message.reply("😊", mention_author=True)
     elif message.content == ':pepoclap:' and prefix == "t?":
         await message.reply(pepo_clap)
-    elif prefix == "w?" and message.channel.id == 789511356197765190:  # admin logs channel
+    elif prefix == "w?" and message.channel.id == ADMIN_LOGS_CHANNEL:  # admin logs channel
         await vkick_anti_bot(message, bot, autoban_counts, melonbotmindusbans)
-    elif prefix == "w?" and message.channel.id == 796305521270587413:  # moderator logs channel
+    elif prefix == "w?" and message.channel.id == MODERATOR_LOGS_CHANNEL:  # moderator logs channel
         await plugin_anti_bot(message, bot, autoban_counts, melonbotmindusbans)
-    elif prefix == "w?" and message.channel.id == 805105861450137600:  # counting hardcore channel
+    elif prefix == "w?" and message.channel.id == COUNTING_CHANNEL :  # counting hardcore channel
         if message.author.id != bot.user.id:
             await counting_bot.run_counterbot(message, bot)
     elif ("#alexcookie" in message.content) and (message.channel.id == 811993295114076190) and (prefix == "w?"):
