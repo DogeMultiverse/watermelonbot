@@ -1075,6 +1075,10 @@ async def appeal(ctx: discord.ext.commands.Context, punishment: str, idoruuid: s
     embed.add_field(name="In-game Player Name:",
                     value=str(idoruuid), inline=False)
     embed.add_field(name="Reason:", value=str(reason), inline=False)
+
+    # check if user is registered or not.
+    # also, returns the duuid
+    embed.add_field(name="DUUID:", value=str(ctx.author.id), inline=False)
     await channel.send(embed=embed)
 
 
