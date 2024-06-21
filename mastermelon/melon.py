@@ -552,10 +552,8 @@ async def getmindusbans(ctx, user: discord.user.User):
             f"Error, input invalid, u gave {user}type{type(user)}, type{type(discord.user.User)}type{type(discord.Member)}")
         return
     docs = mindusbans.find({'banned_by_duuid': userid}).sort("date",-1).limit(10)
-    listt = []
     embed = discord.Embed(title=f"Bans given by {user.name}",colour=discord.Colour.random().value)
     for i,d in enumerate(docs):
-        listt.append(d)
         strr = ""
         strr+= "date:"+str(d["date"])+"\n"
         strr+= "banned_muuid:"+d["banned_muuid"]+"\n"
