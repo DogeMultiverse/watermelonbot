@@ -135,7 +135,7 @@ async def sendcommandtoserver(ctx: commands.Context, serverid: int, consolecomma
         if serverid == -1: # this sends to all
             for serverid in range(len( servers )):
                 await send_command_to_1_server(ctx, serverid, consolecommand, servers, display)
-        elif serverid==-2: # sends to all server, except the last one
+        elif serverid == -2: # sends to all server, except the last one
             for serverid in range(len( servers )-1):
                 await send_command_to_1_server(ctx, serverid, consolecommand, servers, display)
         else: # just sends to 1
