@@ -26,11 +26,11 @@ async def vkick_anti_bot(message,bot,autoban_counts,melonbotmindusbans):
         await mod_report_channel.send( f"☠️ autoban activated for {username}" )
 
         await autoban_message_ctx.channel.send(f"☠️{autoban_counts[0]} banning user: {username}. by IP:"+ban_command_ip+"\nsending command")
-        await console_commands.sendcommandtoserver(autoban_message_ctx,-1,ban_command_ip,False)
+        await console_commands.sendcommandtoserver(autoban_message_ctx,-2,ban_command_ip,False)
         melonbotmindusbans.insert_one( {"date": datetime.utcnow(),"type":"vkick_ip","banned_user":username,"ban_command":ban_command_ip,"original_msg":message.content} )
 
         await autoban_message_ctx.channel.send(f"☠️{autoban_counts[0]} banning user: {username}. by MUUID:"+ban_command_muuid+"\nsending command")
-        await console_commands.sendcommandtoserver(autoban_message_ctx,-1,ban_command_muuid,False)
+        await console_commands.sendcommandtoserver(autoban_message_ctx,-2,ban_command_muuid,False)
         melonbotmindusbans.insert_one( {"date": datetime.utcnow(),"type":"vkick_muuid","banned_user":username,"ban_command":ban_command_muuid,"original_msg":message.content} )
 
 async def plugin_anti_bot(message,bot,autoban_counts,melonbotmindusbans):
@@ -54,5 +54,5 @@ async def plugin_anti_bot(message,bot,autoban_counts,melonbotmindusbans):
         subnet_ip = ".".join(strr)
         sendcmd = f"subnet-ban add {subnet_ip}"
         await message.channel.send(f"☠️☠️{autoban_counts[1]}🤖🤖 autoban activated sending this command to servers: {sendcmd}")
-        await console_commands.sendcommandtoserver(autoban_message_ctx,-1,sendcmd,False)
+        await console_commands.sendcommandtoserver(autoban_message_ctx,-2,sendcmd,False)
         melonbotmindusbans.insert_one( {"date": datetime.utcnow(),"type":"subnet-ban-bot","ban_command":sendcmd,"original_msg":message.content} )
