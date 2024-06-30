@@ -594,10 +594,47 @@ async def changemindusrole(ctx, user: discord.user.User, role: str):
     else:
         await ctx.send(f"Error, role not found. Please choose Admin|Mod|Player.")
 
+
 def is_valid_ip(ip: str) -> bool: # checks if a string is a valid IP address
     import re
     pattern = re.compile(r"^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$")
     return bool(pattern.match(ip))
+
+
+@bot.command(description="Query if the IP address is banned in anyway. Automatically checks for subnet bans. MUST enter a full IP address.",
+             help="<IP address>",
+             brief="Admin Mindustry Utility")
+@commands.has_any_role("Admin (Discord)", "Admin (Mindustry)")
+@commands.check(is_valid_guild)
+async def querybannedip(ctx, ipadd:str):
+    if not is_valid_ip(ipadd):
+        await ctx.send("Error, IP address is invalid.")
+        return
+    query = {"type": "subnet-ban-bot"}
+    projection = {"ban_command": 1, "_id": 0}
+    results = melonbotmindusbans.find(query, projection)
+    res = list(results)
+    subnet_bans = set([bc["ban_command"][15:] for bc in res])
+
+    query = {"type": "vkick_ip"}
+    projection = {"ban_command": 1, "_id": 0}
+    results = melonbotmindusbans.find(query, projection)
+    res = list(results)
+    ip_bans = set([bc["ban_command"][7:] for bc in res])
+    ip_in_question = ".".join(ipadd.split(".")[:3]) # drops the last part.
+    strr= []
+    for ip in ip_bans:
+        if ip_in_question in ip :
+            strr.append( f" `ipban:{ip}` ")
+    for ip in subnet_bans:
+        if ip_in_question in ip :
+            strr.append( f" `subnet-ban:{ip}` ")
+    if len(strr)==0:
+        await ctx.send("IP address is not banned in anyway.")
+    else:
+        final_str = ", ".join(strr)
+        await ctx.send(f"IP address found: {final_str}.\n To unban, use `subnet-ban remove XXX` or `unban XXX`")
+
 
 @bot.command(description="gets the recent bans given by a moderator or admin",
              help="<@user>",
