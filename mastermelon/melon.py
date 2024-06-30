@@ -594,6 +594,10 @@ async def changemindusrole(ctx, user: discord.user.User, role: str):
     else:
         await ctx.send(f"Error, role not found. Please choose Admin|Mod|Player.")
 
+def is_valid_ip(ip: str) -> bool: # checks if a string is a valid IP address
+    import re
+    pattern = re.compile(r"^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$")
+    return bool(pattern.match(ip))
 
 @bot.command(description="gets the recent bans given by a moderator or admin",
              help="<@user>",
