@@ -601,7 +601,7 @@ def is_valid_ip(ip: str) -> bool: # checks if a string is a valid IP address
     return bool(pattern.match(ip))
 
 
-@bot.command(description="Query if the IP address is banned in anyway. Automatically checks for subnet bans. MUST enter a full IP address.",
+@bot.command(description="Query if the IP address is banned in any way. Automatically checks for subnet bans. MUST enter a full IP address.",
              help="<IP address>",
              brief="Admin Mindustry Utility")
 @commands.has_any_role("Admin (Discord)", "Admin (Mindustry)")
@@ -630,7 +630,7 @@ async def querybannedip(ctx, ipadd:str):
         if ip_in_question in ip :
             strr.append( f" `subnet-ban:{ip}` ")
     if len(strr)==0:
-        await ctx.send("IP address is not banned in anyway.")
+        await ctx.send("IP address is not banned in any way.")
     else:
         final_str = ", ".join(strr)
         await ctx.send(f"IP address found: {final_str}.\n To unban, use `subnet-ban remove XXX` or `unban XXX`")
