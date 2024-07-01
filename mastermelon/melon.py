@@ -404,9 +404,6 @@ async def getnames(ctx: commands.Context, serverid: int = None):
 @commands.has_any_role("Admin (Discord)","Admin (Mindustry)")
 @commands.check(is_valid_guild)
 async def getmindusinfo(ctx: commands.Context, DUUID: int = None):
-    if ctx.author.id != DUUID_ALEX:
-        await ctx.channel.send("no testing for u")
-        return
     # TODO: make this function accept both int and @user
     # search for this duuid in duuid1
     # return the name, ip, muuid etc etc.
