@@ -41,6 +41,9 @@ MODERATOR_LOGS_CHANNEL = 796305521270587413
 COUNTING_CHANNEL = 805105861450137600
 APPEAL_CHANNEL = 791490149753683988
 
+STATUS_MSG_CHANNEL = 791158921443409950
+STATUS_LOG_CHANNEL = 791129836948422676
+
 PREFIX_TEST = "t?"
 PREFIX_PROD = "w?"
 
@@ -220,11 +223,11 @@ class bb(commands.Bot):
     async def update_mind_status_task(self):
         await self.wait_until_ready()
         try:
-            status_msg_channel: discord.TextChannel = self.get_channel(
-                791158921443409950)
-            status_log_channel: discord.TextChannel = self.get_channel(
-                791129836948422676)
-            while prefix == PREFIX_PROD:  
+            status_msg_channel: discord.TextChannel = self.get_channel(STATUS_MSG_CHANNEL)
+            status_log_channel: discord.TextChannel = self.get_channel(STATUS_LOG_CHANNEL)
+            update_counter = 0
+            while prefix == PREFIX_PROD:
+                update_counter += 1
                 t0 = time.time()
                 messages = await status_log_channel.history(limit=30, oldest_first=False,
                                                             after=datetime.now() - timedelta(minutes=7)).flatten()
@@ -259,7 +262,8 @@ class bb(commands.Bot):
                 else:  # if not found, send as a new msg
                     await status_msg_channel.send(strbuilder)
                 # save the time series onto AlexMindustry.hourly_players
-                add_hourly_player_data(players_in_servers)
+                if update_counter%3==0: # only save every 3rd time
+                    add_hourly_player_data(players_in_servers)
                 print(
                     f"update mindus servers took {time.time() - t0:.3f}seconds {get_date_str()}")
                 await asyncio.sleep(60 * 6)# server status updates are every 5mins. so this must be longer than that.
