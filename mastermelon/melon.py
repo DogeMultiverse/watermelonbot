@@ -232,7 +232,7 @@ class bb(commands.Bot):
                 servers = set()
                 timestamp = int(datetime.now().timestamp())
                 strbuilder = f"Updated <t:{timestamp}:R>\n"
-                maps = []
+                serverstatuslist = []
                 players_in_servers = dict()
                 for msg in messages:
                     if " is **running**:" in msg.content and "**PLAYERS**" in msg.content:
@@ -246,13 +246,13 @@ class bb(commands.Bot):
                             num_players = msg3[0]
                             RAM = msg3[1]
                             ss = strip_colourbrackets(msg2[0])
-                            maps += [
+                            serverstatuslist += [
                                 f"✅ `ONLINE`✅ {servername}\n`            `**Map**: `{ss}`  **Players**:`{num_players}`  **RAM**:`{RAM}`\n"]
                             players_in_servers[servername] = int(float(num_players))
                 if len(servers) == 0:
                     strbuilder += "Servers Ded :("
                 else:
-                    strbuilder += "".join(sorted(maps))
+                    strbuilder += "".join(sorted(serverstatuslist))
                 status_msg: discord.Message = await status_msg_channel.history(limit=1).flatten()
                 if status_msg and status_msg[0].content.startswith("Updated <t"):
                     await status_msg[0].edit(content=strbuilder)
@@ -262,7 +262,7 @@ class bb(commands.Bot):
                 add_hourly_player_data(players_in_servers)
                 print(
                     f"update mindus servers took {time.time() - t0:.3f}seconds {get_date_str()}")
-                await asyncio.sleep(60 * 5)
+                await asyncio.sleep(60 * 6)# server status updates are every 5mins. so this must be longer than that.
         except RuntimeError:
             print("mindus status update closed")
 
