@@ -236,3 +236,8 @@ async def getserver(ctx: commands.Context):
     servers = getservers()
     strr = [f"`ID:{s1:>3}, {s2:<30}, screen={s3:<10}, port= {s4:<5} , owner:{s5}`" for s1, s2, s3, s4, s5 in servers]
     await ctx.channel.send("\n".join(strr))
+
+
+# for pterodactyl servers:
+# ptero servers may be owned by different companies, but have the same API calls.
+# these information should be saved together and allow for uniform execution.
