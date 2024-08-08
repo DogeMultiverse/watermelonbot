@@ -226,8 +226,12 @@ class bb(commands.Bot):
             status_msg_channel: discord.TextChannel = self.get_channel(STATUS_MSG_CHANNEL)
             status_log_channel: discord.TextChannel = self.get_channel(STATUS_LOG_CHANNEL)
             update_counter = 0
+            peak_num_players = 0 #todo
+            avg_num_players =0
+            counter_num_players =0
             while prefix == PREFIX_PROD:
                 update_counter += 1
+                counter_num_players +=1
                 t0 = time.time()
                 messages = await status_log_channel.history(limit=30, oldest_first=False,
                                                             after=datetime.now() - timedelta(minutes=7)).flatten()
@@ -247,6 +251,7 @@ class bb(commands.Bot):
                             msg2 = msg1[1].split(", **PLAYERS**=")
                             msg3 = msg2[1].split(", **RAM**=")
                             num_players = msg3[0]
+                            avg_num_players +=int(num_players) 
                             RAM = msg3[1]
                             ss = strip_colourbrackets(msg2[0])
                             serverstatuslist += [
@@ -256,6 +261,7 @@ class bb(commands.Bot):
                     strbuilder += "Servers Ded :("
                 else:
                     strbuilder += "".join(sorted(serverstatuslist))
+                    strbuilder += f"avg players ={avg_num_players/counter_num_players :.1f}\n"
                 status_msg: discord.Message = await status_msg_channel.history(limit=1).flatten()
                 if status_msg and status_msg[0].content.startswith("Updated <t"):
                     await status_msg[0].edit(content=strbuilder)
