@@ -645,8 +645,8 @@ async def querybannedip(ctx, ipadd:str):
 
 @bot.command(description="gets the recent bans given by a moderator or admin",
              help="<@user>",
-             brief="Admin Mindustry Utility")
-@commands.has_any_role("Admin (Discord)", "Admin (Mindustry)")
+             brief="Mod Mindustry Utility")
+@commands.has_any_role("Admin (Discord)", "Admin (Mindustry)", "Mod (Mindustry)")
 @commands.check(is_valid_guild)
 async def getmindusbans(ctx, user: discord.user.User):
     userid: int
