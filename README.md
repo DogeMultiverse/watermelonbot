@@ -85,6 +85,10 @@ deleteing these files should only be done by alex.
     - `[]_` are allowed.
     - use underscores or camelCase in file name and map name.
 
+## to free up space in mongodb
+
+run cells in `notebook_filter_duplicate_muuid.ipynb`
+
 
 ## some misc links  
 
