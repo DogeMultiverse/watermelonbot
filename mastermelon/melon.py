@@ -444,11 +444,11 @@ async def getmindusinfo(ctx: commands.Context, DUUID: int = None):
             banned_by_duuid = mindusbans_doc["banned_by_duuid"]
             strr = ""
             strr+= "date:"+str(mindusbans_doc["date"])+"\n"
-            strr+= "banned_muuid:"+mindusbans_doc["banned_muuid"]+"\n"
+            strr+= "banned_muuid: `"+mindusbans_doc["banned_muuid"]+"`\n"
             strr+= "banned_ip:"+mindusbans_doc["banned_ip"]+"\n"
-            strr+= "banned_reason:"+mindusbans_doc["banned_reason"]+"\n"
+            strr+= "banned_reason: `"+mindusbans_doc["banned_reason"]+"`\n"
             strr+= "servername:"+mindusbans_doc["servername"]+"\n"
-            strr+= "banned_type:"+mindusbans_doc["banned_type"]
+            strr+= "banned_type: `"+mindusbans_doc["banned_type"]+"`"
             
             if counts>20: # unlikely for more than 20 bans.
                 counts+=1
