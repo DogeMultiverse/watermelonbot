@@ -14,7 +14,7 @@ Bot for managing discord and servers, written in python.
   
 
 
-# How to contribute
+# How to contribute 
 
 
 ## If you wanted to fix or add new features 
