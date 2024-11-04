@@ -70,7 +70,7 @@ change values of GUILD_ID1 and GUILD_ID2 to the GUILD_ID that you own.
 
 ## IMPORTANT: DO NOT DELETE the following: 
 
-- for survival: `mazev4.msav`
+- for survival: `mazev4.msav` 
 - for pvp: `SpaceFortressV1.msav`
 - for attack: `AxAttV1.msav`
 - for sanbox: `sandboxv3.msav`
