@@ -32,7 +32,7 @@ def getservers(): # host screen port
             ("root@139.162.41.78"                , "pvp_v7_asia"       , "6767" , "LD SG2"),
             ("root@172.245.187.143"              , "pvp_usa"           , "6868" , "RN USA"),
             ("root@92.119.127.171"               , "surv_eu"           , "6888" , "RN FRN"),
-            ("root@92.119.127.171"               , "test_eu"           , "6889" , "RN FRN")
+            ("root@92.119.127.171"               , "test_eu"           , "6889" , "RN FRN") # afk zone
                ]
     #servers = servers
     return [(i,host,screen,port,loc) for i,(host,screen,port,loc) in enumerate(servers)]
