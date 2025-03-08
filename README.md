@@ -93,3 +93,15 @@ run cells in `notebook_filter_duplicate_muuid.ipynb`
 ## some misc links  
 
 https://httpbin.org/ip
+
+## commands to unban/unkick
+
+- w?sendcmd -1 "pardon 4bMY123a0AAAAAkt75Tw=="
+- w?sendcmd -1 "subnet-ban remove 123.15.12"
+- w?sendcmd -1 "unban 4bMY123a0AAAAAkt75Tw=="
+- w?sendcmd -1 "unban 123.15.12.123"
+
+## commands to ban
+
+- w?sendcmd -1 "ban id 4bMY123a0AAAAAkt75Tw=="
+- w?sendcmd -1 "ban ip 123.15.12.123"
