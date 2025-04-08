@@ -1,16 +1,22 @@
-# 🍉 WaterMelonBot 🍉
+# 🍉 WaterMelonBot 🍉 
 
 Bot for managing discord and servers, written in python.
 
 - [🍉 WaterMelonBot 🍉](#-watermelonbot-)
-  - [How to contribute](#how-to-contribute)
-    - [If you wanted to fix or add new features](#if-you-wanted-to-fix-or-add-new-features)
-    - [If you found a bug](#if-you-found-a-bug)
-  - [How to operate the bot (you must have admin rights)](#how-to-operate-the-bot-you-must-have-admin-rights)
-  - [Config file](#config-file)
-    - [With config file](#with-config-file)
-    - [With .env file](#with-env-file)
-  - [TO DO](#to-do)
+- [How to contribute](#how-to-contribute)
+  - [If you wanted to fix or add new features](#if-you-wanted-to-fix-or-add-new-features)
+  - [If you found a bug](#if-you-found-a-bug)
+- [How to operate the bot (you must have admin rights)](#how-to-operate-the-bot-you-must-have-admin-rights)
+- [Config file](#config-file)
+  - [With config file](#with-config-file)
+- [other files](#other-files)
+- [How to upload maps.](#how-to-upload-maps)
+  - [IMPORTANT: DO NOT DELETE the following:](#important-do-not-delete-the-following)
+  - [notes for uploading maps](#notes-for-uploading-maps)
+  - [to free up space in mongodb](#to-free-up-space-in-mongodb)
+  - [some misc links](#some-misc-links)
+  - [commands to unban/unkick](#commands-to-unbanunkick)
+  - [commands to ban](#commands-to-ban)
   
 
 
