@@ -3,14 +3,13 @@ import discord
 from datetime import datetime
 
 async def vkick_anti_bot(message,bot,autoban_counts,melonbotmindusbans):
-    if message.author.id == bot.user.id:
-        return
     if "w?sendcmd -1" not in message.content:
         return
     if "ModAdmin Hammer vkick" not in message.content:
         return
     if "Report" in message.content:
         return
+
     autoban_channel: discord.TextChannel = bot.get_channel(1165956715230015529)
     mod_report_channel: discord.TextChannel = bot.get_channel(796305521270587413) 
     autoban_message_ctx = await autoban_channel.fetch_message(1173435083353505792)
@@ -34,15 +33,12 @@ async def vkick_anti_bot(message,bot,autoban_counts,melonbotmindusbans):
         melonbotmindusbans.insert_one( {"date": datetime.now(),"type":"vkick_muuid","banned_user":username,"ban_command":ban_command_muuid,"original_msg":message.content} )
 
 async def plugin_anti_bot(message,bot,autoban_counts,melonbotmindusbans):
-    
-    if message.author.id == bot.user.id:
-        return
     if "BOT detected! IP banned: " not in message.content:
         return
     ip = message.content.split("BOT detected! IP banned: ")[1]
-    
     if message.content.count("BOT detected! IP banned: ")>1:
         return
+
     autoban_channel: discord.TextChannel = bot.get_channel(1165956715230015529)
     autoban_message_ctx = await autoban_channel.fetch_message(1173435083353505792)
     if len(ip.split("."))!=4:
