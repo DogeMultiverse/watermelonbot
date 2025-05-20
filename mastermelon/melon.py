@@ -41,7 +41,7 @@ MODERATOR_LOGS_CHANNEL = 796305521270587413
 COUNTING_CHANNEL = 805105861450137600
 APPEAL_CHANNEL = 791490149753683988
 
-MINDUS_REPORT_BOT = 796310311376257054
+REPORT_HOOK_BOT = 796310311376257054
 
 STATUS_MSG_CHANNEL = 791158921443409950
 STATUS_LOG_CHANNEL = 791129836948422676
@@ -1240,9 +1240,9 @@ async def on_message(message: discord.Message):
         await message.reply("😊", mention_author=True)
     elif message.content == ':pepoclap:' and prefix == "t?":
         await message.reply(pepo_clap)
-    elif prefix == "w?" and message.channel.id == ADMIN_LOGS_CHANNEL and message.author.id == MINDUS_REPORT_BOT:  # admin logs channel
+    elif prefix == "w?" and message.channel.id == ADMIN_LOGS_CHANNEL and message.author.id == REPORT_HOOK_BOT:  # admin logs channel
         await vkick_anti_bot(message, bot, autoban_counts, melonbotmindusbans)
-    elif prefix == "w?" and message.channel.id == MODERATOR_LOGS_CHANNEL and message.author.id == MINDUS_REPORT_BOT:  # moderator logs channel
+    elif prefix == "w?" and message.channel.id == MODERATOR_LOGS_CHANNEL and message.author.id == REPORT_HOOK_BOT:  # moderator logs channel
         await plugin_anti_bot(message, bot, autoban_counts, melonbotmindusbans)
     elif prefix == "w?" and message.channel.id == COUNTING_CHANNEL :  # counting hardcore channel
         if message.author.id != bot.user.id:
