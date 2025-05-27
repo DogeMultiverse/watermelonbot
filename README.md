@@ -29,7 +29,7 @@ Bot for managing discord and servers, written in python.
 - Make a pull request and wait so that a contributor/repo owner merge the pull request.
 
 ## If you found a bug
-- Make sure the bug is reproducible.
+- Make sure the bug is reproducible. 
 - Make sure the bug is not reported.
 - Open an issue, describe the bug.
 
