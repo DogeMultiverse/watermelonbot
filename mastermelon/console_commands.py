@@ -37,6 +37,17 @@ def getservers(): # host screen port
     #servers = servers
     return [(i,host,screen,port,loc) for i,(host,screen,port,loc) in enumerate(servers)]
 
+def other_info():
+    return "Other info: \n watermelonbot = 'RN USA'\n post forwarding = 'RN FRN'"
+
+
+def find_index_by_loc(target):
+    for i, host, screen, port, loc in getservers():
+        if loc == target:
+            return i
+    return None
+
+
 def servfolders():
     return [
         #"/root/Documents/pvp_v7_2023",
@@ -254,3 +265,30 @@ async def getserver(ctx: commands.Context):
 # for pterodactyl servers:
 # ptero servers may be owned by different companies, but have the same API calls.
 # these information should be saved together and allow for uniform execution.
+
+
+## node commands
+### these commands are for controling the whole node.
+async def getnode(ctx: commands.Context):
+    servers = getservers()
+    nodes = list(enumerate(set([s5 for _,_,_,_,s5 in servers])))
+    strr = [f"`ID:{s1:>3}, {s2:<30}, screen={s3:<10}, port= {s4:<5} , owner:{s5}`" for s1, s2, s3, s4, s5 in servers]
+    await ctx.channel.send("\n".join(strr))
+    strr = [f"`{i:>8}` {s1:<10}" for i,s1 in nodes]
+    await ctx.channel.send("\n".join(strr))
+    await ctx.channel.send(other_info())
+    
+
+async def rebootnode(ctx: commands.Context, nodeid: int):
+    servers = getservers()
+    nodes = list(enumerate(set([s5 for _,_,_,_,s5 in servers])))
+    await ctx.channel.send("Rebooting nodes...", delete_after=3)
+    try:
+        serverid = find_index_by_loc(nodes[nodeid][1])
+        out,err = ssh_withcmd(servers[serverid][0], cmd="sudo reboot")
+        await ctx.channel.send("done reboot.")
+    except Exception as e:
+        strr=traceback.format_exc()
+        await ctx.channel.send("error occurred 292:" + str(e)+"tb:"+strr)
+    else:
+        pass

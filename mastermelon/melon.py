@@ -513,6 +513,32 @@ async def gameoverserver(ctx: commands.Context, serverid: int = None):
     else:
         await console_commands.gameoverserver(ctx, serverid)
 
+## node commands start
+
+@bot.command(description="get available nodes (admin only)", brief="Admin Mindustry Utility")
+@commands.has_role("Admin (Discord)")
+@commands.check(is_valid_guild)
+async def getnode(ctx):
+    await console_commands.getnode(ctx)
+
+
+@bot.command(description="restart node (admin only)", brief="Admin Mindustry Utility")
+@commands.has_role("Admin (Discord)")
+@commands.check(is_valid_guild)
+async def rebootnode(ctx, nodeid: int):
+    if nodeid is None:
+        await console_commands.getnode(ctx)
+        await ctx.send(f"use <nodeid>")
+        return
+    if nodeid == -1:# reboot all nodes, need to make sure watermelonbot is the last one to reboot
+        nodes = list(enumerate(set([s5 for _,_,_,_,s5 in servers])))
+        for nodeid in range(len(nodes) - 1, -1, -1): # watermelonbot is the last one to reboot
+            await console_commands.rebootnode(ctx, nodes[nodeid][0])
+        return
+    else:
+        await console_commands.rebootnode(ctx, nodeid)
+
+## node commands end
 
 @bot.command(description="get available servers (admin only)", brief="Admin Mindustry Utility")
 @commands.has_role("Admin (Discord)")
