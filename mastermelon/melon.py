@@ -555,9 +555,9 @@ async def update(ctx: commands.Context, serverid: int = None):
     elif serverid == -1:  # update all servers
         await ctx.send(f"Updating servers...", delete_after=5)
         for serverid in range(len(console_commands.getservers())):
-            await console_commands.servupload(ctx, serverid)
+            await console_commands.plugin_upload(ctx, serverid)
     else:
-        await console_commands.servupload(ctx, serverid)
+        await console_commands.plugin_upload(ctx, serverid)
 
 
 @bot.command(description="upload maps to servers.", brief="Admin Mindustry Utility",

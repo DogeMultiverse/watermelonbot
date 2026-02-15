@@ -169,7 +169,7 @@ async def showconsole(ctx, i, host, screen, port):
     await ctx.channel.send(f"Completed reading for `{i}` `{host}:{port}` `{screen}`")# todo delete those msgs if passed
 
 
-async def servupload(ctx,serverid):
+async def plugin_upload(ctx,serverid):
     servers = getservers()
     await ctx.channel.send("Uploading plugins...", delete_after=3)
     try:
