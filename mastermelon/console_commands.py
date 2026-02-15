@@ -61,7 +61,7 @@ def mapfolders():
         "mindustry_maps/test_v7_eu/"
     ]
 
-async def restartserver(ctx: commands.Context, serverid: int):
+async def restartgameserver(ctx: commands.Context, serverid: int):
     servers = getservers()
     try:
         i,host,screen,port,loc = servers[serverid]
@@ -81,7 +81,7 @@ async def restartserver(ctx: commands.Context, serverid: int):
         pass # todo delete those msgs if passed
 
 
-async def startserver(ctx: commands.Context, serverid: int):
+async def startgameserver(ctx: commands.Context, serverid: int):
     servers = getservers()
     try:
         i,host,screen,port,loc = servers[serverid]

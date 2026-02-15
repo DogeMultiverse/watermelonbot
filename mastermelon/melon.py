@@ -472,30 +472,30 @@ async def getmindusinfo(ctx: commands.Context, DUUID: int = None):
 @commands.has_role("Admin (Discord)")
 @commands.check(is_valid_guild)
 # todo add servercommand: str = "hubkick"
-async def restartserver(ctx: commands.Context, serverid: int = None):
+async def restartgameserver(ctx: commands.Context, serverid: int = None):
     if serverid is None:
         await console_commands.getserver(ctx)
         await ctx.send(f"use <serverid, -1 for allservers>")
     elif serverid == -1:  # update all servers
         for serverid in range(len(console_commands.getservers())):
-            await console_commands.restartserver(ctx, serverid)
+            await console_commands.restartgameserver(ctx, serverid)
     else:
-        await console_commands.restartserver(ctx, serverid)
+        await console_commands.restartgameserver(ctx, serverid)
 
 
 @bot.command(description="start servers (admin only)", brief="Admin Mindustry Utility",
              help="<serverid, -1 for allservers>")
 @commands.has_role("Admin (Discord)")
 @commands.check(is_valid_guild)
-async def startserver(ctx: commands.Context, serverid: int = None):
+async def startgameserver(ctx: commands.Context, serverid: int = None):
     if serverid is None:
         await console_commands.getserver(ctx)
         await ctx.send(f"use <serverid, -1 for allservers>")
     elif serverid == -1:  # start all servers
         for serverid in range(len(console_commands.getservers())):
-            await console_commands.startserver(ctx, serverid)
+            await console_commands.startgameserver(ctx, serverid)
     else:
-        await console_commands.startserver(ctx, serverid)
+        await console_commands.startgameserver(ctx, serverid)
 
 
 @bot.command(description="send gameover command to servers (admin only)", brief="Admin Mindustry Utility",
