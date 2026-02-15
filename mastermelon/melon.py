@@ -525,7 +525,7 @@ async def getnode(ctx):
 @bot.command(description="restart node (admin only)", brief="Admin Mindustry Utility")
 @commands.has_role("Admin (Discord)")
 @commands.check(is_valid_guild)
-async def rebootnode(ctx, nodeid: int):
+async def rebootnode(ctx, nodeid: int = None):
     if nodeid is None:
         await console_commands.getnode(ctx)
         await ctx.send(f"use <nodeid>")
