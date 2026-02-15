@@ -292,11 +292,11 @@ async def rebootnode(ctx: commands.Context, nodeid: int):
         if nodeid == -1:
           for nodeid in range(len(nodes) - 1, -1, -1): # watermelonbot is the last one to reboot
             serverid = find_index_by_loc(nodes[nodeid][1])
-            out,err = ssh_withcmd(servers[serverid][0], cmd="sudo reboot")
+            out,err = ssh_withcmd(servers[serverid][1], cmd="sudo reboot")
             await ctx.channel.send(f"done reboot `{nodes[nodeid][1]}`") 
         else:
             serverid = find_index_by_loc(nodes[nodeid][1])
-            out,err = ssh_withcmd(servers[serverid][0], cmd="sudo reboot")
+            out,err = ssh_withcmd(servers[serverid][1], cmd="sudo reboot")
             await ctx.channel.send(f"done reboot `{nodes[nodeid][1]}`") 
     except Exception as e:
         strr=traceback.format_exc()
