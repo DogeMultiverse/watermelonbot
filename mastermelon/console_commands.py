@@ -182,7 +182,20 @@ async def plugin_upload(ctx,serverid):
         await ctx.channel.send(f"done upload: `{i}` `{host}:{port}` with screen `{screen}`, output:{str(out)[-1000:]}")
     except Exception as e:
         strr=traceback.format_exc()
-        await ctx.channel.send("error occurred 155:" + str(e)+"tb:"+strr)
+        await ctx.channel.send("error occurred 185:" + str(e)+"tb:"+strr)
+
+
+async def server_release_upload(ctx,serverid):
+    servers = getservers()
+    await ctx.channel.send("Uploading server release...", delete_after=3)
+    try:
+        i,host,screen,port,loc = servers[serverid] 
+        out,err = scp_cmd(host,src="/root/Documents/watermelonbot/server_release/server-release.jar",
+                dst=f"{servfolders()[i]}")
+        await ctx.channel.send(f"done upload: `{i}` `{host}:{port}` with screen `{screen}`, output:{str(out)[-1000:]}")
+    except Exception as e:
+        strr=traceback.format_exc()
+        await ctx.channel.send("error occurred 198:" + str(e)+"tb:"+strr)
 
 
 async def syncmindusmap(ctx,serverid):
@@ -209,7 +222,7 @@ async def syncmindusmap(ctx,serverid):
 
     except Exception as e:
         strr=traceback.format_exc()
-        await ctx.channel.send("error occurred 171:" + str(e)+"tb:"+strr)
+        await ctx.channel.send("error occurred 225:" + str(e)+"tb:"+strr)
     
 async def get_version_of_plugin_from_all_servers(ctx: commands.Context):
     servers = getservers()
