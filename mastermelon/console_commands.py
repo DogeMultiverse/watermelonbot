@@ -37,6 +37,9 @@ def getservers(): # host screen port
     #servers = servers
     return [(i,host,screen,port,loc) for i,(host,screen,port,loc) in enumerate(servers)]
 
+def getnodes():
+    return list(enumerate(["RN USA", "RN FRN","LD JPY","LD SG2"]))
+
 def other_info():
     return "Other info: \n watermelonbot = 'RN USA'\n post forwarding = 'RN FRN'"
 
@@ -271,7 +274,7 @@ async def getserver(ctx: commands.Context):
 ### these commands are for controling the whole node.
 async def getnode(ctx: commands.Context):
     servers = getservers()
-    nodes = list(enumerate(set([s5 for _,_,_,_,s5 in servers])))
+    nodes = getnodes()
     strr = [f"`ID:{s1:>3}, {s2:<30}, screen={s3:<10}, port= {s4:<5} , owner:{s5}`" for s1, s2, s3, s4, s5 in servers]
     await ctx.channel.send("\n".join(strr))
     strr = [f"`{i:>8}` {s1:<10}" for i,s1 in nodes]
@@ -280,15 +283,23 @@ async def getnode(ctx: commands.Context):
     
 
 async def rebootnode(ctx: commands.Context, nodeid: int):
+    # if nodeid==-1, reboot all nodes
+    # if nodeid is not -1, reboot the specified node
     servers = getservers()
-    nodes = list(enumerate(set([s5 for _,_,_,_,s5 in servers])))
+    nodes = getnodes()
     await ctx.channel.send("Rebooting nodes...", delete_after=3)
     try:
-        serverid = find_index_by_loc(nodes[nodeid][1])
-        out,err = ssh_withcmd(servers[serverid][0], cmd="sudo reboot")
-        await ctx.channel.send("done reboot.")
+        if nodeid == -1:
+          for nodeid in range(len(nodes) - 1, -1, -1): # watermelonbot is the last one to reboot
+            serverid = find_index_by_loc(nodes[nodeid][1])
+            out,err = ssh_withcmd(servers[serverid][0], cmd="sudo reboot")
+            await ctx.channel.send(f"done reboot `{nodes[nodeid][1]}`") 
+        else:
+            serverid = find_index_by_loc(nodes[nodeid][1])
+            out,err = ssh_withcmd(servers[serverid][0], cmd="sudo reboot")
+            await ctx.channel.send(f"done reboot `{nodes[nodeid][1]}`") 
     except Exception as e:
         strr=traceback.format_exc()
-        await ctx.channel.send("error occurred 292:" + str(e)+"tb:"+strr)
-    else:
-        pass
+        await ctx.channel.send("error occurred 303:" + str(e)+"tb:"+strr)
+    else: 
+        pass 

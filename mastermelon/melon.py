@@ -530,13 +530,11 @@ async def rebootnode(ctx, nodeid: int):
         await console_commands.getnode(ctx)
         await ctx.send(f"use <nodeid>")
         return
-    if nodeid == -1:# reboot all nodes, need to make sure watermelonbot is the last one to reboot
-        nodes = list(enumerate(set([s5 for _,_,_,_,s5 in servers])))
-        for nodeid in range(len(nodes) - 1, -1, -1): # watermelonbot is the last one to reboot
-            await console_commands.rebootnode(ctx, nodes[nodeid][0])
-        return
-    else:
-        await console_commands.rebootnode(ctx, nodeid)
+    # reboot nodes, need to make sure watermelonbot is the last one to reboot
+    # if nodeid==-1, reboot all nodes
+    # if nodeid is not None, reboot the specified node
+    # logic is handled by console_commands.rebootnode
+    await console_commands.rebootnode(ctx, nodeid)
 
 ## node commands end
 
