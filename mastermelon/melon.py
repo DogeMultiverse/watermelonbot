@@ -548,7 +548,7 @@ async def sendcmd(ctx: commands.Context, serverid: int, consolecommand: str):
              help="<serverid, -1 for allservers>")
 @commands.has_role("Admin (Discord)")
 @commands.check(is_valid_guild)
-async def update(ctx: commands.Context, serverid: int = None):
+async def updateplugin(ctx: commands.Context, serverid: int = None):
     if serverid is None:
         await console_commands.getserver(ctx)
         await ctx.send(f"use <serverid, -1 for allservers>")
@@ -558,6 +558,22 @@ async def update(ctx: commands.Context, serverid: int = None):
             await console_commands.plugin_upload(ctx, serverid)
     else:
         await console_commands.plugin_upload(ctx, serverid)
+
+
+@bot.command(description="upload server release to servers.", brief="Admin Mindustry Utility",
+             help="<serverid, -1 for allservers>")
+@commands.has_role("Admin (Discord)")
+@commands.check(is_valid_guild)
+async def updateserverjar(ctx: commands.Context, serverid: int = None):
+    if serverid is None:
+        await console_commands.getserver(ctx)
+        await ctx.send(f"use <serverid, -1 for allservers>")
+    elif serverid == -1:  # update all servers
+        await ctx.send(f"Updating server release jar to servers...", delete_after=5)
+        for serverid in range(len(console_commands.getservers())):
+            await console_commands.server_release_upload(ctx, serverid)
+    else:
+        await console_commands.server_release_upload(ctx, serverid)
 
 
 @bot.command(description="upload maps to servers.", brief="Admin Mindustry Utility",
