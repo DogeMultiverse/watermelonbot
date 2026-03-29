@@ -231,7 +231,7 @@ async def syncmindusmap(ctx,serverid):
         cmd =f'screen -S {screen} -p 0 -X stuff "maps^M"'
         send_consolecommand(host, cmd)
         await asyncio.sleep(2)
-        await ctx.channel.send(f"done upload: `{i}` `{host}:{port}` with screen `{screen}`, output:\n{output}")
+        await ctx.channel.send(f"done upload & reloadmap: `{i}` `{host}:{port}` screen `{screen}`, output:\n{output}")
         await showconsole(ctx, i, host, screen, port)
 
     except Exception as e:
