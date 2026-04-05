@@ -1,4 +1,4 @@
-# 🍉 WaterMelonBot 🍉 
+# 🍉 WaterMelonBot 🍉
 
 Bot for managing discord and servers, written in python.
 
