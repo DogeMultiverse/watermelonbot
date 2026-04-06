@@ -296,6 +296,71 @@ async def plotanalytics(ctx,hourly_players,last_hours):
 
         plt.tight_layout()
         return fig
+    def figplot_average_players(data, start_time, end_time):
+        import numpy as np
+
+        # Build matrix: servers x hours
+        servers = sorted([s[7:] for s in data.keys()])
+        server_map = {s[7:]: s for s in data.keys()}
+        all_hours = list(range(24))
+
+        matrix = np.zeros((len(servers), 24))
+        counts = np.zeros((len(servers), 24))
+
+        for s_short, s_full in server_map.items():
+            row = servers.index(s_short)
+            for dt, avg in data[s_full]:
+                h = dt.hour
+                matrix[row, h] += avg
+                counts[row, h] += 1
+
+        with np.errstate(invalid='ignore'):
+            matrix = np.where(counts > 0, matrix / counts, np.nan)
+
+        # Sort servers by mean popularity
+        means = np.nanmean(matrix, axis=1)
+        order = np.argsort(means)
+        matrix = matrix[order]
+        servers = [servers[i] for i in order]
+
+        fig, axes = plt.subplots(1, 2, figsize=(16, 6))
+
+        # --- Left: heatmap ---
+        ax = axes[0]
+        masked = np.ma.masked_invalid(matrix)
+        im = ax.imshow(masked, aspect='auto', cmap='YlOrRd', interpolation='none')
+        plt.colorbar(im, ax=ax, label='Avg Players')
+
+        ax.set_xticks(all_hours)
+        ax.set_xticklabels([f"{h:02d}H" for h in all_hours], rotation=45, ha='right', fontsize=7)
+        ax.set_yticks(range(len(servers)))
+        ax.set_yticklabels(servers, fontsize=8)
+        ax.set_xlabel("Hour of Day (UTC)")
+        ax.set_title("Avg Players by Server & Hour")
+
+        # Annotate cells
+        for i in range(len(servers)):
+            for j in all_hours:
+                val = matrix[i, j]
+                if not np.isnan(val):
+                    ax.text(j, i, f"{val:.1f}", ha='center', va='center', fontsize=6,
+                            color='black' if val < masked.max() * 0.6 else 'white')
+
+        # --- Right: horizontal bar chart ---
+        ax2 = axes[1]
+        bar_means = np.nanmean(matrix, axis=1)
+        ax2.barh(servers, bar_means, color='steelblue')
+        ax2.set_xlabel("Avg Players")
+        ax2.set_title("Overall Avg Players per Server")
+        for i, v in enumerate(bar_means):
+            ax2.text(v + 0.05, i, f"{v:.1f}", va='center', fontsize=8)
+
+        plt.suptitle(
+            f"Server Analytics ({start_time.strftime('%Y-%m-%d')} to {end_time.strftime('%Y-%m-%d')} UTC)",
+            fontsize=12
+        )
+        plt.tight_layout()
+        return fig
     
     end_time = datetime.now()
     start_time = end_time - timedelta(hours=last_hours)
