@@ -195,19 +195,27 @@ class bb(commands.Bot):
         await guild.system_channel.send(msg_builder + f"\nNow we have {total_members} members.")
 
     async def on_ready(self):
+        logger = logging.getLogger('discord')
+        logger.info(f"Bot logged in as {bot.user.name} ({bot.user.id})")
         print('Logged in as', bot.user.name, bot.user.id)
+
         for guild in bot.guilds:
-            # Adding each guild's invites to our dict
             self.invites[guild.id] = await guild.invites()
             self.inviter_dict[guild.id] = {}
             invite: discord.guild.Invite
             for invite in self.invites[guild.id]:
                 await self.update_self_invite_dict(guild, invite)
-        self.bg_task.append(self.loop.create_task(
-            self.update_mind_status_task()))
-        git_update_channel: discord.TextChannel = self.get_channel(
-            788228956372992020)
+
+        task = self.loop.create_task(self.update_mind_status_task())
+        self.bg_task.append(task)
+        task.add_done_callback(
+            lambda t: logger.error(f"update_mind_status_task ended unexpectedly: {t.exception()}") 
+            if not t.cancelled() and t.exception() else None
+        )
+
+        git_update_channel: discord.TextChannel = self.get_channel(788228956372992020)
         await git_update_channel.send(f"melon bot started at {get_date_str()}")
+        logger.info(f"Bot startup complete at {get_date_str()}")
 
     async def update_self_invite_dict(self, guild, invite):
         if invite.inviter.id not in self.inviter_dict[guild.id]:
@@ -224,18 +232,20 @@ class bb(commands.Bot):
 
     # background tasks:
     async def update_mind_status_task(self):
+        logger = logging.getLogger('discord')
         await self.wait_until_ready()
-        try:
-            status_msg_channel: discord.TextChannel = self.get_channel(STATUS_MSG_CHANNEL)
-            status_log_channel: discord.TextChannel = self.get_channel(STATUS_LOG_CHANNEL)
-            update_counter = 0
-            peak_num_players = 0 #todo
-            avg_num_players =0
-            counter_num_players =0
-            while prefix == PREFIX_PROD:
+        update_counter = 0
+        peak_num_players = 0  # todo
+        avg_num_players = 0
+        counter_num_players = 0
+
+        while prefix == PREFIX_PROD:
+            try:
                 update_counter += 1
-                counter_num_players +=1
+                counter_num_players += 1
                 t0 = time.time()
+                status_msg_channel: discord.TextChannel = self.get_channel(STATUS_MSG_CHANNEL)
+                status_log_channel: discord.TextChannel = self.get_channel(STATUS_LOG_CHANNEL)
                 messages = await status_log_channel.history(limit=30, oldest_first=False,
                                                             after=datetime.now() - timedelta(minutes=7)).flatten()
                 msg: discord.Message
@@ -246,7 +256,6 @@ class bb(commands.Bot):
                 players_in_servers = dict()
                 for msg in messages:
                     if " is **running**:" in msg.content and "**PLAYERS**" in msg.content:
-                        # print(msg.content, msg.created_at)
                         msg1 = msg.content.split(" is **running**: ")
                         servername = strip_colourbrackets(msg1[0])
                         if servername not in servers:
@@ -254,7 +263,7 @@ class bb(commands.Bot):
                             msg2 = msg1[1].split(", **PLAYERS**=")
                             msg3 = msg2[1].split(", **RAM**=")
                             num_players = msg3[0]
-                            avg_num_players +=int(num_players) 
+                            avg_num_players += int(num_players)
                             RAM = msg3[1]
                             ss = strip_colourbrackets(msg2[0])
                             serverstatuslist += [
@@ -270,14 +279,20 @@ class bb(commands.Bot):
                     await status_msg[0].edit(content=strbuilder)
                 else:  # if not found, send as a new msg
                     await status_msg_channel.send(strbuilder)
-                # save the time series onto AlexMindustry.hourly_players
-                if update_counter%3==0: # only save every 3rd time
+                if update_counter % 3 == 0:
                     add_hourly_player_data(players_in_servers)
-                print(
-                    f"update mindus servers took {time.time() - t0:.3f}seconds {get_date_str()}")
-                await asyncio.sleep(60 * 6)# server status updates are every 5mins. so this must be longer than that.
-        except RuntimeError:
-            print("mindus status update closed")
+                print(f"update mindus servers took {time.time() - t0:.3f}seconds {get_date_str()}")
+                await asyncio.sleep(60 * 6)
+
+            except asyncio.CancelledError:
+                logger.info("update_mind_status_task was cancelled, shutting down")
+                print("mindus status update closed")
+                return
+
+            except Exception as e:
+                logger.error(f"update_mind_status_task failed on update #{update_counter}: {type(e).__name__}: {e}", exc_info=True)
+                print(f"mindus status update error: {type(e).__name__}: {e}")
+                await asyncio.sleep(60)
 
 def add_hourly_player_data(players_in_servers):
     # this is the of the number of players currently in the servers
