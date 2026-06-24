@@ -19,7 +19,14 @@ def scp_cmd(host:str, src: str, dst: str):
     return out,err
 
 def rsync_maps_cmd(host:str, src: str, dst: str):
-    procc = subprocess.Popen(f"rsync -v --delete --include='*' --exclude='*/' {src} {host}:{dst}", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    # ensure src ends with a trailing slash so we copy the contents into dst
+    if not src.endswith('/'):
+        src = src + '/'
+    # use archive mode (-a) to recurse and preserve metadata; -v for verbose, -z to compress over network
+    # use argument list instead of shell=True to avoid local shell quoting issues
+    procc = subprocess.Popen([
+        "rsync", "-avz", "--delete", src, f"{host}:{dst}"
+    ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out,err = procc.communicate()
     return out,err
 
@@ -64,8 +71,10 @@ def servfolders():
     ]
 
 def mapfolders():
+    # ensure this list lines up with servfolders() / getservers()
+    # corrected typos and kept one entry per server
     return [
-        #"/root/Documents/pvp_v7_2023",
+        # index 0 -> attack_usw_v7_2023
         "mindustry_maps/attack_v7/",
         "mindustry_maps/sandbox_v7/",
         "mindustry_maps/survival_v7/",
@@ -217,14 +226,23 @@ async def syncmindusmap(ctx,serverid):
     await ctx.channel.send("Uploading maps...", delete_after=3)
     try:
         i,host,screen,port,loc = servers[serverid]
-        source_folder = mapfolders()[i]
+        folders = mapfolders()
+        if i >= len(folders):
+            await ctx.channel.send(f"Error: no map folder configured for server index `{i}`. mapfolders has {len(folders)} entries.", delete_after=10)
+            return
+        source_folder = folders[i]
         # add logic here to upload the maps to the servers
         # use subprocess to rsync the files 
         out,err = rsync_maps_cmd(host,src="/root/Documents/watermelonbot/"+source_folder,
                 dst=f"{servfolders()[i]}/config/maps/") 
-        # decoded1 = out.decode("utf-8") # this fails when there is non valid character...
-        output = str(out[-1500:])[2:-1].split("\\n") 
-        output = "\n".join(output)
+        # decode outputs safely
+        out_decoded = out.decode('utf-8', errors='replace') if isinstance(out, (bytes, bytearray)) else str(out)
+        err_decoded = err.decode('utf-8', errors='replace') if isinstance(err, (bytes, bytearray)) else str(err)
+        output_tail = out_decoded[-1500:]
+        if err_decoded:
+            output = f"rsync stderr:\n{err_decoded}\n\nrsync stdout tail:\n{output_tail}"
+        else:
+            output = output_tail
         cmd =f'screen -S {screen} -p 0 -X stuff "reloadmaps^M"'
         send_consolecommand(host, cmd)
         await asyncio.sleep(2)
@@ -281,7 +299,6 @@ async def getnode(ctx: commands.Context):
     await ctx.channel.send("\n".join(strr))
     await ctx.channel.send(other_info())
     
-
 async def rebootnode(ctx: commands.Context, nodeid: int):
     # if nodeid==-1, reboot all nodes
     # if nodeid is not -1, reboot the specified node
