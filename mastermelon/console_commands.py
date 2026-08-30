@@ -39,16 +39,17 @@ def getservers(): # host screen port
             ("root@139.162.41.78"                , "pvp_v7_asia"       , "6767" , "LD SG2"),
             ("root@172.245.187.143"              , "pvp_usa"           , "6868" , "RN USA"), # hex
             ("root@92.119.127.171"               , "surv_eu"           , "6888" , "RN FRN"),
+            ("root@23.95.107.12"                 , "plague"            , "6567" , "RN USA2"),
             ("root@92.119.127.171"               , "test_eu"           , "6889" , "RN FRN") # afk zone
                ]
     #servers = servers
     return [(i,host,screen,port,loc) for i,(host,screen,port,loc) in enumerate(servers)]
 
 def getnodes():
-    return list(enumerate(["RN USA", "RN FRN","LD JPY","LD SG2"]))
+    return list(enumerate(["RN USA", "RN FRN","LD JPY","LD SG2", "RN USA2"]))
 
 def other_info():
-    return "Other info: \n watermelonbot = 'RN USA'\n post forwarding = 'RN FRN'"
+    return "Other info: \n watermelonbot = 'RN USA'\n post forwarding = 'RN FRN'\n plague = 'RN USA2'"
 
 
 def find_index_by_loc(target):
@@ -67,6 +68,7 @@ def servfolders():
         "/root/Documents/pvp_v7_asia",
         "/root/Documents/pvp_usa",
         "/root/Documents/surv_eu",
+        "/root/Documents/plague",
         "/root/Documents/test_eu"
     ]
 
@@ -81,6 +83,7 @@ def mapfolders():
         "mindustry_maps/pvp_v7/",
         "mindustry_maps/pvp_v7/",
         "mindustry_maps/survival_v7_eu/",
+        "mindustry_maps/plague/",
         "mindustry_maps/test_v7_eu/"
     ]
 
@@ -179,7 +182,7 @@ async def send_command_to_1_server(ctx, serverid, consolecommand, servers, displ
 
 async def showconsole(ctx, i, host, screen, port):
     await ctx.channel.send(f"reading console on `{i}` `{host}:{port}` with screen `{screen}`", delete_after=3)
-    cmd =f'screen -S {screen} -p 0 -X hardcopy -h "screen_log.log"'
+    cmd =f'screen -S {screen} -p 0 -X hardcopy "screen_log.log"'
     send_consolecommand(host, cmd)
     await asyncio.sleep(1)
     fld=servfolders()[i]
