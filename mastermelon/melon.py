@@ -199,6 +199,12 @@ class bb(commands.Bot):
         logger.info(f"Bot logged in as {bot.user.name} ({bot.user.id})")
         print('Logged in as', bot.user.name, bot.user.id)
 
+        git_update_channel: discord.TextChannel = self.get_channel(788228956372992020)
+        if git_update_channel is not None:
+            await git_update_channel.send(f"melon bot started at {get_date_str()}")
+        else:
+            logger.error("Git update channel was not found; startup message was not sent")
+
         for guild in bot.guilds:
             self.invites[guild.id] = await guild.invites()
             self.inviter_dict[guild.id] = {}
@@ -213,11 +219,12 @@ class bb(commands.Bot):
             if not t.cancelled() and t.exception() else None
         )
 
-        git_update_channel: discord.TextChannel = self.get_channel(788228956372992020)
-        await git_update_channel.send(f"melon bot started at {get_date_str()}")
         logger.info(f"Bot startup complete at {get_date_str()}")
 
     async def update_self_invite_dict(self, guild, invite):
+        if invite.inviter is None:
+            return
+
         if invite.inviter.id not in self.inviter_dict[guild.id]:
             self.inviter_dict[guild.id][invite.inviter.id] = {"total": invite.uses,
                                                               "name": f"{invite.inviter.name}#{invite.inviter.discriminator}",
