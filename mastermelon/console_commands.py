@@ -182,11 +182,12 @@ async def send_command_to_1_server(ctx, serverid, consolecommand, servers, displ
 
 async def showconsole(ctx, i, host, screen, port):
     await ctx.channel.send(f"reading console on `{i}` `{host}:{port}` with screen `{screen}`", delete_after=3)
-    cmd =f'screen -S {screen} -p 0 -X hardcopy "screen_log.log"'
+    fld=servfolders()[i]
+    capture_path=f'{fld}/screen_log.log'
+    cmd =f'screen -S {screen} -p 0 -X hardcopy "{capture_path}"'
     send_consolecommand(host, cmd)
     await asyncio.sleep(1)
-    fld=servfolders()[i]
-    cmd =f'cat {fld}/screen_log.log'
+    cmd =f'cat "{capture_path}"'
     out,err = ssh_withcmd(host, cmd)
     # todo, clean up the [time] tags in each line.
     output = str(out[-1500:])[2:-1].split("\\n") 

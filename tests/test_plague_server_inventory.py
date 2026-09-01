@@ -74,7 +74,7 @@ class PlagueServerInventoryTest(unittest.TestCase):
     def test_console_capture_uses_screen_409_compatible_hardcopy(self):
         source = SOURCE.read_text()
         self.assertNotIn('hardcopy -h "screen_log.log"', source)
-        self.assertIn('hardcopy "screen_log.log"', source)
+        self.assertIn('hardcopy "{capture_path}"', source)
 
 
 if __name__ == "__main__":
